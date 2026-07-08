@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Cart — ELEGANCE</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="icon" type="image/png" href="images/elegance-logo-gold-dash.png" />
+  <meta name="description" content="Review your Elegance cart — premium Indian ethnic wear.">
+  <link rel="stylesheet" href="home.css" />
+  <link rel="stylesheet" href="cart.css" />
+</head>
+<body>
+
+<!-- ANNOUNCEMENT BAR -->
+<div class="announcement-bar">
+  <div class="announce-inner">
+    <span>Free shipping on orders above ₹2,999</span>
+    <span class="announce-sep">✦</span>
+    <span>New arrivals every Friday</span>
+    <span class="announce-sep">✦</span>
+    <span>Customised stitching available — <a href="#">Book now</a></span>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="site-nav" id="siteNav">
+  <div class="nav-inner">
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+
+    <ul class="nav-links nav-links-left" id="navLinks">
+      <li class="nav-item-dropdown">
+        <a href="#" class="nav-link">Shop <i class="fas fa-chevron-down nav-chevron"></i></a>
+        <div class="mega-drop">
+          <div class="mega-col">
+            <span class="mega-heading">By Type</span>
+            <a href="shop.html">Unstitched Suits</a>
+            <a href="shop.html">Semi-Stitched</a>
+            <a href="shop.html">Ready-Mades</a>
+            <a href="shop.html">Salwar Kameez</a>
+            <a href="shop.html">Co-ord Sets</a>
+            <a href="shop.html">Tops / Shirts</a>
+          </div>
+          <div class="mega-col">
+            <span class="mega-heading">By Occasion</span>
+            <a href="#">Casual Wear</a>
+            <a href="#">Work Wear</a>
+            <a href="#">Semi-Formal</a>
+            <a href="#">Occasion Wear</a>
+            <a href="#">Trousseau</a>
+            <a href="#">Festive</a>
+          </div>
+          <div class="mega-col mega-col-img">
+            <img src="images/2026_05_17_13_11_IMG_3466.JPG" alt="New Arrivals" />
+            <span>New Season</span>
+          </div>
+        </div>
+      </li>
+      <li><a href="home.html#new-arrivals" class="nav-link">New Arrivals</a></li>
+      <li><a href="home.html#occasions" class="nav-link">Occasions</a></li>
+      <li><a href="shop.html" class="nav-link nav-sale">Sale</a></li>
+    </ul>
+
+    <a href="home.html" class="nav-brand">
+      <img src="images/elegance-logo-gold-dash.png" alt="Elegance Logo" class="nav-logo" />
+    </a>
+
+    <div class="nav-actions">
+      <button class="nav-icon-btn" aria-label="Search" id="searchToggle">
+        <i class="fas fa-search"></i>
+      </button>
+      <button class="nav-icon-btn" aria-label="Wishlist">
+        <i class="far fa-heart"></i>
+      </button>
+      <a href="cart.html" class="nav-icon-btn cart-btn" aria-label="Cart">
+        <i class="fas fa-shopping-bag"></i>
+        <span class="cart-badge" id="cartBadge">3</span>
+      </a>
+      <a href="#" class="btn-account">Account</a>
+    </div>
+  </div>
+
+  <div class="search-bar" id="searchBar">
+    <div class="search-inner">
+      <i class="fas fa-search search-icon-input"></i>
+      <input type="text" placeholder="Search for sarees, suits, co-ords…" class="search-input" id="searchInput" />
+      <button class="search-close" id="searchClose"><i class="fas fa-times"></i></button>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════
+     CART PAGE BODY
+═══════════════════════════════════════════════════ -->
+<main class="cart-main">
+  <div class="container-xl">
+
+    <!-- PAGE HEADER -->
+    <div class="cart-page-header">
+      <div class="cart-breadcrumb">
+        <a href="home.html">Home</a>
+        <i class="fas fa-chevron-right"></i>
+        <a href="shop.html">Shop</a>
+        <i class="fas fa-chevron-right"></i>
+        <span>Cart</span>
+      </div>
+      <div class="cart-title-row">
+        <h1 class="cart-title">Your <em>Cart</em></h1>
+        <span class="cart-count-label" id="cartCountLabel">3 items</span>
+      </div>
+      <!-- Step progress -->
+      <div class="checkout-steps">
+        <div class="cs-step cs-active">
+          <div class="cs-dot"><i class="fas fa-shopping-bag"></i></div>
+          <span>Cart</span>
+        </div>
+        <div class="cs-line"></div>
+        <div class="cs-step">
+          <div class="cs-dot"><i class="fas fa-map-marker-alt"></i></div>
+          <span>Address</span>
+        </div>
+        <div class="cs-line"></div>
+        <div class="cs-step">
+          <div class="cs-dot"><i class="fas fa-credit-card"></i></div>
+          <span>Payment</span>
+        </div>
+        <div class="cs-line"></div>
+        <div class="cs-step">
+          <div class="cs-dot"><i class="fas fa-check"></i></div>
+          <span>Confirm</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN GRID: items left + summary right -->
+    <div class="cart-grid" id="cartGrid">
+
+      <!-- ══ LEFT: CART ITEMS ══ -->
+      <div class="cart-items-col">
+
+        <!-- Free shipping progress bar -->
+        <div class="free-shipping-bar" id="freeShippingBar">
+          <div class="fsb-text">
+            <i class="fas fa-truck"></i>
+            <span id="fsbMsg">Add <strong id="fsbAmt">₹699</strong> more for free shipping!</span>
+          </div>
+          <div class="fsb-track">
+            <div class="fsb-fill" id="fsbFill" style="width:76%"></div>
+          </div>
+        </div>
+
+        <!-- Items list -->
+        <div class="cart-items-list" id="cartItemsList">
+
+          <!-- ITEM 1 -->
+          <div class="cart-item" data-id="1" data-price="4250" data-name="Ivory Embroidered Anarkali Set">
+            <div class="ci-img-wrap">
+              <img src="images/EC 15955 (6).jpg" alt="Ivory Embroidered Anarkali Set" class="ci-img" />
+              <span class="ci-badge">New Arrival</span>
+            </div>
+            <div class="ci-details">
+              <div class="ci-top">
+                <div>
+                  <p class="ci-brand">Elegance</p>
+                  <h3 class="ci-name">Ivory Embroidered Anarkali Set</h3>
+                  <div class="ci-meta">
+                    <span class="ci-meta-pill"><i class="fas fa-palette"></i> Ivory</span>
+                    <span class="ci-meta-pill"><i class="fas fa-ruler"></i> M</span>
+                    <span class="ci-meta-pill"><i class="fas fa-cut"></i> Semi-Stitched</span>
+                  </div>
+                </div>
+                <button class="ci-remove" data-id="1" aria-label="Remove item">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              <div class="ci-bottom">
+                <div class="ci-price-block">
+                  <span class="ci-price">₹4,250</span>
+                  <span class="ci-mrp">₹6,500</span>
+                  <span class="ci-disc">35% off</span>
+                </div>
+                <div class="ci-actions">
+                  <button class="ci-wishlist" aria-label="Move to wishlist">
+                    <i class="far fa-heart"></i> Save
+                  </button>
+                  <div class="ci-qty-stepper">
+                    <button class="qty-btn qty-dec" data-id="1" aria-label="Decrease">−</button>
+                    <span class="qty-val" id="qty-1">1</span>
+                    <button class="qty-btn qty-inc" data-id="1" aria-label="Increase">+</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ITEM 2 -->
+          <div class="cart-item" data-id="2" data-price="2890" data-name="Rose Gold Co-ord Set">
+            <div class="ci-img-wrap">
+              <img src="images/2026_05_17_13_11_IMG_3466.JPG" alt="Rose Gold Co-ord Set" class="ci-img" />
+              <span class="ci-badge ci-badge-sale">Sale</span>
+            </div>
+            <div class="ci-details">
+              <div class="ci-top">
+                <div>
+                  <p class="ci-brand">Elegance</p>
+                  <h3 class="ci-name">Rose Gold Co-ord Sharara Set</h3>
+                  <div class="ci-meta">
+                    <span class="ci-meta-pill"><i class="fas fa-palette"></i> Rose Gold</span>
+                    <span class="ci-meta-pill"><i class="fas fa-ruler"></i> S</span>
+                    <span class="ci-meta-pill"><i class="fas fa-cut"></i> Ready-Made</span>
+                  </div>
+                </div>
+                <button class="ci-remove" data-id="2" aria-label="Remove item">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              <div class="ci-bottom">
+                <div class="ci-price-block">
+                  <span class="ci-price">₹2,890</span>
+                  <span class="ci-mrp">₹4,200</span>
+                  <span class="ci-disc">31% off</span>
+                </div>
+                <div class="ci-actions">
+                  <button class="ci-wishlist" aria-label="Move to wishlist">
+                    <i class="far fa-heart"></i> Save
+                  </button>
+                  <div class="ci-qty-stepper">
+                    <button class="qty-btn qty-dec" data-id="2" aria-label="Decrease">−</button>
+                    <span class="qty-val" id="qty-2">2</span>
+                    <button class="qty-btn qty-inc" data-id="2" aria-label="Increase">+</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ITEM 3 -->
+          <div class="cart-item" data-id="3" data-price="3750" data-name="Marigold Printed Salwar Suit">
+            <div class="ci-img-wrap">
+              <img src="images/17.png" alt="Marigold Printed Salwar Suit" class="ci-img" />
+            </div>
+            <div class="ci-details">
+              <div class="ci-top">
+                <div>
+                  <p class="ci-brand">Elegance</p>
+                  <h3 class="ci-name">Marigold Printed Salwar Suit</h3>
+                  <div class="ci-meta">
+                    <span class="ci-meta-pill"><i class="fas fa-palette"></i> Marigold</span>
+                    <span class="ci-meta-pill"><i class="fas fa-ruler"></i> L</span>
+                    <span class="ci-meta-pill"><i class="fas fa-cut"></i> Unstitched</span>
+                  </div>
+                </div>
+                <button class="ci-remove" data-id="3" aria-label="Remove item">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              <div class="ci-bottom">
+                <div class="ci-price-block">
+                  <span class="ci-price">₹3,750</span>
+                  <span class="ci-mrp">₹5,500</span>
+                  <span class="ci-disc">32% off</span>
+                </div>
+                <div class="ci-actions">
+                  <button class="ci-wishlist" aria-label="Move to wishlist">
+                    <i class="far fa-heart"></i> Save
+                  </button>
+                  <div class="ci-qty-stepper">
+                    <button class="qty-btn qty-dec" data-id="3" aria-label="Decrease">−</button>
+                    <span class="qty-val" id="qty-3">1</span>
+                    <button class="qty-btn qty-inc" data-id="3" aria-label="Increase">+</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /cart-items-list -->
+
+        <!-- RECENTLY VIEWED / YOU MAY ALSO LIKE -->
+        <div class="cart-upsell">
+          <div class="cart-upsell-header">
+            <h2 class="cart-upsell-title">You May Also <em>Like</em></h2>
+            <a href="shop.html" class="cart-upsell-viewall">View All <i class="fas fa-arrow-right"></i></a>
+          </div>
+          <div class="cart-upsell-track-wrap">
+            <button class="upsell-nav upsell-nav-prev" id="upsellPrev" aria-label="Previous"><i class="fas fa-chevron-left"></i></button>
+            <div class="cart-upsell-track" id="upsellTrack">
+
+              <div class="upsell-card">
+                <div class="uc-img-wrap">
+                  <img src="images/2026_05_17_10_14_IMG_3252.JPG" alt="Pink Georgette Lehenga" />
+                  <button class="uc-wish"><i class="far fa-heart"></i></button>
+                  <button class="uc-add" data-name="Pink Georgette Lehenga" data-price="5200">
+                    <i class="fas fa-plus"></i> Add
+                  </button>
+                </div>
+                <div class="uc-info">
+                  <p class="uc-name">Pink Georgette Lehenga</p>
+                  <div class="uc-price-row">
+                    <span class="uc-price">₹5,200</span>
+                    <span class="uc-mrp">₹7,800</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="upsell-card">
+                <div class="uc-img-wrap">
+                  <img src="images/2026_05_17_10_24_IMG_3270.JPG" alt="Ivory Georgette Suit" />
+                  <button class="uc-wish"><i class="far fa-heart"></i></button>
+                  <button class="uc-add" data-name="Ivory Georgette Suit" data-price="3100">
+                    <i class="fas fa-plus"></i> Add
+                  </button>
+                </div>
+                <div class="uc-info">
+                  <p class="uc-name">Ivory Georgette Suit</p>
+                  <div class="uc-price-row">
+                    <span class="uc-price">₹3,100</span>
+                    <span class="uc-mrp">₹4,500</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="upsell-card">
+                <div class="uc-img-wrap">
+                  <img src="images/19.png" alt="Emerald Silk Anarkali" />
+                  <button class="uc-wish"><i class="far fa-heart"></i></button>
+                  <button class="uc-add" data-name="Emerald Silk Anarkali" data-price="6800">
+                    <i class="fas fa-plus"></i> Add
+                  </button>
+                </div>
+                <div class="uc-info">
+                  <p class="uc-name">Emerald Silk Anarkali</p>
+                  <div class="uc-price-row">
+                    <span class="uc-price">₹6,800</span>
+                    <span class="uc-mrp">₹9,500</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="upsell-card">
+                <div class="uc-img-wrap">
+                  <img src="images/EC 15955 (6).jpg" alt="Beige Embroidered Suit" />
+                  <button class="uc-wish"><i class="far fa-heart"></i></button>
+                  <button class="uc-add" data-name="Beige Embroidered Suit" data-price="4100">
+                    <i class="fas fa-plus"></i> Add
+                  </button>
+                </div>
+                <div class="uc-info">
+                  <p class="uc-name">Beige Embroidered Suit</p>
+                  <div class="uc-price-row">
+                    <span class="uc-price">₹4,100</span>
+                    <span class="uc-mrp">₹6,000</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="upsell-card">
+                <div class="uc-img-wrap">
+                  <img src="images/17.png" alt="Festive Lehenga Choli" />
+                  <button class="uc-wish"><i class="far fa-heart"></i></button>
+                  <button class="uc-add" data-name="Festive Lehenga Choli" data-price="7500">
+                    <i class="fas fa-plus"></i> Add
+                  </button>
+                </div>
+                <div class="uc-info">
+                  <p class="uc-name">Festive Lehenga Choli</p>
+                  <div class="uc-price-row">
+                    <span class="uc-price">₹7,500</span>
+                    <span class="uc-mrp">₹11,000</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <button class="upsell-nav upsell-nav-next" id="upsellNext" aria-label="Next"><i class="fas fa-chevron-right"></i></button>
+          </div>
+        </div>
+
+      </div><!-- /cart-items-col -->
+
+
+      <!-- ══ RIGHT: ORDER SUMMARY ══ -->
+      <div class="cart-summary-col" id="cartSummaryCol">
+        <div class="cart-summary-card">
+
+          <!-- Header -->
+          <div class="cs-header">
+            <h2 class="cs-title">Order Summary</h2>
+            <span class="cs-item-count" id="csItemCount">3 items</span>
+          </div>
+
+          <!-- Coupon -->
+          <div class="cs-coupon">
+            <div class="coupon-input-wrap">
+              <i class="fas fa-tag coupon-icon"></i>
+              <input type="text" id="couponInput" placeholder="Enter coupon code" class="coupon-input" />
+              <button class="coupon-apply-btn" id="couponApplyBtn">Apply</button>
+            </div>
+            <div class="coupon-msg" id="couponMsg"></div>
+            <!-- Suggested codes -->
+            <div class="coupon-suggestions">
+              <button class="coupon-chip" data-code="ELEGANCE10">ELEGANCE10</button>
+              <button class="coupon-chip" data-code="FIRST20">FIRST20</button>
+              <button class="coupon-chip" data-code="FESTIVE15">FESTIVE15</button>
+            </div>
+          </div>
+
+          <!-- Price breakdown -->
+          <div class="cs-breakdown">
+            <div class="cs-row">
+              <span>Subtotal (<span id="breakdownCount">3</span> items)</span>
+              <span id="subtotalVal">₹13,780</span>
+            </div>
+            <div class="cs-row cs-row-disc">
+              <span>Discount</span>
+              <span id="discountVal" class="cs-green">−₹4,420</span>
+            </div>
+            <div class="cs-row" id="couponRow" style="display:none">
+              <span>Coupon (<span id="couponAppliedCode"></span>)</span>
+              <span id="couponDiscVal" class="cs-green"></span>
+            </div>
+            <div class="cs-row">
+              <span>Stitching</span>
+              <span id="stitchingVal">₹500</span>
+            </div>
+            <div class="cs-row">
+              <span class="cs-row-flex">
+                Delivery
+                <span class="cs-tooltip-wrap">
+                  <i class="fas fa-info-circle cs-info-icon"></i>
+                  <span class="cs-tooltip">Free shipping on orders above ₹2,999. Express available at checkout.</span>
+                </span>
+              </span>
+              <span id="deliveryVal" class="cs-green">FREE</span>
+            </div>
+            <div class="cs-divider"></div>
+            <div class="cs-row cs-row-total">
+              <span>Total</span>
+              <span id="totalVal">₹9,860</span>
+            </div>
+            <p class="cs-tax-note">Inclusive of all taxes</p>
+          </div>
+
+          <!-- Savings pill -->
+          <div class="cs-savings-pill" id="csSavingsPill">
+            <i class="fas fa-tag"></i>
+            <span>You're saving <strong id="savingsAmt">₹4,420</strong> on this order!</span>
+          </div>
+
+          <!-- Checkout CTA -->
+          <button class="cs-checkout-btn" id="checkoutBtn">
+            <span>Proceed to Checkout</span>
+            <i class="fas fa-arrow-right"></i>
+          </button>
+          <a href="shop.html" class="cs-continue-link">
+            <i class="fas fa-arrow-left"></i> Continue Shopping
+          </a>
+
+          <!-- Trust badges -->
+          <div class="cs-trust">
+            <div class="cs-trust-item">
+              <i class="fas fa-shield-alt"></i>
+              <span>Secure Payment</span>
+            </div>
+            <div class="cs-trust-item">
+              <i class="fas fa-undo"></i>
+              <span>Easy Returns</span>
+            </div>
+            <div class="cs-trust-item">
+              <i class="fas fa-lock"></i>
+              <span>SSL Encrypted</span>
+            </div>
+          </div>
+
+          <!-- Payment icons -->
+          <div class="cs-payments">
+            <span class="cs-pay-label">We accept</span>
+            <div class="cs-pay-icons">
+              <span class="pay-chip">Visa</span>
+              <span class="pay-chip">Mastercard</span>
+              <span class="pay-chip">UPI</span>
+              <span class="pay-chip">Net Banking</span>
+              <span class="pay-chip">COD</span>
+            </div>
+          </div>
+
+        </div><!-- /cart-summary-card -->
+
+        <!-- Delivery estimate card -->
+        <div class="delivery-estimate-card">
+          <div class="de-icon"><i class="fas fa-map-marker-alt"></i></div>
+          <div class="de-body">
+            <p class="de-label">Delivering to</p>
+            <p class="de-pincode" id="dePincode">— Enter pincode</p>
+            <div class="de-input-row" id="deInputRow">
+              <input type="text" id="pincodeInput" placeholder="Enter pincode" maxlength="6" class="de-input" />
+              <button class="de-check-btn" id="deCheckBtn">Check</button>
+            </div>
+            <p class="de-result" id="deResult"></p>
+          </div>
+        </div>
+
+      </div><!-- /cart-summary-col -->
+
+    </div><!-- /cart-grid -->
+
+
+    <!-- ══ EMPTY CART STATE (hidden by default) ══ -->
+    <div class="empty-cart" id="emptyCart" style="display:none">
+      <div class="ec-icon">
+        <i class="fas fa-shopping-bag"></i>
+        <div class="ec-icon-ring"></div>
+      </div>
+      <h2 class="ec-title">Your cart is <em>empty</em></h2>
+      <p class="ec-sub">Looks like you haven't added anything yet.<br>Discover our curated collections.</p>
+      <a href="shop.html" class="ec-btn">Start Shopping <i class="fas fa-arrow-right"></i></a>
+      <div class="ec-links">
+        <a href="#">Trending Now</a>
+        <span>·</span>
+        <a href="#">New Arrivals</a>
+        <span>·</span>
+        <a href="#">Sale</a>
+      </div>
+    </div>
+
+  </div><!-- /container-xl -->
+</main>
+
+
+<!-- ══ REMOVE CONFIRM OVERLAY ══ -->
+<div class="remove-overlay" id="removeOverlay">
+  <div class="remove-modal">
+    <div class="rm-icon"><i class="fas fa-trash-alt"></i></div>
+    <h3 class="rm-title">Remove Item?</h3>
+    <p class="rm-sub" id="rmProductName">Ivory Embroidered Anarkali Set</p>
+    <p class="rm-msg">This item will be removed from your cart.</p>
+    <div class="rm-actions">
+      <button class="rm-btn rm-btn-cancel" id="rmCancel">Keep Item</button>
+      <button class="rm-btn rm-btn-confirm" id="rmConfirm">Remove</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ADD TO CART TOAST ══ -->
+<div class="cart-toast" id="cartToast">
+  <i class="fas fa-check-circle"></i>
+  <span id="cartToastMsg">Item added to cart!</span>
+</div>
+
+
+<!-- ══ FOOTER ══ -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+
+      <div class="footer-col footer-col-brand">
+        <img src="images/elegance-logo-gold-dash.png" alt="Elegance" class="footer-logo" />
+        <p class="footer-tagline">An ethnic regalia — crafted with love, worn with pride.</p>
+        <div class="footer-social">
+          <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" aria-label="Pinterest"><i class="fab fa-pinterest-p"></i></a>
+          <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="footer-col-title">Shop</h4>
+        <ul class="footer-links">
+          <li><a href="#">New Arrivals</a></li>
+          <li><a href="#">Unstitched Suits</a></li>
+          <li><a href="#">Ready-Mades</a></li>
+          <li><a href="#">Co-ord Sets</a></li>
+          <li><a href="#">Sale</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="footer-col-title">Help</h4>
+        <ul class="footer-links">
+          <li><a href="#">Size Guide</a></li>
+          <li><a href="#">Stitching Options</a></li>
+          <li><a href="#">Track Order</a></li>
+          <li><a href="#">Returns</a></li>
+          <li><a href="#">Contact Us</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="footer-col-title">Newsletter</h4>
+        <p class="footer-news-sub">Get new arrivals and exclusive offers — before everyone else.</p>
+        <form class="footer-news-form" onsubmit="return false">
+          <input type="email" placeholder="Your email address" class="footer-news-input" />
+          <button type="submit" class="footer-news-btn">Subscribe</button>
+        </form>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; 2026 Elegance — An Ethnic Regalia. All rights reserved.</p>
+      <div class="footer-bottom-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Use</a>
+        <a href="#">Sitemap</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="home.js"></script>
+<script src="cart.js"></script>
+</body>
+</html>
