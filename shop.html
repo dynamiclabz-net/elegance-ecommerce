@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ELEGANCE — Shop All Collections</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="icon" type="image/png" href="images/elegance-logo-gold-dash.png">
+  <meta name="description" content="Elegance — Shop our full collection of premium Indian ethnic wear.">
+  <link rel="stylesheet" href="shop.css" />
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     ANNOUNCEMENT BAR
+══════════════════════════════════════ -->
+<div class="announcement-bar">
+  <div class="announce-inner">
+    <span>Free shipping on orders above &#8377;2,999</span>
+    <span class="announce-sep">✦</span>
+    <span>New arrivals every Friday</span>
+    <span class="announce-sep">✦</span>
+    <span>Customised stitching available — <a href="#">Book now</a></span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     NAVBAR
+══════════════════════════════════════ -->
+<nav class="site-nav" id="siteNav">
+  <div class="nav-inner">
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+
+    <ul class="nav-links nav-links-left" id="navLinks">
+      <li class="nav-item-dropdown">
+        <a href="#" class="nav-link">Shop <i class="fas fa-chevron-down nav-chevron"></i></a>
+        <div class="mega-drop">
+          <div class="mega-col">
+            <span class="mega-heading">By Type</span>
+            <a href="#">Unstitched Suits</a>
+            <a href="#">Semi-Stitched</a>
+            <a href="#">Ready-Mades</a>
+            <a href="#">Salwar Kameez</a>
+            <a href="#">Co-ord Sets</a>
+            <a href="#">Tops / Shirts</a>
+          </div>
+          <div class="mega-col">
+            <span class="mega-heading">By Occasion</span>
+            <a href="#">Casual Wear</a>
+            <a href="#">Work Wear</a>
+            <a href="#">Semi-Formal</a>
+            <a href="#">Occasion Wear</a>
+            <a href="#">Trousseau</a>
+            <a href="#">Festive</a>
+          </div>
+          <div class="mega-col mega-col-img">
+            <img src="images/2026_05_17_13_11_IMG_3466.JPG" alt="New Arrivals" />
+            <span>New Season</span>
+          </div>
+        </div>
+      </li>
+      <li><a href="home.html#new-arrivals" class="nav-link">New Arrivals</a></li>
+      <li><a href="home.html#occasions"    class="nav-link">Occasions</a></li>
+      <li><a href="#" class="nav-link nav-sale">Sale</a></li>
+    </ul>
+
+    <a href="home.html" class="nav-brand">
+      <img src="images/elegance-logo-gold-dash.png" alt="Elegance Logo" class="nav-logo" />
+    </a>
+
+    <div class="nav-actions">
+      <button class="nav-icon-btn" aria-label="Search" id="searchToggle">
+        <i class="fas fa-search"></i>
+      </button>
+      <button class="nav-icon-btn" aria-label="Wishlist">
+        <i class="far fa-heart"></i>
+      </button>
+      <button class="nav-icon-btn cart-btn" aria-label="Cart">
+        <i class="fas fa-shopping-bag"></i>
+        <span class="cart-badge">2</span>
+      </button>
+      <a href="#" class="btn-account">Account</a>
+    </div>
+  </div>
+
+  <div class="search-bar" id="searchBar">
+    <div class="search-inner">
+      <i class="fas fa-search search-icon-input"></i>
+      <input type="text" placeholder="Search for sarees, suits, co-ords…" class="search-input" id="searchInput" />
+      <button class="search-close" id="searchClose"><i class="fas fa-times"></i></button>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════
+     SHOP PAGE HERO — SLIM CATEGORY BANNER
+══════════════════════════════════════ -->
+<div class="shop-hero">
+  <div class="shop-hero-bg" style="background-image: url('images/19.png')"></div>
+  <div class="shop-hero-overlay"></div>
+  <div class="shop-hero-content">
+    <p class="shop-hero-eyebrow">The Edit — SS 2026</p>
+    <h1 class="shop-hero-title">All Collections</h1>
+    <p class="shop-hero-breadcrumb">
+      <a href="home.html">Home</a>
+      <i class="fas fa-chevron-right"></i>
+      <span>Shop</span>
+    </p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     CATEGORY TABS
+══════════════════════════════════════ -->
+<div class="cat-tabs-bar" id="catTabsBar">
+  <div class="cat-tabs-inner">
+    <button class="cat-tab cat-tab-active" data-cat="all">All</button>
+    <button class="cat-tab" data-cat="unstitched">Unstitched Suits</button>
+    <button class="cat-tab" data-cat="semi">Semi Stitched</button>
+    <button class="cat-tab" data-cat="readymade">Ready-mades</button>
+    <button class="cat-tab" data-cat="salwar">Salwar Suits</button>
+    <button class="cat-tab" data-cat="tops">Tops / Shirts</button>
+    <button class="cat-tab" data-cat="coord">Co-ord Sets</button>
+    <button class="cat-tab cat-tab-sale" data-cat="sale">Sale</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     MAIN SHOP LAYOUT
+══════════════════════════════════════ -->
+<div class="shop-layout">
+
+  <!-- ─── SIDEBAR FILTERS ─── -->
+  <aside class="shop-sidebar" id="shopSidebar">
+
+    <!-- Mobile close -->
+    <div class="sidebar-head">
+      <span class="sidebar-title-label">Filters</span>
+      <button class="sidebar-close-btn" id="sidebarClose" aria-label="Close filters">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Active filters chips -->
+    <div class="active-filters" id="activeFilters" style="display:none">
+      <div class="active-filters-row" id="activeFiltersRow"></div>
+      <button class="clear-all-btn" id="clearAllBtn">Clear All</button>
+    </div>
+
+    <!-- Price Range -->
+    <div class="filter-group">
+      <button class="filter-group-toggle" aria-expanded="true">
+        Price Range <i class="fas fa-chevron-up filter-chevron"></i>
+      </button>
+      <div class="filter-group-body">
+        <div class="price-range-display">
+          <span id="priceMin">&#8377;500</span>
+          <span id="priceMax">&#8377;25,000</span>
+        </div>
+        <div class="price-slider-wrap">
+          <input type="range" class="price-slider" id="priceSliderMin" min="500" max="25000" step="100" value="500" />
+          <input type="range" class="price-slider" id="priceSliderMax" min="500" max="25000" step="100" value="25000" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Category -->
+    <div class="filter-group">
+      <button class="filter-group-toggle" aria-expanded="true">
+        Category <i class="fas fa-chevron-up filter-chevron"></i>
+      </button>
+      <div class="filter-group-body">
+        <label class="filter-check"><input type="checkbox" value="unstitched" class="filter-input" data-type="category" /> Unstitched Suits <span class="filter-count">24</span></label>
+        <label class="filter-check"><input type="checkbox" value="semi" class="filter-input" data-type="category" /> Semi Stitched <span class="filter-count">18</span></label>
+        <label class="filter-check"><input type="checkbox" value="readymade" class="filter-input" data-type="category" /> Ready-mades <span class="filter-count">32</span></label>
+        <label class="filter-check"><input type="checkbox" value="salwar" class="filter-input" data-type="category" /> Salwar Suits <span class="filter-count">41</span></label>
+        <label class="filter-check"><input type="checkbox" value="tops" class="filter-input" data-type="category" /> Tops / Shirts <span class="filter-count">15</span></label>
+        <label class="filter-check"><input type="checkbox" value="coord" class="filter-input" data-type="category" /> Co-ord Sets <span class="filter-count">22</span></label>
+      </div>
+    </div>
+
+    <!-- Size -->
+    <div class="filter-group">
+      <button class="filter-group-toggle" aria-expanded="true">
+        Size <i class="fas fa-chevron-up filter-chevron"></i>
+      </button>
+      <div class="filter-group-body filter-sizes-grid">
+        <button class="size-pill" data-size="XS">XS</button>
+        <button class="size-pill" data-size="S">S</button>
+        <button class="size-pill" data-size="M">M</button>
+        <button class="size-pill" data-size="L">L</button>
+        <button class="size-pill" data-size="XL">XL</button>
+        <button class="size-pill" data-size="XXL">XXL</button>
+        <button class="size-pill" data-size="36">36</button>
+        <button class="size-pill" data-size="38">38</button>
+        <button class="size-pill" data-size="40">40</button>
+        <button class="size-pill" data-size="42">42</button>
+        <button class="size-pill" data-size="Free">Free</button>
+      </div>
+    </div>
+
+    <!-- Colour -->
+    <div class="filter-group">
+      <button class="filter-group-toggle" aria-expanded="true">
+        Colour <i class="fas fa-chevron-up filter-chevron"></i>
+      </button>
+      <div class="filter-group-body filter-color-grid">
+        <button class="color-swatch" data-color="Pink"      style="background:#E8A0BF;" title="Pink"><span class="sr-only">Pink</span></button>
+        <button class="color-swatch" data-color="Ivory"     style="background:#FFFFF0; border:1px solid #ddd;" title="Ivory"><span class="sr-only">Ivory</span></button>
+        <button class="color-swatch" data-color="Gold"      style="background:#D4A843;" title="Gold"><span class="sr-only">Gold</span></button>
+        <button class="color-swatch" data-color="Navy"      style="background:#1B2A4A;" title="Navy"><span class="sr-only">Navy</span></button>
+        <button class="color-swatch" data-color="Red"       style="background:#C0392B;" title="Red"><span class="sr-only">Red</span></button>
+        <button class="color-swatch" data-color="Green"     style="background:#2E7D52;" title="Green"><span class="sr-only">Green</span></button>
+        <button class="color-swatch" data-color="Teal"      style="background:#008080;" title="Teal"><span class="sr-only">Teal</span></button>
+        <button class="color-swatch" data-color="Peach"     style="background:#FFCBA4;" title="Peach"><span class="sr-only">Peach</span></button>
+        <button class="color-swatch" data-color="Lavender"  style="background:#C3B1E1;" title="Lavender"><span class="sr-only">Lavender</span></button>
+        <button class="color-swatch" data-color="Maroon"    style="background:#800000;" title="Maroon"><span class="sr-only">Maroon</span></button>
+        <button class="color-swatch" data-color="White"     style="background:#FFFFFF; border:1px solid #ddd;" title="White"><span class="sr-only">White</span></button>
+        <button class="color-swatch" data-color="Black"     style="background:#1C1613;" title="Black"><span class="sr-only">Black</span></button>
+      </div>
+    </div>
+
+    <!-- Fabric -->
+    <div class="filter-group">
+      <button class="filter-group-toggle" aria-expanded="false">
+        Fabric <i class="fas fa-chevron-down filter-chevron"></i>
+      </button>
+      <div class="filter-group-body" style="display:none">
+        <label class="filter-check"><input type="checkbox" value="cotton" class="filter-input" data-type="fabric" /> Cotton</label>
+        <label class="filter-check"><input type="checkbox" value="silk" class="filter-input" data-type="fabric" /> Silk</label>
+        <label class="filter-check"><input type="checkbox" value="georgette" class="filter-input" data-type="fabric" /> Georgette</label>
+        <label class="filter-check"><input type="checkbox" value="chiffon" class="filter-input" data-type="fabric" /> Chiffon</label>
+        <label class="filter-check"><input type="checkbox" value="linen" class="filter-input" data-type="fabric" /> Linen</label>
+        <label class="filter-check"><input type="checkbox" value="organza" class="filter-input" data-type="fabric" /> Organza</label>
+        <label class="filter-check"><input type="checkbox" value="chanderi" class="filter-input" data-type="fabric" /> Chanderi</label>
+      </div>
+    </div>
+
+    <!-- Occasion -->
+    <div class="filter-group">
+      <button class="filter-group-toggle" aria-expanded="false">
+        Occasion <i class="fas fa-chevron-down filter-chevron"></i>
+      </button>
+      <div class="filter-group-body" style="display:none">
+        <label class="filter-check"><input type="checkbox" value="casual" class="filter-input" data-type="occasion" /> Casual Wear</label>
+        <label class="filter-check"><input type="checkbox" value="work" class="filter-input" data-type="occasion" /> Work Wear</label>
+        <label class="filter-check"><input type="checkbox" value="festive" class="filter-input" data-type="occasion" /> Festive</label>
+        <label class="filter-check"><input type="checkbox" value="occasion" class="filter-input" data-type="occasion" /> Occasion Wear</label>
+        <label class="filter-check"><input type="checkbox" value="bridal" class="filter-input" data-type="occasion" /> Bridal / Trousseau</label>
+      </div>
+    </div>
+
+    <!-- Discount -->
+    <div class="filter-group">
+      <button class="filter-group-toggle" aria-expanded="false">
+        Discount <i class="fas fa-chevron-down filter-chevron"></i>
+      </button>
+      <div class="filter-group-body" style="display:none">
+        <label class="filter-check"><input type="radio" name="discount" value="10" class="filter-input" data-type="discount" /> 10% and above</label>
+        <label class="filter-check"><input type="radio" name="discount" value="20" class="filter-input" data-type="discount" /> 20% and above</label>
+        <label class="filter-check"><input type="radio" name="discount" value="30" class="filter-input" data-type="discount" /> 30% and above</label>
+        <label class="filter-check"><input type="radio" name="discount" value="50" class="filter-input" data-type="discount" /> 50% and above</label>
+      </div>
+    </div>
+
+  </aside><!-- /sidebar -->
+
+  <!-- ─── PRODUCT AREA ─── -->
+  <main class="shop-main">
+
+    <!-- Toolbar -->
+    <div class="shop-toolbar">
+      <div class="toolbar-left">
+        <button class="filter-toggle-btn" id="filterToggleBtn">
+          <i class="fas fa-sliders-h"></i> Filters
+          <span class="filter-count-badge" id="filterCountBadge" style="display:none">0</span>
+        </button>
+        <span class="result-count" id="resultCount">152 Products</span>
+      </div>
+      <div class="toolbar-right">
+        <!-- Grid view toggles -->
+        <div class="grid-toggles">
+          <button class="grid-btn grid-btn-active" id="grid3Btn" aria-label="3 column grid" title="3 columns">
+            <i class="fas fa-th-large"></i>
+          </button>
+          <button class="grid-btn" id="grid4Btn" aria-label="4 column grid" title="4 columns">
+            <i class="fas fa-th"></i>
+          </button>
+        </div>
+        <!-- Sort -->
+        <div class="sort-wrap">
+          <label class="sort-label" for="sortSelect">Sort:</label>
+          <select class="sort-select" id="sortSelect">
+            <option value="featured">Featured</option>
+            <option value="newest">Newest First</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+            <option value="discount">Highest Discount</option>
+            <option value="popular">Most Popular</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── PRODUCT GRID ─── -->
+    <div class="product-grid grid-3" id="productGrid">
+
+      <!-- Card 1 -->
+      <div class="sp-card" data-cat="salwar" data-price="5900" data-discount="28">
+        <div class="sp-img-wrap">
+          <img src="images/EC 15955 (6).jpg" alt="Ivory Embroidered Salwar Set" loading="lazy" />
+          <div class="sp-badges">
+            <span class="sp-badge sp-badge-new">New</span>
+          </div>
+          <button class="sp-wish" aria-label="Wishlist"><i class="far fa-heart"></i></button>
+          <div class="sp-hover-actions">
+            <button class="sp-quick-view" data-id="1"><i class="fas fa-eye"></i> Quick View</button>
+            <button class="sp-add-cart"><i class="fas fa-shopping-bag"></i> Add to Cart</button>
+          </div>
+          <div class="sp-size-row">
+            <span>S</span><span>M</span><span>L</span><span>XL</span>
+          </div>
+        </div>
+        <div class="sp-info">
+          <p class="sp-category">Salwar Suits</p>
+          <h3 class="sp-name">Ivory Embroidered Salwar Set</h3>
+          <div class="sp-price-row">
+            <span class="sp-price">&#8377;5,900</span>
+            <span class="sp-mrp">&#8377;8,200</span>
+            <span class="sp-off">28% OFF</span>
+          </div>
+          <div class="sp-rating">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+            <span class="sp-rating-count">(128)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="sp-card" data-cat="coord" data-price="3200" data-discount="33">
+        <div class="sp-img-wrap">
+          <img src="images/15.png" alt="Printed Organza Co-ord Set" loading="lazy" />
+          <div class="sp-badges">
+            <span class="sp-badge sp-badge-hot">Hot</span>
+          </div>
+          <button class="sp-wish" aria-label="Wishlist"><i class="far fa-heart"></i></button>
+          <div class="sp-hover-actions">
+            <button class="sp-quick-view" data-id="2"><i class="fas fa-eye"></i> Quick View</button>
+            <button class="sp-add-cart"><i class="fas fa-shopping-bag"></i> Add to Cart</button>
+          </div>
+          <div class="sp-size-row">
+            <span>S</span><span>M</span><span>L</span>
+          </div>
+        </div>
+        <div class="sp-info">
+          <p class="sp-category">Co-ord Sets</p>
+          <h3 class="sp-name">Printed Organza Co-ord Set</h3>
+          <div class="sp-price-row">
+            <span class="sp-price">&#8377;3,200</span>
+            <span class="sp-mrp">&#8377;4,800</span>
+            <span class="sp-off">33% OFF</span>
+          </div>
+          <div class="sp-rating">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <span class="sp-rating-count">(94)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="sp-card" data-cat="unstitched" data-price="1850" data-discount="29">
+        <div class="sp-img-wrap">
+          <img src="images/2026_05_17_10_14_IMG_3252.JPG" alt="Soft Cotton Unstitched Suit" loading="lazy" />
+          <div class="sp-badges"></div>
+          <button class="sp-wish" aria-label="Wishlist"><i class="far fa-heart"></i></button>
+          <div class="sp-hover-actions">
+            <button class="sp-quick-view" data-id="3"><i class="fas fa-eye"></i> Quick View</button>
+            <button class="sp-add-cart"><i class="fas fa-shopping-bag"></i> Add to Cart</button>
+          </div>
+          <div class="sp-size-row">
+            <span>Free Size</span>
+          </div>
+        </div>
+        <div class="sp-info">
+          <p class="sp-category">Unstitched Suits</p>
+          <h3 class="sp-name">Soft Cotton Unstitched Suit</h3>
+          <div class="sp-price-row">
+            <span class="sp-price">&#8377;1,850</span>
+            <span class="sp-mrp">&#8377;2,600</span>
+            <span class="sp-off">29% OFF</span>
+          </div>
+          <div class="sp-rating">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
+            <span class="sp-rating-count">(47)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="sp-card" data-cat="readymade" data-price="6800" data-discount="24">
+        <div class="sp-img-wrap">
+          <img src="images/EC 17021_3.jpg" alt="Peach Georgette Occasion Suit" loading="lazy" />
+          <div class="sp-badges">
+            <span class="sp-badge sp-badge-new">New</span>
+          </div>
+          <button class="sp-wish" aria-label="Wishlist"><i class="far fa-heart"></i></button>
+          <div class="sp-hover-actions">
+            <button class="sp-quick-view" data-id="4"><i class="fas fa-eye"></i> Quick View</button>
+            <button class="sp-add-cart"><i class="fas fa-shopping-bag"></i> Add to Cart</button>
+          </div>
+          <div class="sp-size-row">
+            <span>S</span><span>M</span><span>L</span><span>XL</span>
+          </div>
+        </div>
+        <div class="sp-info">
+          <p class="sp-category">Ready-mades</p>
+          <h3 class="sp-name">Peach Georgette Occasion Suit</h3>
+          <div class="sp-price-row">
+            <span class="sp-price">&#8377;6,800</span>
+            <span class="sp-mrp">&#8377;9,000</span>
+            <span class="sp-off">24% OFF</span>
+          </div>
+          <div class="sp-rating">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+            <span class="sp-rating-count">(63)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 5 -->
+      <div class="sp-card" data-cat="semi" data-price="3750" data-discount="32">
+        <div class="sp-img-wrap">
+          <img src="images/17.png" alt="Zari Work Semi-Stitched Suit" loading="lazy" />
+          <div class="sp-badges">
+            <span class="sp-badge sp-badge-sale">Sale</span>
+          </div>
+          <button class="sp-wish" aria-label="Wishlist"><i class="far fa-heart"></i></button>
+          <div class="sp-hover-actions">
+            <button class="sp-quick-view" data-id="5"><i class="fas fa-eye"></i> Quick View</button>
+            <button class="sp-add-cart"><i class="fas fa-shopping-bag"></i> Add to Cart</button>
+          </div>
+          <div class="sp-size-row">
+            <span>S</span><span>M</span><span>L</span>
+          </div>
+        </div>
+        <div class="sp-info">
+          <p class="sp-category">Semi Stitched</p>
+          <h3 class="sp-name">Zari Work Semi-Stitched Suit</h3>
+          <div class="sp-price-row">
+            <span class="sp-price">&#8377;3,750</span>
+            <span class="sp-mrp">&#8377;5,500</span>
+            <span class="sp-off">32% OFF</span>
+          </div>
+          <div class="sp-rating">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
+            <span class="sp-rating-count">(81)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 6 -->
+      <div class="sp-card" data-cat="tops" data-price="1499" data-discount="40">
+        <div class="sp-img-wrap">
+          <img src="images/2026_05_17_13_11_IMG_3465.JPG" alt="Embroidered Silk Top" loading="lazy" />
+          <div class="sp-badges">
+            <span class="sp-badge sp-badge-sale">Sale</span>
+          </div>
+          <button class="sp-wish" aria-label="Wishlist"><i class="far fa-heart"></i></button>
+          <div class="sp-hover-actions">
+            <button class="sp-quick-view" data-id="6"><i class="fas fa-eye"></i> Quick View</button>
+            <button class="sp-add-cart"><i class="fas fa-shopping-bag"></i> Add to Cart</button>
+          </div>
+          <div class="sp-size-row">
+            <span>XS</span><span>S</span><span>M</span><span>L</span>
+          </div>
+        </div>
+        <div class="sp-info">
+          <p class="sp-category">Tops / Shirts</p>
+          <h3 class="sp-name">Embroidered Silk Kurti Top</h3>
+          <div class="sp-price-row">
+            <span class="sp-price">&#8377;1,499</span>
+            <span class="sp-mrp">&#8377;2,500</span>
+            <span class="sp-off">40% OFF</span>
+          </div>
+          <div class="sp-rating">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <span class="sp-rating-count">(215)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 7 -->
+      <div class="sp-card" data-cat="salwar" data-price="4250" data-discount="29">
+        <div class="sp-img-wrap">
+          <img src="images/2026_05_17_13_11_IMG_3466.JPG" alt="Pastel Floral Anarkali Suit" loading="lazy" />
+          <div class="sp-badges">
+            <span class="sp-badge sp-badge-hot">Hot</span>
+          </div>
+          <button class="sp-wish" aria-label="Wishlist"><i class="far fa-heart"></i></button>
+          <div class="sp-hover-actions">
+            <button class="sp-quick-view" data-id="7"><i class="fas fa-eye"></i> Quick View</button>
+            <button class="sp-add-cart"><i class="fas fa-shopping-bag"></i> Add to Cart</button>
+          </div>
+          <div class="sp-size-row">
+            <span>S</span><span>M</span><span>L</span><span>XL</span><span>XXL</span>
+          </div>
+        </div>
+        <div class="sp-info">
+          <p class="sp-category">Salwar Suits</p>
+          <h3 class="sp-name">Pastel Floral Anarkali Suit</h3>
+          <div class="sp-price-row">
+            <span class="sp-price">&#8377;4,250</span>
+            <span class="sp-mrp">&#8377;6,000</span>
+            <span class="sp-off">29% OFF</span>
+          </div>
+          <div class="sp-rating">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+            <span class="sp-rating-count">(172)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 8 -->
+      <div class="sp-card" data-cat="readymade" data-price="8500" data-discount="15">
+        <div class="sp-img-wrap">
+          <img src="images/19.png" alt="Silk Blend Festive Suit" loading="lazy" />
+          <div class="sp-badges">
+            <span class="sp-badge sp-badge-new">New</span>
+          </div>
+          <button class="sp-wish" aria-label="Wishlist"><i class="far fa-heart"></i></button>
+          <div class="sp-hover-actions">
+            <button class="sp-quick-view" data-id="8"><i class="fas fa-eye"></i> Quick View</button>
+            <button class="sp-add-cart"><i class="fas fa-shopping-bag"></i> Add to Cart</button>
+          </div>
+          <div class="sp-size-row">
+            <span>S</span><span>M</span><span>L</span>
+          </div>
+        </div>
+        <div class="sp-info">
+          <p class="sp-category">Ready-mades</p>
+          <h3 class="sp-name">Silk Blend Festive Suit</h3>
+          <div class="sp-price-row">
+            <span class="sp-price">&#8377;8,500</span>
+            <span class="sp-mrp">&#8377;10,000</span>
+            <span class="sp-off">15% OFF</span>
+          </div>
+          <div class="sp-rating">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
+            <span class="sp-rating-count">(39)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 9 -->
+      <div class="sp-card" data-cat="coord" data-price="2899" data-discount="38">
+        <div class="sp-img-wrap">
+          <img src="images/2026_05_17_10_24_IMG_3270.JPG" alt="Block Print Co-ord Set" loading="lazy" />
+          <div class="sp-badges">
+            <span class="sp-badge sp-badge-sale">Sale</span>
+          </div>
+          <button class="sp-wish" aria-label="Wishlist"><i class="far fa-heart"></i></button>
+          <div class="sp-hover-actions">
+            <button class="sp-quick-view" data-id="9"><i class="fas fa-eye"></i> Quick View</button>
+            <button class="sp-add-cart"><i class="fas fa-shopping-bag"></i> Add to Cart</button>
+          </div>
+          <div class="sp-size-row">
+            <span>S</span><span>M</span><span>L</span><span>XL</span>
+          </div>
+        </div>
+        <div class="sp-info">
+          <p class="sp-category">Co-ord Sets</p>
+          <h3 class="sp-name">Block Print Cotton Co-ord Set</h3>
+          <div class="sp-price-row">
+            <span class="sp-price">&#8377;2,899</span>
+            <span class="sp-mrp">&#8377;4,699</span>
+            <span class="sp-off">38% OFF</span>
+          </div>
+          <div class="sp-rating">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <span class="sp-rating-count">(108)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 10 -->
+      <div class="sp-card" data-cat="unstitched" data-price="2400" data-discount="20">
+        <div class="sp-img-wrap">
+          <img src="images/2026_05_17_10_14_IMG_3252.JPG" alt="Chanderi Unstitched Suit" loading="lazy" />
+          <div class="sp-badges"></div>
+          <button class="sp-wish" aria-label="Wishlist"><i class="far fa-heart"></i></button>
+          <div class="sp-hover-actions">
+            <button class="sp-quick-view" data-id="10"><i class="fas fa-eye"></i> Quick View</button>
+            <button class="sp-add-cart"><i class="fas fa-shopping-bag"></i> Add to Cart</button>
+          </div>
+          <div class="sp-size-row">
+            <span>Free Size</span>
+          </div>
+        </div>
+        <div class="sp-info">
+          <p class="sp-category">Unstitched Suits</p>
+          <h3 class="sp-name">Chanderi Silk Unstitched Suit</h3>
+          <div class="sp-price-row">
+            <span class="sp-price">&#8377;2,400</span>
+            <span class="sp-mrp">&#8377;3,000</span>
+            <span class="sp-off">20% OFF</span>
+          </div>
+          <div class="sp-rating">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
+            <span class="sp-rating-count">(56)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 11 -->
+      <div class="sp-card" data-cat="semi" data-price="5200" data-discount="26">
+        <div class="sp-img-wrap">
+          <img src="images/EC 15955 (6).jpg" alt="Georgette Semi Stitched Suit" loading="lazy" />
+          <div class="sp-badges">
+            <span class="sp-badge sp-badge-hot">Hot</span>
+          </div>
+          <button class="sp-wish" aria-label="Wishlist"><i class="far fa-heart"></i></button>
+          <div class="sp-hover-actions">
+            <button class="sp-quick-view" data-id="11"><i class="fas fa-eye"></i> Quick View</button>
+            <button class="sp-add-cart"><i class="fas fa-shopping-bag"></i> Add to Cart</button>
+          </div>
+          <div class="sp-size-row">
+            <span>36</span><span>38</span><span>40</span><span>42</span>
+          </div>
+        </div>
+        <div class="sp-info">
+          <p class="sp-category">Semi Stitched</p>
+          <h3 class="sp-name">Georgette Embroidered Semi Suit</h3>
+          <div class="sp-price-row">
+            <span class="sp-price">&#8377;5,200</span>
+            <span class="sp-mrp">&#8377;7,000</span>
+            <span class="sp-off">26% OFF</span>
+          </div>
+          <div class="sp-rating">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+            <span class="sp-rating-count">(74)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 12 -->
+      <div class="sp-card" data-cat="tops" data-price="1199" data-discount="45">
+        <div class="sp-img-wrap">
+          <img src="images/2026_05_17_13_11_IMG_3465.JPG" alt="Casual Linen Shirt" loading="lazy" />
+          <div class="sp-badges">
+            <span class="sp-badge sp-badge-sale">Sale</span>
+          </div>
+          <button class="sp-wish" aria-label="Wishlist"><i class="far fa-heart"></i></button>
+          <div class="sp-hover-actions">
+            <button class="sp-quick-view" data-id="12"><i class="fas fa-eye"></i> Quick View</button>
+            <button class="sp-add-cart"><i class="fas fa-shopping-bag"></i> Add to Cart</button>
+          </div>
+          <div class="sp-size-row">
+            <span>XS</span><span>S</span><span>M</span><span>L</span><span>XL</span>
+          </div>
+        </div>
+        <div class="sp-info">
+          <p class="sp-category">Tops / Shirts</p>
+          <h3 class="sp-name">Casual Linen Shirt Tunic</h3>
+          <div class="sp-price-row">
+            <span class="sp-price">&#8377;1,199</span>
+            <span class="sp-mrp">&#8377;2,199</span>
+            <span class="sp-off">45% OFF</span>
+          </div>
+          <div class="sp-rating">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <span class="sp-rating-count">(189)</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /product-grid -->
+
+    <!-- ─── PAGINATION ─── -->
+    <div class="pagination-wrap" id="paginationWrap">
+      <div class="pagination-info" id="paginationInfo">Showing 1–12 of 152 products</div>
+      <nav class="pagination" aria-label="Product pages">
+        <button class="pg-btn pg-prev" id="pgPrev" disabled aria-label="Previous page">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <button class="pg-num pg-active" data-page="1">1</button>
+        <button class="pg-num" data-page="2">2</button>
+        <button class="pg-num" data-page="3">3</button>
+        <span class="pg-ellipsis">…</span>
+        <button class="pg-num" data-page="13">13</button>
+        <button class="pg-btn pg-next" id="pgNext" aria-label="Next page">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </nav>
+      <div class="per-page-wrap">
+        <span>Show:</span>
+        <button class="per-page-btn per-page-active" data-pp="12">12</button>
+        <button class="per-page-btn" data-pp="24">24</button>
+        <button class="per-page-btn" data-pp="48">48</button>
+      </div>
+    </div>
+
+  </main><!-- /shop-main -->
+</div><!-- /shop-layout -->
+
+<!-- ══════════════════════════════════════
+     QUICK VIEW MODAL
+══════════════════════════════════════ -->
+<div class="qv-backdrop" id="qvBackdrop">
+  <div class="qv-modal" id="qvModal" role="dialog" aria-modal="true" aria-label="Quick View">
+    <button class="qv-close" id="qvClose" aria-label="Close"><i class="fas fa-times"></i></button>
+    <div class="qv-body">
+      <!-- Left: image -->
+      <div class="qv-gallery">
+        <div class="qv-main-img">
+          <img src="images/EC 15955 (6).jpg" alt="Product" id="qvImg" />
+        </div>
+        <div class="qv-thumbs-row" id="qvThumbsRow">
+          <button class="qv-thumb qv-thumb-active"><img src="images/EC 15955 (6).jpg" alt="View 1" /></button>
+          <button class="qv-thumb"><img src="images/17.png" alt="View 2" /></button>
+          <button class="qv-thumb"><img src="images/EC 17021_3.jpg" alt="View 3" /></button>
+        </div>
+      </div>
+      <!-- Right: details -->
+      <div class="qv-details">
+        <p class="qv-cat">Salwar Suits</p>
+        <h2 class="qv-title">Ivory Embroidered Salwar Set</h2>
+        <div class="qv-rating">
+          <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+          <span>4.5 (128 reviews)</span>
+        </div>
+        <div class="qv-price-row">
+          <span class="qv-price">&#8377;5,900</span>
+          <span class="qv-mrp">&#8377;8,200</span>
+          <span class="qv-off">28% OFF</span>
+        </div>
+        <p class="qv-desc">Handcrafted ivory salwar set with intricate thread embroidery on georgette fabric. Perfect for semi-formal and festive occasions.</p>
+
+        <!-- Size selector -->
+        <div class="qv-option-label">Select Size</div>
+        <div class="qv-sizes">
+          <button class="qv-size-btn">S</button>
+          <button class="qv-size-btn qv-size-active">M</button>
+          <button class="qv-size-btn">L</button>
+          <button class="qv-size-btn">XL</button>
+        </div>
+        <a href="#" class="qv-size-guide">Size Guide <i class="fas fa-ruler-horizontal"></i></a>
+
+        <!-- Quantity -->
+        <div class="qv-option-label">Quantity</div>
+        <div class="qv-qty-row">
+          <button class="qty-btn" id="qvQtyMinus"><i class="fas fa-minus"></i></button>
+          <span class="qty-val" id="qvQtyVal">1</span>
+          <button class="qty-btn" id="qvQtyPlus"><i class="fas fa-plus"></i></button>
+        </div>
+
+        <!-- CTAs -->
+        <div class="qv-ctas">
+          <button class="qv-btn-cart"><i class="fas fa-shopping-bag"></i> Add to Cart</button>
+          <button class="qv-btn-wish"><i class="far fa-heart"></i></button>
+        </div>
+
+        <!-- Meta -->
+        <div class="qv-meta">
+          <span><i class="fas fa-truck"></i> Free delivery above &#8377;2,999</span>
+          <span><i class="fas fa-undo"></i> 7-day easy returns</span>
+        </div>
+
+        <a href="#" class="qv-full-link">View Full Details <i class="fas fa-arrow-right"></i></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     FILTER OVERLAY (mobile)
+══════════════════════════════════════ -->
+<div class="filter-backdrop" id="filterBackdrop"></div>
+
+<!-- ══════════════════════════════════════
+     FOOTER
+══════════════════════════════════════ -->
+<footer class="site-footer">
+  <div class="footer-top">
+    <div class="footer-brand-col">
+      <img src="images/elegance-logo-gold-dash.png" alt="Elegance Logo" class="footer-logo" />
+      <p class="footer-tagline">An ethnic regalia — where handcraft meets grace.</p>
+      <div class="footer-socials">
+        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" aria-label="Pinterest"><i class="fab fa-pinterest-p"></i></a>
+        <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Shop</h4>
+      <a href="#">Unstitched Suits</a>
+      <a href="#">Semi Stitched</a>
+      <a href="#">Ready-mades</a>
+      <a href="#">Salwar Suits</a>
+      <a href="#">Co-ord Sets</a>
+      <a href="#">Sale</a>
+    </div>
+    <div class="footer-col">
+      <h4>Help</h4>
+      <a href="#">Size Guide</a>
+      <a href="#">Track Your Order</a>
+      <a href="#">Returns &amp; Exchanges</a>
+      <a href="#">Stitching Info</a>
+      <a href="#">FAQs</a>
+      <a href="#">Contact Us</a>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <a href="#">About Elegance</a>
+      <a href="#">Our Story</a>
+      <a href="#">Careers</a>
+      <a href="#">Press</a>
+      <a href="#">Sustainability</a>
+    </div>
+    <div class="footer-col footer-newsletter-col">
+      <h4>Stay in the Loop</h4>
+      <p>New arrivals, exclusive offers and style notes straight to your inbox.</p>
+      <form class="footer-newsletter" onsubmit="return false">
+        <input type="email" placeholder="Your email address" />
+        <button type="submit">Subscribe</button>
+      </form>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2026 Elegance — An Ethnic Regalia. All rights reserved.</p>
+    <div class="footer-legal">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="shop.js"></script>
+</body>
+</html>
