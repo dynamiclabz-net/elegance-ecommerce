@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ELEGANCE — Checkout</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="icon" type="image/png" href="images/elegance-logo-gold-dash.png" />
+  <meta name="description" content="Elegance — Secure checkout for your ethnic wear order.">
+  <link rel="stylesheet" href="checkout.css" />
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════
+     ANNOUNCEMENT BAR
+══════════════════════════════════════════════════ -->
+<div class="announcement-bar">
+  <div class="announce-inner">
+    <span><i class="fas fa-lock" style="color:var(--gold-light);margin-right:6px;font-size:10px;"></i>Secure &amp; Encrypted Checkout</span>
+    <span class="announce-sep">✦</span>
+    <span>Free shipping on orders above ₹2,999 — <strong style="color:var(--gold-light);">You qualify!</strong></span>
+    <span class="announce-sep">✦</span>
+    <span>Easy 30-day returns &amp; exchanges</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     CHECKOUT NAVBAR (minimal)
+══════════════════════════════════════════════════ -->
+<nav class="checkout-nav" id="checkoutNav">
+  <div class="checkout-nav-inner">
+    <!-- Back to cart -->
+    <a href="cart.html" class="checkout-back-link">
+      <i class="fas fa-arrow-left"></i>
+      <span>Back to Cart</span>
+    </a>
+
+    <!-- Brand -->
+    <a href="home.html" class="nav-brand checkout-brand">
+      <img src="images/elegance-logo-gold-dash.png" alt="Elegance Logo" class="nav-logo" />
+    </a>
+
+    <!-- Trust badges -->
+    <div class="checkout-trust-badges">
+      <span class="trust-badge-sm"><i class="fas fa-lock"></i> SSL Secure</span>
+      <span class="trust-badge-sm"><i class="fas fa-shield-alt"></i> 100% Safe</span>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════════════
+     CHECKOUT BODY
+══════════════════════════════════════════════════ -->
+<main class="checkout-main">
+  <div class="checkout-wrap">
+
+    <!-- ─── LEFT COLUMN: Steps ─── -->
+    <div class="checkout-left">
+
+      <!-- Step Progress Bar -->
+      <div class="step-progress-wrap">
+        <div class="step-progress">
+          <div class="step-item step-done" data-step="1">
+            <div class="step-circle"><i class="fas fa-check"></i></div>
+            <span class="step-label">Cart</span>
+          </div>
+          <div class="step-line step-line-done"></div>
+          <div class="step-item step-active" data-step="2">
+            <div class="step-circle">2</div>
+            <span class="step-label">Address</span>
+          </div>
+          <div class="step-line" id="line2-3"></div>
+          <div class="step-item" data-step="3" id="step3">
+            <div class="step-circle">3</div>
+            <span class="step-label">Shipping</span>
+          </div>
+          <div class="step-line" id="line3-4"></div>
+          <div class="step-item" data-step="4" id="step4">
+            <div class="step-circle">4</div>
+            <span class="step-label">Payment</span>
+          </div>
+          <div class="step-line" id="line4-5"></div>
+          <div class="step-item" data-step="5" id="step5">
+            <div class="step-circle">5</div>
+            <span class="step-label">Confirm</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ STEP 2: ADDRESS ══ -->
+      <div class="checkout-step" id="checkoutStep2">
+        <div class="step-header">
+          <h2 class="step-title">Delivery <em>Address</em></h2>
+          <p class="step-subtitle">Where should we send your order?</p>
+        </div>
+
+        <!-- Saved Addresses -->
+        <div class="saved-addresses-row" id="savedAddressRow">
+          <div class="saved-addr-card saved-addr-selected" data-id="1">
+            <div class="saved-addr-radio"></div>
+            <div class="saved-addr-body">
+              <div class="saved-addr-name">Priya Sharma <span class="addr-tag">Home</span></div>
+              <div class="saved-addr-text">12, Rose Garden Society, Near Jodhpur Cross Roads, Satellite, Ahmedabad — 380015, Gujarat</div>
+              <div class="saved-addr-phone"><i class="fas fa-phone"></i> +91 98765 43210</div>
+            </div>
+            <button class="saved-addr-edit"><i class="fas fa-pen"></i></button>
+          </div>
+          <div class="saved-addr-card" data-id="2">
+            <div class="saved-addr-radio"></div>
+            <div class="saved-addr-body">
+              <div class="saved-addr-name">Priya Sharma <span class="addr-tag addr-tag-work">Work</span></div>
+              <div class="saved-addr-text">B-401, Safal Prelude, Prahladnagar, Ahmedabad — 380051, Gujarat</div>
+              <div class="saved-addr-phone"><i class="fas fa-phone"></i> +91 98765 43210</div>
+            </div>
+            <button class="saved-addr-edit"><i class="fas fa-pen"></i></button>
+          </div>
+          <button class="add-new-addr-btn" id="addNewAddrBtn">
+            <i class="fas fa-plus-circle"></i> Add New Address
+          </button>
+        </div>
+
+        <!-- Address Form -->
+        <div class="addr-form-wrap" id="addrFormWrap">
+          <div class="addr-form-header">
+            <h3 class="addr-form-title">Add New Address</h3>
+            <button class="addr-form-cancel" id="addrFormCancel"><i class="fas fa-times"></i></button>
+          </div>
+
+          <form class="addr-form" id="addrForm" novalidate>
+            <!-- Row 1: First & Last name -->
+            <div class="form-row-2">
+              <div class="form-field-wrap">
+                <label class="form-label" for="firstName">First Name <span class="req">*</span></label>
+                <div class="form-input-wrap">
+                  <input type="text" id="firstName" class="form-input" placeholder="Priya" required />
+                  <span class="input-tick"><i class="fas fa-check"></i></span>
+                </div>
+                <span class="form-error">Please enter your first name</span>
+              </div>
+              <div class="form-field-wrap">
+                <label class="form-label" for="lastName">Last Name <span class="req">*</span></label>
+                <div class="form-input-wrap">
+                  <input type="text" id="lastName" class="form-input" placeholder="Sharma" required />
+                  <span class="input-tick"><i class="fas fa-check"></i></span>
+                </div>
+                <span class="form-error">Please enter your last name</span>
+              </div>
+            </div>
+
+            <!-- Row 2: Phone & Email -->
+            <div class="form-row-2">
+              <div class="form-field-wrap">
+                <label class="form-label" for="phone">Phone <span class="req">*</span></label>
+                <div class="form-input-wrap input-with-prefix">
+                  <span class="input-prefix">+91</span>
+                  <input type="tel" id="phone" class="form-input" placeholder="98765 43210" required maxlength="10" />
+                  <span class="input-tick"><i class="fas fa-check"></i></span>
+                </div>
+                <span class="form-error">Enter a valid 10-digit mobile number</span>
+              </div>
+              <div class="form-field-wrap">
+                <label class="form-label" for="email">Email <span class="req">*</span></label>
+                <div class="form-input-wrap">
+                  <input type="email" id="email" class="form-input" placeholder="priya@example.com" required />
+                  <span class="input-tick"><i class="fas fa-check"></i></span>
+                </div>
+                <span class="form-error">Enter a valid email address</span>
+              </div>
+            </div>
+
+            <!-- Address Line -->
+            <div class="form-field-wrap">
+              <label class="form-label" for="address1">Address Line 1 <span class="req">*</span></label>
+              <div class="form-input-wrap">
+                <input type="text" id="address1" class="form-input" placeholder="House / Flat / Plot No., Street, Area" required />
+                <span class="input-tick"><i class="fas fa-check"></i></span>
+              </div>
+              <span class="form-error">Please enter your address</span>
+            </div>
+
+            <div class="form-field-wrap">
+              <label class="form-label" for="address2">Address Line 2 <span class="optional">(optional)</span></label>
+              <div class="form-input-wrap">
+                <input type="text" id="address2" class="form-input" placeholder="Landmark, Colony, etc." />
+              </div>
+            </div>
+
+            <!-- Row 3: Pincode, City, State -->
+            <div class="form-row-3">
+              <div class="form-field-wrap">
+                <label class="form-label" for="pincode">Pincode <span class="req">*</span></label>
+                <div class="form-input-wrap">
+                  <input type="text" id="pincode" class="form-input" placeholder="380015" required maxlength="6" />
+                  <span class="pin-loading" id="pinLoading"><i class="fas fa-circle-notch fa-spin"></i></span>
+                  <span class="input-tick" id="pinTick"><i class="fas fa-check"></i></span>
+                </div>
+                <span class="form-error" id="pinError">Enter valid 6-digit pincode</span>
+              </div>
+              <div class="form-field-wrap">
+                <label class="form-label" for="city">City <span class="req">*</span></label>
+                <div class="form-input-wrap">
+                  <input type="text" id="city" class="form-input" placeholder="Ahmedabad" required />
+                  <span class="input-tick"><i class="fas fa-check"></i></span>
+                </div>
+                <span class="form-error">Please enter your city</span>
+              </div>
+              <div class="form-field-wrap">
+                <label class="form-label" for="state">State <span class="req">*</span></label>
+                <div class="form-input-wrap">
+                  <select id="state" class="form-input form-select-custom" required>
+                    <option value="">Select State</option>
+                    <option value="GJ" selected>Gujarat</option>
+                    <option value="MH">Maharashtra</option>
+                    <option value="RJ">Rajasthan</option>
+                    <option value="DL">Delhi</option>
+                    <option value="KA">Karnataka</option>
+                    <option value="TN">Tamil Nadu</option>
+                    <option value="WB">West Bengal</option>
+                    <option value="UP">Uttar Pradesh</option>
+                    <option value="MP">Madhya Pradesh</option>
+                    <option value="PB">Punjab</option>
+                    <option value="HR">Haryana</option>
+                    <option value="AP">Andhra Pradesh</option>
+                    <option value="TS">Telangana</option>
+                    <option value="KL">Kerala</option>
+                    <option value="OR">Odisha</option>
+                  </select>
+                </div>
+                <span class="form-error">Please select your state</span>
+              </div>
+            </div>
+
+            <!-- Address type -->
+            <div class="form-field-wrap">
+              <label class="form-label">Save as</label>
+              <div class="addr-type-row">
+                <button type="button" class="addr-type-btn addr-type-active" data-type="home">
+                  <i class="fas fa-home"></i> Home
+                </button>
+                <button type="button" class="addr-type-btn" data-type="work">
+                  <i class="fas fa-briefcase"></i> Work
+                </button>
+                <button type="button" class="addr-type-btn" data-type="other">
+                  <i class="fas fa-map-marker-alt"></i> Other
+                </button>
+              </div>
+            </div>
+
+            <!-- Default address checkbox -->
+            <label class="custom-check-row">
+              <input type="checkbox" id="defaultAddr" checked />
+              <span class="custom-check-box"></span>
+              <span class="custom-check-label">Set as default delivery address</span>
+            </label>
+
+          </form><!-- /addrForm -->
+        </div><!-- /addrFormWrap -->
+
+        <!-- Delivery note -->
+        <div class="delivery-note-row">
+          <div class="delivery-note-icon"><i class="fas fa-truck-fast"></i></div>
+          <div class="delivery-note-text">
+            <strong>Estimated delivery:</strong> 3–5 business days to Ahmedabad.
+            <span class="delivery-express-link">Upgrade to Express (₹149) →</span>
+          </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="step-cta-row">
+          <button class="step-cta-btn" id="toStep3Btn">
+            Continue to Shipping <i class="fas fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+      <!-- /STEP 2 -->
+
+      <!-- ══ STEP 3: SHIPPING ══ -->
+      <div class="checkout-step d-none" id="checkoutStep3">
+        <div class="step-header">
+          <h2 class="step-title">Shipping <em>Method</em></h2>
+          <p class="step-subtitle">Choose how fast you want your order.</p>
+        </div>
+
+        <!-- Delivering to summary -->
+        <div class="shipping-addr-summary">
+          <i class="fas fa-map-marker-alt" style="color:var(--gold);"></i>
+          <div>
+            <div class="shipping-addr-name">Priya Sharma, 12 Rose Garden Society…</div>
+            <div class="shipping-addr-pin">Ahmedabad — 380015, Gujarat</div>
+          </div>
+          <button class="shipping-addr-change" id="changeAddrBtn">Change</button>
+        </div>
+
+        <!-- Shipping options -->
+        <div class="shipping-options">
+
+          <label class="shipping-option shipping-option-selected" for="shpStd">
+            <input type="radio" name="shipping" id="shpStd" value="standard" checked />
+            <div class="shipping-option-icon">
+              <i class="fas fa-truck"></i>
+            </div>
+            <div class="shipping-option-body">
+              <div class="shipping-option-name">Standard Delivery</div>
+              <div class="shipping-option-eta"><i class="far fa-calendar-alt"></i> Arrives by <strong>Fri, Jul 11 – Mon, Jul 14</strong></div>
+              <div class="shipping-option-desc">Regular shipping via BlueDart / Delhivery</div>
+            </div>
+            <div class="shipping-option-price">
+              <span class="shp-free">FREE</span>
+              <span class="shp-original">₹80</span>
+            </div>
+            <div class="shipping-selected-check"><i class="fas fa-check-circle"></i></div>
+          </label>
+
+          <label class="shipping-option" for="shpExpress">
+            <input type="radio" name="shipping" id="shpExpress" value="express" />
+            <div class="shipping-option-icon shp-express-icon">
+              <i class="fas fa-bolt"></i>
+            </div>
+            <div class="shipping-option-body">
+              <div class="shipping-option-name">Express Delivery <span class="shp-popular-badge">POPULAR</span></div>
+              <div class="shipping-option-eta"><i class="far fa-calendar-alt"></i> Arrives by <strong>Thu, Jul 10</strong></div>
+              <div class="shipping-option-desc">Priority via Xpressbees · Requires signature</div>
+            </div>
+            <div class="shipping-option-price">
+              <span class="shp-price">₹149</span>
+            </div>
+            <div class="shipping-selected-check"><i class="fas fa-check-circle"></i></div>
+          </label>
+
+          <label class="shipping-option" for="shpSameDay">
+            <input type="radio" name="shipping" id="shpSameDay" value="sameday" />
+            <div class="shipping-option-icon shp-same-icon">
+              <i class="fas fa-motorcycle"></i>
+            </div>
+            <div class="shipping-option-body">
+              <div class="shipping-option-name">Same-Day Delivery <span class="shp-limited-badge">LIMITED CITIES</span></div>
+              <div class="shipping-option-eta"><i class="far fa-calendar-alt"></i> Today by <strong>8:00 PM</strong></div>
+              <div class="shipping-option-desc">Available for Ahmedabad, Mumbai, Bangalore, Delhi only</div>
+            </div>
+            <div class="shipping-option-price">
+              <span class="shp-price">₹299</span>
+            </div>
+            <div class="shipping-selected-check"><i class="fas fa-check-circle"></i></div>
+          </label>
+
+          <label class="shipping-option" for="shpStore">
+            <input type="radio" name="shipping" id="shpStore" value="store" />
+            <div class="shipping-option-icon shp-store-icon">
+              <i class="fas fa-store"></i>
+            </div>
+            <div class="shipping-option-body">
+              <div class="shipping-option-name">Store Pickup — Ahmedabad</div>
+              <div class="shipping-option-eta"><i class="far fa-calendar-alt"></i> Ready by <strong>Tomorrow, 11 AM</strong></div>
+              <div class="shipping-option-desc">CG Road Flagship Store · Mon–Sat 10am–8pm</div>
+            </div>
+            <div class="shipping-option-price">
+              <span class="shp-free">FREE</span>
+            </div>
+            <div class="shipping-selected-check"><i class="fas fa-check-circle"></i></div>
+          </label>
+
+        </div><!-- /shipping-options -->
+
+        <!-- Gift / Special instructions -->
+        <div class="gift-wrap-card" id="giftWrapCard">
+          <label class="custom-check-row gift-check-row">
+            <input type="checkbox" id="giftWrapCheck" />
+            <span class="custom-check-box"></span>
+            <span class="custom-check-label">
+              <i class="fas fa-gift" style="color:var(--gold);margin-right:6px;"></i>
+              Gift wrap this order <span class="gift-price">+₹99</span>
+            </span>
+          </label>
+          <div class="gift-msg-wrap d-none" id="giftMsgWrap">
+            <textarea class="form-input gift-msg-input" placeholder="Write your gift message (optional, max 150 chars)…" maxlength="150" rows="3"></textarea>
+            <span class="gift-msg-count"><span id="giftCharCount">0</span>/150</span>
+          </div>
+        </div>
+
+        <div class="special-instructions-wrap">
+          <label class="form-label" for="specialInstr">Delivery Instructions <span class="optional">(optional)</span></label>
+          <div class="form-input-wrap">
+            <textarea id="specialInstr" class="form-input" rows="2" placeholder="Leave at door, call before delivery, etc."></textarea>
+          </div>
+        </div>
+
+        <!-- CTAs -->
+        <div class="step-cta-row step-cta-row-2">
+          <button class="step-back-btn" id="backToStep2Btn"><i class="fas fa-arrow-left"></i> Back</button>
+          <button class="step-cta-btn" id="toStep4Btn">
+            Continue to Payment <i class="fas fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+      <!-- /STEP 3 -->
+
+      <!-- ══ STEP 4: PAYMENT ══ -->
+      <div class="checkout-step d-none" id="checkoutStep4">
+        <div class="step-header">
+          <h2 class="step-title">Payment <em>Details</em></h2>
+          <p class="step-subtitle">All transactions are encrypted &amp; secure.</p>
+        </div>
+
+        <!-- Payment method tabs -->
+        <div class="payment-tabs" role="tablist">
+          <button class="pay-tab pay-tab-active" data-pay="upi" role="tab">
+            <i class="fas fa-mobile-alt"></i> UPI
+          </button>
+          <button class="pay-tab" data-pay="card" role="tab">
+            <i class="fas fa-credit-card"></i> Card
+          </button>
+          <button class="pay-tab" data-pay="netbanking" role="tab">
+            <i class="fas fa-university"></i> Net Banking
+          </button>
+          <button class="pay-tab" data-pay="wallet" role="tab">
+            <i class="fas fa-wallet"></i> Wallets
+          </button>
+          <button class="pay-tab" data-pay="cod" role="tab">
+            <i class="fas fa-money-bill-wave"></i> COD
+          </button>
+        </div>
+
+        <!-- UPI Panel -->
+        <div class="pay-panel pay-panel-active" id="panel-upi">
+          <!-- Saved UPI IDs -->
+          <div class="saved-upi-row">
+            <label class="upi-saved-option upi-saved-selected" for="upiSaved1">
+              <input type="radio" name="upiChoice" id="upiSaved1" value="saved1" checked />
+              <div class="upi-icon-wrap"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/UPI-Logo-vector.svg/200px-UPI-Logo-vector.svg.png" alt="UPI" style="height:18px;" /></div>
+              <div>
+                <div class="upi-id-text">priya.sharma@okaxis</div>
+                <div class="upi-id-sub">Saved ID</div>
+              </div>
+              <div class="upi-check-icon"><i class="fas fa-check-circle"></i></div>
+            </label>
+            <label class="upi-saved-option" for="upiNew">
+              <input type="radio" name="upiChoice" id="upiNew" value="new" />
+              <div class="upi-icon-wrap"><i class="fas fa-plus-circle" style="color:var(--gold);font-size:18px;"></i></div>
+              <div>
+                <div class="upi-id-text">Add new UPI ID</div>
+                <div class="upi-id-sub">Any UPI app</div>
+              </div>
+            </label>
+          </div>
+          <!-- New UPI input -->
+          <div class="new-upi-wrap d-none" id="newUpiWrap">
+            <div class="form-input-wrap">
+              <input type="text" class="form-input" id="newUpiId" placeholder="yourname@upi" />
+              <button class="upi-verify-btn" id="upiVerifyBtn">Verify</button>
+            </div>
+            <span class="upi-hint">Enter your VPA — e.g. name@okicici, name@ybl</span>
+          </div>
+          <!-- Popular UPI apps -->
+          <div class="upi-apps-row">
+            <span class="upi-apps-label">Pay via</span>
+            <div class="upi-app-chips">
+              <button class="upi-app-chip">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Paytm_Logo_%28standalone%29.svg/200px-Paytm_Logo_%28standalone%29.svg.png" alt="Paytm" style="height:20px;" />
+              </button>
+              <button class="upi-app-chip">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Google_Pay_Logo.svg/200px-Google_Pay_Logo.svg.png" alt="GPay" style="height:20px;" />
+              </button>
+              <button class="upi-app-chip">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/PhonePe_Logo.svg/200px-PhonePe_Logo.svg.png" alt="PhonePe" style="height:20px;" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card Panel -->
+        <div class="pay-panel d-none" id="panel-card">
+          <div class="card-form-wrap">
+            <!-- Card preview -->
+            <div class="card-preview-wrap" id="cardPreviewWrap">
+              <div class="card-preview" id="cardPreview">
+                <div class="card-preview-front">
+                  <div class="card-preview-top">
+                    <span class="card-chip-icon"><i class="fas fa-microchip"></i></span>
+                    <img src="" alt="" class="card-network-logo" id="cardNetworkLogo" />
+                  </div>
+                  <div class="card-preview-number" id="previewCardNum">•••• •••• •••• ••••</div>
+                  <div class="card-preview-bottom">
+                    <div>
+                      <div class="card-preview-field-label">Card Holder</div>
+                      <div class="card-preview-field-val" id="previewCardName">YOUR NAME</div>
+                    </div>
+                    <div>
+                      <div class="card-preview-field-label">Expires</div>
+                      <div class="card-preview-field-val" id="previewCardExp">MM / YY</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <form class="card-form" id="cardForm" novalidate>
+              <div class="form-field-wrap">
+                <label class="form-label" for="cardNum">Card Number <span class="req">*</span></label>
+                <div class="form-input-wrap card-num-wrap">
+                  <i class="far fa-credit-card card-input-icon"></i>
+                  <input type="text" id="cardNum" class="form-input card-input" placeholder="1234 5678 9012 3456" maxlength="19" required />
+                  <span class="card-type-badge" id="cardTypeBadge"></span>
+                </div>
+                <span class="form-error">Enter a valid card number</span>
+              </div>
+
+              <div class="form-field-wrap">
+                <label class="form-label" for="cardName">Name on Card <span class="req">*</span></label>
+                <div class="form-input-wrap">
+                  <input type="text" id="cardName" class="form-input" placeholder="PRIYA SHARMA" required style="text-transform:uppercase;" />
+                  <span class="input-tick"><i class="fas fa-check"></i></span>
+                </div>
+                <span class="form-error">Enter the name as on your card</span>
+              </div>
+
+              <div class="form-row-2">
+                <div class="form-field-wrap">
+                  <label class="form-label" for="cardExp">Expiry Date <span class="req">*</span></label>
+                  <div class="form-input-wrap">
+                    <input type="text" id="cardExp" class="form-input" placeholder="MM / YY" maxlength="7" required />
+                    <span class="input-tick"><i class="fas fa-check"></i></span>
+                  </div>
+                  <span class="form-error">Enter valid expiry (MM/YY)</span>
+                </div>
+                <div class="form-field-wrap">
+                  <label class="form-label" for="cardCvv">
+                    CVV <span class="req">*</span>
+                    <button type="button" class="cvv-help-btn" id="cvvHelpBtn"><i class="fas fa-question-circle"></i></button>
+                  </label>
+                  <div class="form-input-wrap cvv-input-wrap">
+                    <input type="password" id="cardCvv" class="form-input" placeholder="•••" maxlength="4" required />
+                    <button type="button" class="cvv-toggle" id="cvvToggle"><i class="far fa-eye"></i></button>
+                  </div>
+                  <span class="form-error">Enter your CVV</span>
+                  <!-- CVV tooltip -->
+                  <div class="cvv-tooltip d-none" id="cvvTooltip">
+                    <i class="fas fa-info-circle" style="color:var(--gold);"></i>
+                    3 digits on the back of Visa/Mastercard · 4 digits on the front of Amex
+                  </div>
+                </div>
+              </div>
+
+              <label class="custom-check-row">
+                <input type="checkbox" id="saveCard" checked />
+                <span class="custom-check-box"></span>
+                <span class="custom-check-label">Save card securely for future payments</span>
+              </label>
+
+              <!-- Card brand logos -->
+              <div class="accepted-cards-row">
+                <span class="accepted-label">We accept</span>
+                <i class="fab fa-cc-visa accepted-card-icon" style="color:#1a1f71;"></i>
+                <i class="fab fa-cc-mastercard accepted-card-icon" style="color:#eb001b;"></i>
+                <i class="fab fa-cc-amex accepted-card-icon" style="color:#2e77bc;"></i>
+                <i class="fab fa-cc-discover accepted-card-icon" style="color:#e65c00;"></i>
+                <i class="fab fa-cc-diners-club accepted-card-icon" style="color:#004b87;"></i>
+              </div>
+
+            </form>
+          </div>
+        </div>
+
+        <!-- Net Banking Panel -->
+        <div class="pay-panel d-none" id="panel-netbanking">
+          <div class="netbanking-banks">
+            <label class="bank-option" for="bankHDFC">
+              <input type="radio" name="bank" id="bankHDFC" value="hdfc" checked />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/HDFC_Bank_Logo.svg/200px-HDFC_Bank_Logo.svg.png" alt="HDFC" class="bank-logo" />
+              <span>HDFC Bank</span>
+              <div class="bank-check"><i class="fas fa-check"></i></div>
+            </label>
+            <label class="bank-option" for="bankICICI">
+              <input type="radio" name="bank" id="bankICICI" value="icici" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/ICICI_Bank_Logo.svg/200px-ICICI_Bank_Logo.svg.png" alt="ICICI" class="bank-logo" />
+              <span>ICICI Bank</span>
+              <div class="bank-check"><i class="fas fa-check"></i></div>
+            </label>
+            <label class="bank-option" for="bankSBI">
+              <input type="radio" name="bank" id="bankSBI" value="sbi" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/SBI-logo.svg/200px-SBI-logo.svg.png" alt="SBI" class="bank-logo" />
+              <span>State Bank of India</span>
+              <div class="bank-check"><i class="fas fa-check"></i></div>
+            </label>
+            <label class="bank-option" for="bankAxis">
+              <input type="radio" name="bank" id="bankAxis" value="axis" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Axis_Bank_logo.svg/200px-Axis_Bank_logo.svg.png" alt="Axis" class="bank-logo" />
+              <span>Axis Bank</span>
+              <div class="bank-check"><i class="fas fa-check"></i></div>
+            </label>
+            <label class="bank-option" for="bankKotak">
+              <input type="radio" name="bank" id="bankKotak" value="kotak" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Kotak_Mahindra_Bank_logo.svg/200px-Kotak_Mahindra_Bank_logo.svg.png" alt="Kotak" class="bank-logo" />
+              <span>Kotak Bank</span>
+              <div class="bank-check"><i class="fas fa-check"></i></div>
+            </label>
+          </div>
+          <div class="netbank-other-wrap">
+            <label class="form-label" for="otherBank">Other bank</label>
+            <div class="form-input-wrap">
+              <select class="form-input form-select-custom" id="otherBank">
+                <option value="">Select your bank</option>
+                <option value="pnb">Punjab National Bank</option>
+                <option value="bob">Bank of Baroda</option>
+                <option value="canara">Canara Bank</option>
+                <option value="yes">Yes Bank</option>
+                <option value="idbi">IDBI Bank</option>
+                <option value="federal">Federal Bank</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Wallets Panel -->
+        <div class="pay-panel d-none" id="panel-wallet">
+          <div class="wallet-options">
+            <label class="wallet-option" for="wltPaytm">
+              <input type="radio" name="wallet" id="wltPaytm" checked />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Paytm_Logo_%28standalone%29.svg/200px-Paytm_Logo_%28standalone%29.svg.png" alt="Paytm" style="height:24px;" />
+              <div class="wallet-info">
+                <span class="wallet-name">Paytm Wallet</span>
+                <span class="wallet-balance">Balance: ₹2,450</span>
+              </div>
+              <div class="wallet-check"><i class="fas fa-check-circle"></i></div>
+            </label>
+            <label class="wallet-option" for="wltAmazon">
+              <input type="radio" name="wallet" id="wltAmazon" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/200px-Amazon_logo.svg.png" alt="Amazon Pay" style="height:20px;" />
+              <div class="wallet-info">
+                <span class="wallet-name">Amazon Pay</span>
+                <span class="wallet-balance">Balance: ₹0</span>
+              </div>
+              <div class="wallet-check"><i class="fas fa-check-circle"></i></div>
+            </label>
+            <label class="wallet-option" for="wltMobikwik">
+              <input type="radio" name="wallet" id="wltMobikwik" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Mobikwik_Logo.svg/200px-Mobikwik_Logo.svg.png" alt="Mobikwik" style="height:22px;" />
+              <div class="wallet-info">
+                <span class="wallet-name">MobiKwik</span>
+                <span class="wallet-balance">Balance: ₹350</span>
+              </div>
+              <div class="wallet-check"><i class="fas fa-check-circle"></i></div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Cash on Delivery Panel -->
+        <div class="pay-panel d-none" id="panel-cod">
+          <div class="cod-card">
+            <div class="cod-icon-wrap"><i class="fas fa-hand-holding-usd"></i></div>
+            <div class="cod-content">
+              <div class="cod-title">Cash on Delivery</div>
+              <div class="cod-desc">Pay ₹15,999 in cash when your order arrives. A handling fee of <strong>₹49</strong> applies.</div>
+              <ul class="cod-notes">
+                <li><i class="fas fa-circle" style="font-size:5px;"></i> Keep exact change ready</li>
+                <li><i class="fas fa-circle" style="font-size:5px;"></i> Confirm order before delivery</li>
+                <li><i class="fas fa-circle" style="font-size:5px;"></i> Returns accepted within 7 days</li>
+              </ul>
+            </div>
+          </div>
+          <div class="cod-pincheck-row">
+            <label class="form-label" for="codPin">Check COD availability</label>
+            <div class="form-input-wrap cod-pin-wrap">
+              <input type="text" id="codPin" class="form-input" placeholder="Enter Pincode" maxlength="6" style="max-width:180px;" />
+              <button class="cod-check-btn" id="codCheckBtn">Check</button>
+            </div>
+            <div class="cod-available d-none" id="codAvailMsg">
+              <i class="fas fa-check-circle" style="color:#2e7d32;"></i> COD available at 380015
+            </div>
+          </div>
+        </div>
+
+        <!-- Coupon mini reminder -->
+        <div class="coupon-applied-banner">
+          <i class="fas fa-tag" style="color:var(--gold);"></i>
+          <span>Coupon <strong>ELEGANCE10</strong> applied — saving ₹1,390</span>
+          <button class="coupon-remove-sm" id="removeCouponPayStep"><i class="fas fa-times"></i></button>
+        </div>
+
+        <!-- CTAs -->
+        <div class="step-cta-row step-cta-row-2">
+          <button class="step-back-btn" id="backToStep3Btn"><i class="fas fa-arrow-left"></i> Back</button>
+          <button class="step-cta-btn pay-cta-btn" id="placeOrderBtn">
+            <i class="fas fa-lock" style="margin-right:8px;font-size:12px;"></i>
+            Place Order — ₹15,999
+          </button>
+        </div>
+      </div>
+      <!-- /STEP 4 -->
+
+      <!-- ══ STEP 5: CONFIRMATION ══ -->
+      <div class="checkout-step d-none" id="checkoutStep5">
+        <div class="confirm-wrap">
+          <!-- Animated checkmark -->
+          <div class="confirm-anim-wrap">
+            <svg class="confirm-circle-svg" viewBox="0 0 100 100">
+              <circle class="confirm-circle-bg" cx="50" cy="50" r="46"/>
+              <circle class="confirm-circle-stroke" cx="50" cy="50" r="46"/>
+              <polyline class="confirm-check-mark" points="28,52 44,67 72,35"/>
+            </svg>
+          </div>
+
+          <h2 class="confirm-title">Order <em>Placed!</em></h2>
+          <p class="confirm-sub">Thank you, <strong>Priya</strong>. Your order has been confirmed.</p>
+
+          <!-- Order ID -->
+          <div class="confirm-order-id">
+            <span>Order ID</span>
+            <strong>#ELG-2026-07482</strong>
+            <button class="copy-order-btn" id="copyOrderBtn" title="Copy order ID"><i class="far fa-copy"></i></button>
+          </div>
+
+          <!-- Items confirmed -->
+          <div class="confirm-items">
+            <div class="confirm-item">
+              <div class="confirm-item-img" style="background-image:url('images/2026_05_17_10_14_IMG_3252.JPG')"></div>
+              <div class="confirm-item-info">
+                <div class="confirm-item-name">Zari Embroidered Anarkali Suit</div>
+                <div class="confirm-item-meta">Ivory · Size L · Semi-Stitched</div>
+                <div class="confirm-item-price">₹8,499</div>
+              </div>
+            </div>
+            <div class="confirm-item">
+              <div class="confirm-item-img" style="background-image:url('images/EC 15955 (6).jpg')"></div>
+              <div class="confirm-item-info">
+                <div class="confirm-item-name">Raw Silk Co-ord Set</div>
+                <div class="confirm-item-meta">Dusty Rose · Size M · Ready-Made</div>
+                <div class="confirm-item-price">₹5,199</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Delivery info -->
+          <div class="confirm-delivery-card">
+            <div class="confirm-delivery-row">
+              <div class="conf-del-item">
+                <span class="conf-del-label">Delivering to</span>
+                <span class="conf-del-val">12 Rose Garden, Ahmedabad — 380015</span>
+              </div>
+              <div class="conf-del-item">
+                <span class="conf-del-label">Expected by</span>
+                <span class="conf-del-val" style="color:var(--gold);font-weight:600;">Fri, Jul 11 – Mon, Jul 14</span>
+              </div>
+              <div class="conf-del-item">
+                <span class="conf-del-label">Payment</span>
+                <span class="conf-del-val">UPI · priya.sharma@okaxis</span>
+              </div>
+              <div class="conf-del-item">
+                <span class="conf-del-label">Amount paid</span>
+                <span class="conf-del-val" style="font-weight:600;">₹15,999</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Track / Continue -->
+          <div class="confirm-actions">
+            <a href="#" class="step-cta-btn confirm-track-btn">
+              <i class="fas fa-truck-fast"></i> Track My Order
+            </a>
+            <a href="shop.html" class="step-back-btn confirm-continue-btn">
+              Continue Shopping <i class="fas fa-arrow-right"></i>
+            </a>
+          </div>
+
+          <!-- Whatsapp updates -->
+          <label class="custom-check-row confirm-whatsapp-row">
+            <input type="checkbox" checked />
+            <span class="custom-check-box"></span>
+            <span class="custom-check-label">
+              <i class="fab fa-whatsapp" style="color:#25d366;margin-right:5px;"></i>
+              Get order updates on WhatsApp
+            </span>
+          </label>
+
+          <!-- Confetti element -->
+          <div class="confetti-wrap" id="confettiWrap"></div>
+        </div>
+      </div>
+      <!-- /STEP 5 -->
+
+    </div>
+    <!-- /checkout-left -->
+
+    <!-- ─── RIGHT COLUMN: Order Summary ─── -->
+    <aside class="checkout-summary" id="checkoutSummary">
+
+      <!-- Toggle on mobile -->
+      <button class="summary-toggle-btn" id="summaryToggleBtn">
+        <span>Order Summary</span>
+        <span class="summary-total-mini">₹15,999</span>
+        <i class="fas fa-chevron-down summary-toggle-icon" id="summaryToggleIcon"></i>
+      </button>
+
+      <div class="summary-body" id="summaryBody">
+
+        <!-- Items -->
+        <div class="summary-items">
+          <div class="summary-item">
+            <div class="summary-item-img-wrap">
+              <div class="summary-item-img" style="background-image:url('images/2026_05_17_10_14_IMG_3252.JPG')"></div>
+              <span class="summary-item-qty-badge">1</span>
+            </div>
+            <div class="summary-item-info">
+              <div class="summary-item-name">Zari Embroidered Anarkali Suit</div>
+              <div class="summary-item-meta">Ivory · L · Semi-Stitched</div>
+              <div class="summary-item-price">₹8,499</div>
+            </div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-item-img-wrap">
+              <div class="summary-item-img" style="background-image:url('images/EC 15955 (6).jpg')"></div>
+              <span class="summary-item-qty-badge">1</span>
+            </div>
+            <div class="summary-item-info">
+              <div class="summary-item-name">Raw Silk Co-ord Set</div>
+              <div class="summary-item-meta">Dusty Rose · M · Ready-Made</div>
+              <div class="summary-item-price">₹5,199</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="summary-divider"></div>
+
+        <!-- Coupon -->
+        <div class="summary-coupon-wrap" id="summaryCouponSection">
+          <div class="coupon-input-row" id="couponInputRow">
+            <div class="form-input-wrap coupon-field-wrap">
+              <i class="fas fa-tag coupon-icon-inside"></i>
+              <input type="text" class="form-input coupon-input" id="summCouponInput" placeholder="Enter coupon code" />
+              <button class="coupon-apply-btn" id="summCouponApply">Apply</button>
+            </div>
+          </div>
+          <div class="coupon-applied-row d-none" id="couponAppliedRow">
+            <div class="coupon-applied-tag">
+              <i class="fas fa-check-circle" style="color:#2e7d32;"></i>
+              <strong>ELEGANCE10</strong> — 10% off applied!
+            </div>
+            <button class="coupon-remove-btn" id="summCouponRemove"><i class="fas fa-times"></i></button>
+          </div>
+          <!-- Suggestions -->
+          <div class="coupon-suggestions" id="couponSuggestions">
+            <span class="coupon-suggest-label">Try:</span>
+            <button class="coupon-chip" data-code="ELEGANCE10">ELEGANCE10</button>
+            <button class="coupon-chip" data-code="FIRST20">FIRST20</button>
+            <button class="coupon-chip" data-code="FESTIVE15">FESTIVE15</button>
+          </div>
+        </div>
+
+        <div class="summary-divider"></div>
+
+        <!-- Price breakdown -->
+        <div class="summary-breakdown">
+          <div class="summary-row">
+            <span>Subtotal (2 items)</span>
+            <span>₹15,998</span>
+          </div>
+          <div class="summary-row summary-row-discount">
+            <span>Product Discount</span>
+            <span class="summary-green">− ₹3,200</span>
+          </div>
+          <div class="summary-row summary-row-coupon" id="summCouponRow">
+            <span>Coupon (ELEGANCE10)</span>
+            <span class="summary-green" id="summCouponAmt">− ₹1,390</span>
+          </div>
+          <div class="summary-row">
+            <span>Stitching</span>
+            <span>₹499</span>
+          </div>
+          <div class="summary-row">
+            <span>Delivery</span>
+            <span class="summary-green">FREE</span>
+          </div>
+          <div class="summary-row" id="shippingUpgradeRow" style="display:none;">
+            <span>Express Shipping</span>
+            <span id="shippingUpgradeAmt">₹149</span>
+          </div>
+          <div class="summary-row" id="giftWrapRow" style="display:none;">
+            <span>Gift Wrap</span>
+            <span>₹99</span>
+          </div>
+          <div class="summary-row" id="codRow" style="display:none;">
+            <span>COD Handling Fee</span>
+            <span>₹49</span>
+          </div>
+        </div>
+
+        <div class="summary-divider"></div>
+
+        <!-- Total -->
+        <div class="summary-total-row">
+          <div>
+            <div class="summary-total-label">Total</div>
+            <div class="summary-total-gst">Incl. all taxes &amp; GST</div>
+          </div>
+          <div class="summary-total-amt" id="summTotalAmt">₹15,999</div>
+        </div>
+
+        <!-- Savings pill -->
+        <div class="summary-savings-pill">
+          <i class="fas fa-piggy-bank"></i>
+          You save <strong>₹4,590</strong> on this order!
+        </div>
+
+        <!-- Trust row -->
+        <div class="summary-trust-row">
+          <div class="summary-trust-item">
+            <i class="fas fa-undo-alt"></i>
+            <span>Easy Returns</span>
+          </div>
+          <div class="summary-trust-item">
+            <i class="fas fa-lock"></i>
+            <span>100% Secure</span>
+          </div>
+          <div class="summary-trust-item">
+            <i class="fas fa-certificate"></i>
+            <span>Authentic</span>
+          </div>
+        </div>
+
+        <!-- Payment logos -->
+        <div class="summary-pay-logos">
+          <i class="fab fa-cc-visa" title="Visa"></i>
+          <i class="fab fa-cc-mastercard" title="Mastercard"></i>
+          <i class="fab fa-cc-amex" title="Amex"></i>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/UPI-Logo-vector.svg/60px-UPI-Logo-vector.svg.png" alt="UPI" style="height:14px;object-fit:contain;" />
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Paytm_Logo_%28standalone%29.svg/60px-Paytm_Logo_%28standalone%29.svg.png" alt="Paytm" style="height:14px;object-fit:contain;" />
+        </div>
+
+      </div>
+      <!-- /summary-body -->
+    </aside>
+
+  </div>
+  <!-- /checkout-wrap -->
+</main>
+
+<!-- ══════════════════════════════════════════════════
+     MINIMAL FOOTER
+══════════════════════════════════════════════════ -->
+<footer class="checkout-footer">
+  <div class="checkout-footer-inner">
+    <a href="home.html">
+      <img src="images/elegance-logo-gold-dash.png" alt="Elegance" style="height:32px;" />
+    </a>
+    <div class="checkout-footer-links">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+      <a href="#">Returns &amp; Refunds</a>
+      <a href="#">Help Center</a>
+    </div>
+    <div class="checkout-footer-copy">© 2026 Elegance — An Ethnic Regalia</div>
+  </div>
+</footer>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="checkout.js"></script>
+</body>
+</html>

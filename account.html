@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Account — ELEGANCE</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="icon" type="image/png" href="images/elegance-logo-gold-dash.png">
+  <link rel="stylesheet" href="home.css" />
+  <link rel="stylesheet" href="account.css" />
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════
+     TOP ANNOUNCEMENT BAR
+══════════════════════════════════════════════════ -->
+<div class="announcement-bar">
+  <div class="announce-inner">
+    <span>Free shipping on orders above ₹2,999</span>
+    <span class="announce-sep">✦</span>
+    <span>New arrivals every Friday</span>
+    <span class="announce-sep">✦</span>
+    <span>Customised stitching available — <a href="#">Book now</a></span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     NAVBAR
+══════════════════════════════════════════════════ -->
+<nav class="site-nav" id="siteNav">
+  <div class="nav-inner">
+    <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+    <ul class="nav-links nav-links-left" id="navLinks">
+      <li class="nav-item-dropdown">
+        <a href="/shop" class="nav-link">Shop <i class="fas fa-chevron-down nav-chevron"></i></a>
+        <div class="mega-drop">
+          <div class="mega-col">
+            <span class="mega-heading">By Type</span>
+            <a href="/shop">Unstitched Suits</a>
+            <a href="/shop">Semi-Stitched</a>
+            <a href="/shop">Ready-Mades</a>
+            <a href="/shop">Salwar Kameez</a>
+            <a href="/shop">Co-ord Sets</a>
+            <a href="/shop">Tops / Shirts</a>
+          </div>
+          <div class="mega-col">
+            <span class="mega-heading">By Occasion</span>
+            <a href="/shop">Casual Wear</a>
+            <a href="/shop">Work Wear</a>
+            <a href="/shop">Semi-Formal</a>
+            <a href="/shop">Occasion Wear</a>
+            <a href="/shop">Trousseau</a>
+            <a href="/shop">Festive</a>
+          </div>
+          <div class="mega-col mega-col-img">
+            <img src="images/2026_05_17_13_11_IMG_3466.JPG" alt="New Arrivals" />
+            <span>New Season</span>
+          </div>
+        </div>
+      </li>
+      <li><a href="/home" class="nav-link">Home</a></li>
+      <li><a href="#" class="nav-link">New Arrivals</a></li>
+      <li><a href="#" class="nav-link nav-sale">Sale</a></li>
+    </ul>
+    <a href="/home" class="nav-brand">
+      <img src="images/elegance-logo-gold-dash.png" alt="Elegance Logo" class="nav-logo" />
+    </a>
+    <div class="nav-actions">
+      <button class="nav-icon-btn" aria-label="Search" id="searchToggle"><i class="fas fa-search"></i></button>
+      <button class="nav-icon-btn" aria-label="Wishlist"><i class="far fa-heart"></i></button>
+      <button class="nav-icon-btn cart-btn" aria-label="Cart"><i class="fas fa-shopping-bag"></i><span class="cart-badge">2</span></button>
+      <a href="/account" class="btn-account">Account</a>
+    </div>
+  </div>
+  <div class="search-bar" id="searchBar">
+    <div class="search-inner">
+      <i class="fas fa-search search-icon-input"></i>
+      <input type="text" placeholder="Search for sarees, suits, co-ords…" class="search-input" id="searchInput" />
+      <button class="search-close" id="searchClose"><i class="fas fa-times"></i></button>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════════════
+     PAGE HEADER
+══════════════════════════════════════════════════ -->
+<section class="account-header">
+  <div class="account-header-inner">
+    <div>
+      <h1 class="account-title">My <em>Account</em></h1>
+      <p class="account-subtitle">Manage your profile, orders & addresses</p>
+    </div>
+    <button class="btn-logout" id="logoutBtn">
+      <i class="fas fa-sign-out-alt"></i> Logout
+    </button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     MAIN CONTENT
+══════════════════════════════════════════════════ -->
+<div class="account-container">
+
+  <!-- ── SIDEBAR NAV ── -->
+  <aside class="account-sidebar">
+    <div class="sidebar-menu">
+      <button class="sidebar-item sidebar-item-active" data-tab="profile">
+        <i class="fas fa-user"></i>
+        <span>My Profile</span>
+      </button>
+      <button class="sidebar-item" data-tab="orders">
+        <i class="fas fa-box-open"></i>
+        <span>My Orders</span>
+        <span class="badge-count">8</span>
+      </button>
+      <button class="sidebar-item" data-tab="addresses">
+        <i class="fas fa-map-marker-alt"></i>
+        <span>Addresses</span>
+      </button>
+      <button class="sidebar-item" data-tab="wishlist">
+        <i class="fas fa-heart"></i>
+        <span>Wishlist</span>
+        <span class="badge-count">12</span>
+      </button>
+      <button class="sidebar-item" data-tab="password">
+        <i class="fas fa-lock"></i>
+        <span>Change Password</span>
+      </button>
+      <button class="sidebar-item" data-tab="settings">
+        <i class="fas fa-cog"></i>
+        <span>Account Settings</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ── CONTENT PANEL ── -->
+  <main class="account-main">
+
+    <!-- ═══ MY PROFILE ═══ -->
+    <div class="account-panel account-panel-active" data-panel="profile">
+      <div class="panel-header">
+        <h2>My Profile</h2>
+      </div>
+
+      <!-- Profile card -->
+      <div class="profile-card">
+        <div class="profile-avatar">
+          <img src="images/2026_05_17_13_11_IMG_3466.JPG" alt="Your avatar" />
+          <button class="avatar-edit" title="Change avatar">
+            <i class="fas fa-camera"></i>
+          </button>
+        </div>
+        <div class="profile-info">
+          <h3>Priya Sharma</h3>
+          <p class="member-since">Member since January 2024</p>
+          <p class="profile-email">priya.sharma@email.com</p>
+          <div class="profile-stats">
+            <div class="stat">
+              <span class="stat-val">8</span>
+              <span class="stat-label">Orders</span>
+            </div>
+            <div class="stat">
+              <span class="stat-val">₹14,250</span>
+              <span class="stat-label">Total Spent</span>
+            </div>
+            <div class="stat">
+              <span class="stat-val">Platinum</span>
+              <span class="stat-label">Status</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edit form -->
+      <div class="profile-form">
+        <h3 class="form-title">Edit Profile Information</h3>
+        <form id="profileForm" class="form-grid">
+          <div class="form-group">
+            <label for="firstName">First Name</label>
+            <input type="text" id="firstName" class="form-control-modern" value="Priya" />
+          </div>
+          <div class="form-group">
+            <label for="lastName">Last Name</label>
+            <input type="text" id="lastName" class="form-control-modern" value="Sharma" />
+          </div>
+          <div class="form-group form-group-full">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" class="form-control-modern" value="priya.sharma@email.com" />
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" class="form-control-modern" value="+91 98765 43210" />
+          </div>
+          <div class="form-group">
+            <label for="dob">Date of Birth</label>
+            <input type="date" id="dob" class="form-control-modern" value="1995-04-15" />
+          </div>
+          <div class="form-group form-group-full">
+            <label for="preferences">Communication Preferences</label>
+            <div class="checkbox-group">
+              <label class="checkbox-custom">
+                <input type="checkbox" checked />
+                <span>Email notifications</span>
+              </label>
+              <label class="checkbox-custom">
+                <input type="checkbox" checked />
+                <span>SMS notifications</span>
+              </label>
+              <label class="checkbox-custom">
+                <input type="checkbox" />
+                <span>Marketing emails</span>
+              </label>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn-primary-modern">Save Changes</button>
+            <button type="button" class="btn-secondary-modern">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ═══ MY ORDERS ═══ -->
+    <div class="account-panel" data-panel="orders">
+      <div class="panel-header">
+        <h2>My Orders</h2>
+        <div class="orders-filter">
+          <button class="filter-chip filter-chip-active" data-filter="all">All</button>
+          <button class="filter-chip" data-filter="completed">Delivered</button>
+          <button class="filter-chip" data-filter="pending">In Progress</button>
+          <button class="filter-chip" data-filter="cancelled">Cancelled</button>
+        </div>
+      </div>
+
+      <div class="orders-list">
+        <!-- Order 1 -->
+        <div class="order-card order-card-delivered">
+          <div class="order-header">
+            <div>
+              <p class="order-id">Order #ELG-2024-8765</p>
+              <p class="order-date">Delivered on Dec 20, 2024</p>
+            </div>
+            <span class="order-status order-status-delivered">Delivered</span>
+          </div>
+          <div class="order-items">
+            <div class="order-item">
+              <img src="images/2026_05_17_10_14_IMG_3252.JPG" alt="Product" />
+              <div class="order-item-info">
+                <p class="order-product-name">Embroidered Salwar Kameez</p>
+                <p class="order-product-meta">Ivory • M • Semi-Stitched</p>
+                <p class="order-product-price">₹4,299</p>
+              </div>
+              <span class="order-qty">Qty: 1</span>
+            </div>
+          </div>
+          <div class="order-footer">
+            <div class="order-total">
+              <span>Total:</span>
+              <span class="total-val">₹4,299</span>
+            </div>
+            <div class="order-actions">
+              <button class="btn-order-action btn-reorder">
+                <i class="fas fa-redo"></i> Reorder
+              </button>
+              <button class="btn-order-action btn-track">
+                <i class="fas fa-box"></i> Track
+              </button>
+              <button class="btn-order-action btn-details">
+                <i class="fas fa-eye"></i> Details
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Order 2 -->
+        <div class="order-card order-card-pending">
+          <div class="order-header">
+            <div>
+              <p class="order-id">Order #ELG-2024-8642</p>
+              <p class="order-date">Ordered on Dec 18, 2024</p>
+            </div>
+            <span class="order-status order-status-pending">In Progress</span>
+          </div>
+          <div class="order-items">
+            <div class="order-item">
+              <img src="images/EC 15955 (6).jpg" alt="Product" />
+              <div class="order-item-info">
+                <p class="order-product-name">Luxe Gold Net Couture Gown</p>
+                <p class="order-product-meta">Gold • Custom Stitched</p>
+                <p class="order-product-price">₹8,599</p>
+              </div>
+              <span class="order-qty">Qty: 1</span>
+            </div>
+          </div>
+          <div class="order-footer">
+            <div class="order-total">
+              <span>Total:</span>
+              <span class="total-val">₹8,599</span>
+            </div>
+            <div class="order-actions">
+              <button class="btn-order-action btn-track">
+                <i class="fas fa-box"></i> Track
+              </button>
+              <button class="btn-order-action btn-cancel">
+                <i class="fas fa-times"></i> Cancel
+              </button>
+              <button class="btn-order-action btn-details">
+                <i class="fas fa-eye"></i> Details
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Order 3 -->
+        <div class="order-card order-card-delivered">
+          <div class="order-header">
+            <div>
+              <p class="order-id">Order #ELG-2024-8521</p>
+              <p class="order-date">Delivered on Dec 10, 2024</p>
+            </div>
+            <span class="order-status order-status-delivered">Delivered</span>
+          </div>
+          <div class="order-items">
+            <div class="order-item">
+              <img src="images/17.png" alt="Product" />
+              <div class="order-item-info">
+                <p class="order-product-name">Co-ord Set with Mirror Work</p>
+                <p class="order-product-meta">Red • L • Unstitched</p>
+                <p class="order-product-price">₹3,499</p>
+              </div>
+              <span class="order-qty">Qty: 1</span>
+            </div>
+          </div>
+          <div class="order-footer">
+            <div class="order-total">
+              <span>Total:</span>
+              <span class="total-val">₹3,499</span>
+            </div>
+            <div class="order-actions">
+              <button class="btn-order-action btn-reorder">
+                <i class="fas fa-redo"></i> Reorder
+              </button>
+              <button class="btn-order-action btn-review">
+                <i class="fas fa-star"></i> Review
+              </button>
+              <button class="btn-order-action btn-details">
+                <i class="fas fa-eye"></i> Details
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ ADDRESSES ═══ -->
+    <div class="account-panel" data-panel="addresses">
+      <div class="panel-header">
+        <h2>Saved Addresses</h2>
+        <button class="btn-add-address" id="addAddressBtn">
+          <i class="fas fa-plus"></i> Add New Address
+        </button>
+      </div>
+
+      <div class="addresses-grid">
+        <!-- Address 1 -->
+        <div class="address-card address-card-active">
+          <div class="address-badge">Home</div>
+          <h4>Priya Sharma</h4>
+          <p class="address-text">123 Luxury Apartments, Bandra West,<br>Mumbai, Maharashtra 400050</p>
+          <p class="address-phone">+91 98765 43210</p>
+          <div class="address-actions">
+            <button class="btn-addr-action btn-edit" title="Edit">
+              <i class="fas fa-edit"></i> Edit
+            </button>
+            <button class="btn-addr-action btn-delete" title="Delete">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+          </div>
+        </div>
+
+        <!-- Address 2 -->
+        <div class="address-card">
+          <div class="address-badge">Work</div>
+          <h4>Priya Sharma</h4>
+          <p class="address-text">450 Business Plaza, Lower Parel,<br>Mumbai, Maharashtra 400013</p>
+          <p class="address-phone">+91 98765 43210</p>
+          <div class="address-actions">
+            <button class="btn-addr-action btn-edit" title="Edit">
+              <i class="fas fa-edit"></i> Edit
+            </button>
+            <button class="btn-addr-action btn-delete" title="Delete">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+          </div>
+        </div>
+
+        <!-- Address 3 -->
+        <div class="address-card">
+          <div class="address-badge">Other</div>
+          <h4>Priya Sharma</h4>
+          <p class="address-text">Plot 89, Sunnyvale Society,<br>Pune, Maharashtra 411001</p>
+          <p class="address-phone">+91 88765 54321</p>
+          <div class="address-actions">
+            <button class="btn-addr-action btn-edit" title="Edit">
+              <i class="fas fa-edit"></i> Edit
+            </button>
+            <button class="btn-addr-action btn-delete" title="Delete">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ WISHLIST ═══ -->
+    <div class="account-panel" data-panel="wishlist">
+      <div class="panel-header">
+        <h2>My Wishlist</h2>
+        <span class="wishlist-count">(12 items)</span>
+      </div>
+
+      <div class="wishlist-grid">
+        <!-- Wishlist item 1 -->
+        <div class="wishlist-card">
+          <div class="wishlist-img">
+            <img src="images/2026_05_17_10_14_IMG_3252.JPG" alt="Product" />
+            <button class="wishlist-remove" title="Remove"><i class="fas fa-times"></i></button>
+          </div>
+          <div class="wishlist-info">
+            <p class="wishlist-brand">Aariyana Couture</p>
+            <h4 class="wishlist-name">Pink Silk Georgette Gown</h4>
+            <p class="wishlist-price">₹5,450 <span class="wishlist-original">₹10,900</span></p>
+            <button class="btn-add-cart">Add to Cart</button>
+          </div>
+        </div>
+
+        <!-- Wishlist item 2 -->
+        <div class="wishlist-card">
+          <div class="wishlist-img">
+            <img src="images/EC 15955 (6).jpg" alt="Product" />
+            <button class="wishlist-remove" title="Remove"><i class="fas fa-times"></i></button>
+          </div>
+          <div class="wishlist-info">
+            <p class="wishlist-brand">Mehak Murpana</p>
+            <h4 class="wishlist-name">Pink Crepe Dupatta Organza</h4>
+            <p class="wishlist-price">₹9,128 <span class="wishlist-original">₹11,410</span></p>
+            <button class="btn-add-cart">Add to Cart</button>
+          </div>
+        </div>
+
+        <!-- Wishlist item 3 -->
+        <div class="wishlist-card">
+          <div class="wishlist-img">
+            <img src="images/17.png" alt="Product" />
+            <button class="wishlist-remove" title="Remove"><i class="fas fa-times"></i></button>
+          </div>
+          <div class="wishlist-info">
+            <p class="wishlist-brand">Seasons Mumbai</p>
+            <h4 class="wishlist-name">Mirror Work Lehenga Set</h4>
+            <p class="wishlist-price">₹7,299 <span class="wishlist-original">₹12,599</span></p>
+            <button class="btn-add-cart">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ CHANGE PASSWORD ═══ -->
+    <div class="account-panel" data-panel="password">
+      <div class="panel-header">
+        <h2>Change Password</h2>
+      </div>
+
+      <div class="password-form">
+        <form id="passwordForm" class="form-col">
+          <p class="form-help-text">Enter your current password and set a new one.</p>
+          
+          <div class="form-group">
+            <label for="currentPwd">Current Password</label>
+            <div class="password-input-wrapper">
+              <input type="password" id="currentPwd" class="form-control-modern" placeholder="••••••••" />
+              <button type="button" class="pwd-toggle" data-target="currentPwd">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="newPwd">New Password</label>
+            <div class="password-input-wrapper">
+              <input type="password" id="newPwd" class="form-control-modern" placeholder="••••••••" />
+              <button type="button" class="pwd-toggle" data-target="newPwd">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+            <div class="password-strength">
+              <div class="strength-bar"><div class="strength-fill" style="width: 0%"></div></div>
+              <p class="strength-text">Password strength: <strong id="strengthLabel">Too weak</strong></p>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPwd">Confirm New Password</label>
+            <div class="password-input-wrapper">
+              <input type="password" id="confirmPwd" class="form-control-modern" placeholder="••••••••" />
+              <button type="button" class="pwd-toggle" data-target="confirmPwd">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="password-requirements">
+            <p>Password must contain:</p>
+            <ul>
+              <li><span class="req-check" data-req="length"><i class="fas fa-check-circle"></i></span> At least 8 characters</li>
+              <li><span class="req-check" data-req="uppercase"><i class="fas fa-check-circle"></i></span> One uppercase letter</li>
+              <li><span class="req-check" data-req="lowercase"><i class="fas fa-check-circle"></i></span> One lowercase letter</li>
+              <li><span class="req-check" data-req="number"><i class="fas fa-check-circle"></i></span> One number</li>
+              <li><span class="req-check" data-req="special"><i class="fas fa-check-circle"></i></span> One special character</li>
+            </ul>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-primary-modern">Update Password</button>
+            <button type="button" class="btn-secondary-modern">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ═══ ACCOUNT SETTINGS ═══ -->
+    <div class="account-panel" data-panel="settings">
+      <div class="panel-header">
+        <h2>Account Settings</h2>
+      </div>
+
+      <div class="settings-section">
+        <h3>Privacy & Security</h3>
+        <div class="setting-item">
+          <div>
+            <p class="setting-name">Two-Factor Authentication</p>
+            <p class="setting-desc">Add an extra layer of security to your account</p>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="setting-item">
+          <div>
+            <p class="setting-name">Login Alerts</p>
+            <p class="setting-desc">Get notified of new logins from unknown devices</p>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" checked />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3>Preferences</h3>
+        <div class="setting-item">
+          <div>
+            <p class="setting-name">Newsletter Subscription</p>
+            <p class="setting-desc">Receive updates about new collections and offers</p>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" checked />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="setting-item">
+          <div>
+            <p class="setting-name">Personalized Recommendations</p>
+            <p class="setting-desc">Get product suggestions based on your browsing</p>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" checked />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="settings-section danger-zone">
+        <h3>Danger Zone</h3>
+        <div class="setting-item">
+          <div>
+            <p class="setting-name">Delete Account</p>
+            <p class="setting-desc">Permanently delete your account and all associated data</p>
+          </div>
+          <button class="btn-danger">Delete</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════════ -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-col">
+      <img src="images/elegance-logo-gold-dash.png" alt="Elegance" class="footer-logo" />
+      <p>Elegance brings you premium ethnic wear for every occasion, celebrating tradition with contemporary style.</p>
+      <div class="footer-socials">
+        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="#" aria-label="Pinterest"><i class="fab fa-pinterest"></i></a>
+        <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <span class="footer-heading">Shop</span>
+      <ul>
+        <li><a href="#">New Arrivals</a></li>
+        <li><a href="#">Salwar Suits</a></li>
+        <li><a href="#">Co-ord Sets</a></li>
+        <li><a href="#">Sale</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <span class="footer-heading">Customer Care</span>
+      <ul>
+        <li><a href="#">Contact Us</a></li>
+        <li><a href="#">Shipping Info</a></li>
+        <li><a href="#">Returns</a></li>
+        <li><a href="#">FAQ</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <span class="footer-heading">Newsletter</span>
+      <p>Get 10% off your first order</p>
+      <div class="footer-newsletter">
+        <input type="email" placeholder="Your email" />
+        <button><i class="fas fa-arrow-right"></i></button>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2024 ELEGANCE. All rights reserved.</p>
+    <div class="footer-links">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+      <a href="#">Cookie Policy</a>
+    </div>
+  </div>
+</footer>
+
+<script src="home.js"></script>
+<script src="account.js"></script>
+
+</body>
+</html>
