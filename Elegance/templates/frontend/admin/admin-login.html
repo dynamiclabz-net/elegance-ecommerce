@@ -1,0 +1,90 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Sign In — Elegance</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+
+  <style>
+    body.e-login-body {
+      background: var(--e-primary-dark);
+      background-image: radial-gradient(circle at 15% 20%, rgba(169,129,47,0.18), transparent 45%),
+                         radial-gradient(circle at 85% 85%, rgba(169,129,47,0.10), transparent 45%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .e-login-card {
+      width: 100%;
+      max-width: 400px;
+      background: var(--e-surface);
+      border-radius: 14px;
+      padding: 2.25rem 2rem;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    }
+    .e-login-mark {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: var(--e-primary-tint);
+      color: var(--e-primary);
+      display: flex; align-items: center; justify-content: center;
+      font-family: "Fraunces", serif; font-weight: 600; font-size: 22px;
+      margin: 0 auto 1.1rem;
+    }
+    .e-login-title { text-align: center; font-family: "Fraunces", serif; font-size: 22px; margin-bottom: 0.3rem; }
+    .e-login-subtitle { text-align: center; font-size: 13px; color: var(--e-text-muted); margin-bottom: 1.75rem; }
+    .e-login-alert {
+      display: none;
+      background: var(--e-danger-tint); color: var(--e-danger);
+      border-radius: var(--e-radius-sm); padding: 0.65rem 0.9rem;
+      font-size: 13px; margin-bottom: 1.1rem;
+    }
+  </style>
+</head>
+<body class="e-login-body">
+
+  <div class="e-login-card">
+    <div class="e-login-mark">E</div>
+    <div class="e-login-title">Elegance Admin</div>
+    <div class="e-login-subtitle">Sign in to manage your store</div>
+
+    <div class="e-login-alert" id="login-alert"></div>
+
+    <form id="admin-login-form">
+      <div class="e-field">
+        <label class="e-label" for="contact_number">Contact number <span class="req">*</span></label>
+        <input type="text" class="e-input" id="contact_number" name="contact_number" placeholder="10-digit mobile number" autocomplete="username" required>
+      </div>
+      <div class="e-field">
+        <label class="e-label" for="password">Password <span class="req">*</span></label>
+        <div style="position:relative;">
+          <input type="password" class="e-input" id="password" name="password" placeholder="Enter your password" autocomplete="current-password" required>
+        </div>
+      </div>
+      <button type="submit" class="btn-e-primary w-100" style="padding:0.65rem;" id="login-submit-btn">
+        Sign in
+      </button>
+    </form>
+  </div>
+
+  <script src="{% static 'js/api_caller.js' %}"></script>
+  <script src="{% static 'js/admin/admin_utils.js' %}"></script>
+  <script src="{% static 'js/admin/admin_login.js' %}"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      AdminLoginInit({
+        csrfToken: "{{ csrf_token }}",
+        loginApiUrl: "{% url 'admin-login-api-list' %}",
+        dashboardUrl: "{% url 'admin-dashboard-list' %}",
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+{% extends "frontend/_base.html" %}
+{% load static %}
+
+{% block title %}Confirming Payment{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/payment-callback.css' %}" />
+{% endblock %}
+
+{% block content %}
+
+<main class="pc-main">
+  <div class="pc-card">
+    <div id="pcProcessing">
+      <i class="fas fa-circle-notch fa-spin pc-icon"></i>
+      <h1 class="pc-title">Confirming your payment…</h1>
+      <p class="pc-text">Please don&apos;t close this window.</p>
+    </div>
+    <div id="pcSuccess" style="display:none">
+      <i class="fas fa-check-circle pc-icon pc-icon-success"></i>
+      <h1 class="pc-title">Payment Confirmed!</h1>
+      <p class="pc-text">Your order has been placed successfully.</p>
+      <a href="#" class="pc-btn" id="pcViewOrderBtn">View Order</a>
+    </div>
+    <div id="pcError" style="display:none">
+      <i class="fas fa-times-circle pc-icon pc-icon-error"></i>
+      <h1 class="pc-title">Something Went Wrong</h1>
+      <p class="pc-text" id="pcErrorMsg">We couldn&apos;t confirm your payment.</p>
+      <a href="/cart/" class="pc-btn">Back to Cart</a>
+    </div>
+  </div>
+</main>
+
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'js/payment-callback.js' %}"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      PaymentCallbackPageInit({
+        csrfToken: "{{ csrf_token }}",
+        orderId: "{{ order_id }}",
+        paymentVerifyApiUrl: "{% url 'payment-verify-api-list' %}",
+        orderDetailUrlTemplate: "/order-detail/__ID__/",
+      });
+    });
+  </script>
+{% endblock %}

@@ -1,0 +1,117 @@
+{% extends "frontend/admin/_base.html" %}
+{% load static %}
+
+{% block title %}Order Detail{% endblock %}
+{% block breadcrumb %}Sales / Orders{% endblock %}
+{% block page_title %}<span id="order-number-title">Order</span>{% endblock %}
+
+{% block content %}
+<div id="order-detail-loading" class="e-empty">
+  <div class="e-skeleton" style="height:14px;width:200px;margin:0 auto;"></div>
+</div>
+
+<div id="order-detail-content" style="display:none;">
+  <div class="row g-3">
+    <div class="col-lg-8">
+      <div class="e-card mb-3">
+        <div class="e-card-header">
+          <h2>Items</h2>
+          <span id="order-status-badge"></span>
+        </div>
+        <div class="e-card-body p-0">
+          <div style="overflow-x:auto;">
+            <table class="e-table">
+              <thead><tr><th>Product</th><th>SKU</th><th>Price</th><th>Qty</th><th>Total</th></tr></thead>
+              <tbody id="order-items-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="e-card mb-3">
+        <div class="e-card-header"><h2>Status History</h2></div>
+        <div class="e-card-body">
+          <div id="status-history-list" class="d-flex flex-column gap-3"></div>
+        </div>
+      </div>
+
+      <div class="e-card">
+        <div class="e-card-header"><h2>Payments</h2></div>
+        <div class="e-card-body p-0">
+          <div style="overflow-x:auto;">
+            <table class="e-table">
+              <thead><tr><th>Type</th><th>Amount</th><th>Status</th><th>Paid At</th></tr></thead>
+              <tbody id="order-payments-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="e-card mb-3">
+        <div class="e-card-header"><h2>Update Status</h2></div>
+        <div class="e-card-body">
+          <form id="status-update-form">
+            <div class="e-field">
+              <label class="e-label">Order Status</label>
+              <select class="e-select" id="update-order-status">
+                <option value="placed">Placed</option>
+                <option value="confirmed">Confirmed</option>
+                <option value="processing">Processing</option>
+                <option value="shipped">Shipped</option>
+                <option value="out_for_delivery">Out for Delivery</option>
+                <option value="delivered">Delivered</option>
+                <option value="cancelled">Cancelled</option>
+                <option value="returned">Returned</option>
+              </select>
+            </div>
+            <div class="e-field">
+              <label class="e-label">Note</label>
+              <textarea class="e-input" id="update-note" rows="2" placeholder="Optional note visible in status history"></textarea>
+            </div>
+            <hr>
+            <div class="e-field">
+              <label class="e-label">Courier Partner</label>
+              <input type="text" class="e-input" id="update-courier">
+            </div>
+            <div class="e-field">
+              <label class="e-label">Tracking ID</label>
+              <input type="text" class="e-input" id="update-tracking-id">
+            </div>
+            <div class="e-field">
+              <label class="e-label">Tracking URL</label>
+              <input type="text" class="e-input" id="update-tracking-url">
+            </div>
+            <button type="submit" class="btn-e-primary w-100" id="status-update-btn">Save Changes</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="e-card mb-3">
+        <div class="e-card-header"><h2>Customer &amp; Shipping</h2></div>
+        <div class="e-card-body" id="shipping-details"></div>
+      </div>
+
+      <div class="e-card">
+        <div class="e-card-header"><h2>Order Summary</h2></div>
+        <div class="e-card-body" id="order-summary"></div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/admin/admin_order_detail.js' %}"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    AdminOrderDetailInit({
+      csrfToken: "{{ csrf_token }}",
+      orderId: {{ order_id }},
+      adminOrderApiUrl: "{% url 'admin-order-api-list' %}",
+      ordersListUrl: "{% url 'admin-orders-list' %}",
+    });
+  });
+</script>
+{% endblock %}

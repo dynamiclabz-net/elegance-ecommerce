@@ -1,0 +1,113 @@
+/* ═══════════════════════════════════════════════════════════════
+   ELEGANCE — Checkout Page
+   Extends site.css + cart.css tokens/buttons.
+   ═══════════════════════════════════════════════════════════════ */
+
+.co-section {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 22px;
+  margin-bottom: 20px;
+  background: var(--bg-white);
+}
+.co-section-title {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 16px;
+}
+.co-section-title i { color: var(--gold); font-size: 15px; }
+
+.co-address-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+.co-address-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--border-md);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color 0.2s var(--ease);
+}
+.co-address-card:hover { border-color: var(--gold); }
+.co-address-card input[type="radio"] { margin-top: 3px; accent-color: var(--gold); }
+.co-address-name { font-size: 14px; font-weight: 600; color: var(--text-dark); margin: 0 0 2px; }
+.co-address-text { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin: 0; }
+.co-address-badge {
+  display: inline-block;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--gold);
+  background: var(--gold-pale);
+  padding: 2px 8px;
+  border-radius: 20px;
+  margin-left: 8px;
+}
+
+.co-add-address-btn {
+  background: none;
+  border: 1px dashed var(--border-md);
+  border-radius: 6px;
+  padding: 12px;
+  width: 100%;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--gold);
+  cursor: pointer;
+}
+.co-add-address-btn:hover { border-color: var(--gold); background: var(--gold-pale); }
+
+.co-address-form { display: flex; flex-direction: column; gap: 12px; margin-top: 14px; }
+.co-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.co-address-form input[type="text"],
+.co-address-form input[type="tel"] {
+  padding: 11px 14px;
+  border: 1px solid var(--border-md);
+  border-radius: 4px;
+  font-size: 13.5px;
+  font-family: var(--sans);
+  color: var(--text-dark);
+}
+.co-address-form input:focus { outline: none; border-color: var(--gold); }
+.co-checkbox { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-mid); }
+.co-checkbox input { accent-color: var(--gold); }
+.co-form-actions { display: flex; gap: 10px; justify-content: flex-end; }
+.co-cancel-btn {
+  background: none;
+  border: 1px solid var(--border-md);
+  border-radius: 4px;
+  padding: 12px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-mid);
+  cursor: pointer;
+}
+.co-cancel-btn:hover { border-color: var(--text-mid); }
+
+.co-payment-options { display: flex; flex-direction: column; gap: 10px; }
+.co-payment-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--border-md);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color 0.2s var(--ease);
+}
+.co-payment-option:has(input:checked) { border-color: var(--gold); background: var(--gold-pale); }
+.co-payment-option input { margin-top: 3px; accent-color: var(--gold); }
+.co-payment-label { display: block; font-size: 14px; font-weight: 600; color: var(--text-dark); }
+.co-payment-desc { display: block; font-size: 12.5px; color: var(--text-muted); margin-top: 2px; }
+
+.co-summary-items { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; max-height: 220px; overflow-y: auto; }
+.co-summary-item { display: flex; gap: 10px; align-items: center; }
+.co-summary-item img { width: 44px; height: 56px; object-fit: cover; border-radius: 3px; background: var(--bg-cream); flex-shrink: 0; }
+.co-summary-item-info { flex: 1; min-width: 0; }
+.co-summary-item-name { font-size: 12.5px; font-weight: 500; color: var(--text-dark); margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.co-summary-item-meta { font-size: 11.5px; color: var(--text-muted); margin: 0; }
+.co-summary-item-price { font-size: 12.5px; font-weight: 600; color: var(--text-dark); white-space: nowrap; }

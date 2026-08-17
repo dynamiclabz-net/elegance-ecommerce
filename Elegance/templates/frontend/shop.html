@@ -1,0 +1,146 @@
+{% extends "frontend/_base.html" %}
+{% load static %}
+
+{% block title %}Shop All Collections{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/shop.css' %}" />
+{% endblock %}
+
+{% block content %}
+
+<!-- ══════════════════════════════════════════════════
+     HERO
+══════════════════════════════════════════════════ -->
+<div class="shop-hero">
+  <div class="shop-hero-bg"></div>
+  <div class="shop-hero-content">
+    <p class="shop-hero-eyebrow">The Edit</p>
+    <h1 class="shop-hero-title">All Collections</h1>
+    <p class="shop-hero-breadcrumb">
+      <a href="/home">Home</a>
+      <i class="fas fa-chevron-right"></i>
+      <span>Shop</span>
+    </p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     CATEGORY TABS (populated from Category API)
+══════════════════════════════════════════════════ -->
+<div class="cat-tabs-bar" id="catTabsBar">
+  <div class="cat-tabs-inner" id="catTabsInner">
+    <button class="cat-tab cat-tab-active" data-category="">All</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     MAIN LAYOUT
+══════════════════════════════════════════════════ -->
+<div class="shop-layout">
+
+  <!-- ─── SIDEBAR FILTERS ─── -->
+  <aside class="shop-sidebar" id="shopSidebar">
+    <div class="sidebar-head">
+      <span class="sidebar-title-label">Filters</span>
+      <button class="sidebar-close-btn" id="sidebarClose"><i class="fas fa-times"></i></button>
+    </div>
+
+    <div class="filter-group">
+      <button class="filter-group-toggle" aria-expanded="true">
+        Price Range <i class="fas fa-chevron-up filter-chevron"></i>
+      </button>
+      <div class="filter-group-body">
+        <div class="price-range-display">
+          <span id="priceMinLabel">&#8377;0</span>
+          <span id="priceMaxLabel">&#8377;25,000</span>
+        </div>
+        <div class="price-slider-wrap">
+          <input type="range" class="price-slider" id="priceSliderMin" min="0" max="25000" step="100" value="0" />
+        </div>
+        <div class="price-slider-wrap">
+          <input type="range" class="price-slider" id="priceSliderMax" min="0" max="25000" step="100" value="25000" />
+        </div>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <button class="filter-group-toggle" aria-expanded="true">
+        Sub-Category <i class="fas fa-chevron-up filter-chevron"></i>
+      </button>
+      <div class="filter-group-body" id="subcategoryFilterBody">
+        <p class="filter-count" style="margin:0;">Select a category above</p>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <button class="filter-group-toggle" aria-expanded="true">
+        Product Type <i class="fas fa-chevron-up filter-chevron"></i>
+      </button>
+      <div class="filter-group-body" id="productTypeFilterBody"></div>
+    </div>
+
+    <div class="filter-group">
+      <button class="filter-group-toggle" aria-expanded="true">
+        Availability <i class="fas fa-chevron-up filter-chevron"></i>
+      </button>
+      <div class="filter-group-body">
+        <label class="filter-check">
+          <input type="checkbox" id="inStockFilter" /> In Stock Only
+        </label>
+        <label class="filter-check">
+          <input type="checkbox" id="featuredFilter" /> Featured Only
+        </label>
+      </div>
+    </div>
+
+    <button class="clear-all-btn" id="clearAllBtn">Clear All Filters</button>
+  </aside><!-- /sidebar -->
+
+  <!-- ─── PRODUCT AREA ─── -->
+  <main class="shop-main">
+    <div class="shop-toolbar">
+      <div class="toolbar-left">
+        <button class="filter-toggle-btn" id="filterToggleBtn"><i class="fas fa-sliders-h"></i> Filters</button>
+        <span class="result-count" id="resultCount">Loading products…</span>
+      </div>
+      <div class="toolbar-right">
+        <div class="sort-wrap">
+          <label class="sort-label" for="sortSelect">Sort:</label>
+          <select class="sort-select" id="sortSelect">
+            <option value="">Featured</option>
+            <option value="newest">Newest First</option>
+            <option value="price_asc">Price: Low to High</option>
+            <option value="price_desc">Price: High to Low</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-grid" id="productGrid">
+      <div class="empty-shop-state"><i class="fas fa-circle-notch fa-spin"></i><p>Loading products…</p></div>
+    </div>
+
+    <div class="pagination" id="paginationWrap"></div>
+  </main>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'js/shop.js' %}"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      ShopPageInit({
+        csrfToken: "{{ csrf_token }}",
+        categoryApiUrl: "{% url 'category-api-list' %}",
+        subcategoryApiUrl: "{% url 'subcategory-api-list' %}",
+        productTypeApiUrl: "{% url 'product-type-api-list' %}",
+        productApiUrl: "{% url 'product-api-list' %}",
+        cartApiUrl: "{% url 'cart-api-list' %}",
+        productDetailUrlTemplate: "/product/__SLUG__/",
+      });
+    });
+  </script>
+{% endblock %}

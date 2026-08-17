@@ -1,0 +1,144 @@
+{% extends "frontend/_base.html" %}
+{% load static %}
+
+{% block title %}Checkout{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/cart.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/checkout.css' %}" />
+{% endblock %}
+
+{% block content %}
+
+<main class="cart-main">
+  <div class="cart-container">
+
+    <div class="cart-page-header">
+      <div class="cart-breadcrumb">
+        <a href="/home">Home</a> <i class="fas fa-chevron-right"></i>
+        <a href="/shop">Shop</a> <i class="fas fa-chevron-right"></i>
+        <a href="{% url 'cart-list' %}">Cart</a> <i class="fas fa-chevron-right"></i>
+        <span>Checkout</span>
+      </div>
+      <div class="cart-title-row">
+        <h1 class="cart-title">Check<em>out</em></h1>
+      </div>
+      <div class="checkout-steps">
+        <div class="cs-step cs-active"><div class="cs-dot"><i class="fas fa-shopping-bag"></i></div><span>Cart</span></div>
+        <div class="cs-line"></div>
+        <div class="cs-step cs-active"><div class="cs-dot"><i class="fas fa-map-marker-alt"></i></div><span>Address</span></div>
+        <div class="cs-line"></div>
+        <div class="cs-step cs-active"><div class="cs-dot"><i class="fas fa-credit-card"></i></div><span>Payment</span></div>
+        <div class="cs-line"></div>
+        <div class="cs-step"><div class="cs-dot"><i class="fas fa-check"></i></div><span>Confirm</span></div>
+      </div>
+    </div>
+
+    <div class="cart-loading-state" id="coLoadingState">
+      <i class="fas fa-circle-notch fa-spin"></i>
+      <p>Loading checkout…</p>
+    </div>
+
+    <div class="cart-grid" id="coGrid" style="display:none">
+
+      <div class="cart-items-col">
+
+        <!-- Address -->
+        <section class="co-section">
+          <h2 class="co-section-title"><i class="fas fa-map-marker-alt"></i> Shipping Address</h2>
+
+          <div class="co-address-list" id="coAddressList"></div>
+
+          <button class="co-add-address-btn" id="coAddAddressBtn"><i class="fas fa-plus"></i> Add New Address</button>
+
+          <form class="co-address-form" id="coAddressForm" style="display:none">
+            <div class="co-form-row">
+              <input type="text" name="full_name" placeholder="Full Name" required />
+              <input type="tel" name="mobile" placeholder="Mobile Number" required />
+            </div>
+            <input type="text" name="address_line1" placeholder="Address Line 1" required />
+            <input type="text" name="address_line2" placeholder="Address Line 2 (optional)" />
+            <div class="co-form-row">
+              <input type="text" name="city" placeholder="City" required />
+              <input type="text" name="state" placeholder="State" required />
+            </div>
+            <div class="co-form-row">
+              <input type="text" name="pincode" placeholder="Pincode" required />
+              <input type="text" name="country" placeholder="Country" value="India" required />
+            </div>
+            <label class="co-checkbox"><input type="checkbox" name="save_address" checked /> Save this address for later</label>
+            <div class="co-form-actions">
+              <button type="button" class="co-cancel-btn" id="coCancelAddressBtn">Cancel</button>
+              <button type="submit" class="cart-btn cart-btn-primary">Use This Address</button>
+            </div>
+          </form>
+        </section>
+
+        <!-- Payment Method -->
+        <section class="co-section">
+          <h2 class="co-section-title"><i class="fas fa-credit-card"></i> Payment Method</h2>
+          <div class="co-payment-options">
+            <label class="co-payment-option">
+              <input type="radio" name="paymentMethod" value="online" checked />
+              <div class="co-payment-info">
+                <span class="co-payment-label">Pay Online</span>
+                <span class="co-payment-desc">Pay the full amount now via UPI, Card or Net Banking.</span>
+              </div>
+            </label>
+            <label class="co-payment-option">
+              <input type="radio" name="paymentMethod" value="cod" />
+              <div class="co-payment-info">
+                <span class="co-payment-label">Cash on Delivery</span>
+                <span class="co-payment-desc">Pay a small advance now online, and the rest on delivery.</span>
+              </div>
+            </label>
+          </div>
+        </section>
+
+      </div>
+
+      <div class="cart-summary-col">
+        <div class="cart-summary-card">
+          <div class="cs-header">
+            <h2 class="cs-title">Order Summary</h2>
+            <span class="cs-item-count" id="csItemCount"></span>
+          </div>
+
+          <div class="co-summary-items" id="coSummaryItems"></div>
+
+          <div class="cs-breakdown">
+            <div class="cs-row"><span>Subtotal</span><span id="subtotalVal">&#8377;0</span></div>
+            <div class="cs-row"><span>Shipping</span><span id="shippingVal">&#8377;0</span></div>
+            <div class="cs-row" id="advanceRow" style="display:none"><span>Pay Now (Advance)</span><span id="advanceVal">&#8377;0</span></div>
+            <div class="cs-row" id="balanceRow" style="display:none"><span>Pay on Delivery</span><span id="balanceVal">&#8377;0</span></div>
+            <div class="cs-row cs-row-total"><span>Total</span><span id="totalVal">&#8377;0</span></div>
+          </div>
+
+          <button class="cart-btn cart-btn-dark cs-checkout-btn" id="placeOrderBtn">
+            Place Order <i class="fas fa-arrow-right"></i>
+          </button>
+
+          <div class="cs-secure-note"><i class="fas fa-lock"></i> Secure checkout</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'js/checkout.js' %}"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      CheckoutPageInit({
+        csrfToken: "{{ csrf_token }}",
+        cartApiUrl: "{% url 'cart-api-list' %}",
+        addressApiUrl: "{% url 'address-api-list' %}",
+        checkoutApiUrl: "{% url 'checkout-api-list' %}",
+        cartPageUrl: "{% url 'cart-list' %}",
+      });
+    });
+  </script>
+{% endblock %}

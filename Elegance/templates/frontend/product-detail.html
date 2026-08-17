@@ -1,0 +1,151 @@
+{% extends "frontend/_base.html" %}
+{% load static %}
+
+{% block title %}Product{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/product-detail.css' %}" />
+{% endblock %}
+
+{% block content %}
+
+<div class="pd-breadcrumb-bar">
+  <p class="pd-breadcrumb" id="pdBreadcrumb">
+    <a href="/home">Home</a> <i class="fas fa-chevron-right"></i>
+    <a href="/shop">Shop</a> <i class="fas fa-chevron-right"></i>
+    <span id="pdBreadcrumbName">Loading…</span>
+  </p>
+</div>
+
+<div class="pd-loading-state" id="pdLoadingState">
+  <i class="fas fa-circle-notch fa-spin"></i>
+  <p>Loading product…</p>
+</div>
+
+<div class="pd-error-state" id="pdErrorState" style="display:none">
+  <p id="pdErrorMsg">Product not found.</p>
+  <a href="/shop" class="pd-btn pd-btn-outline">Back to Shop</a>
+</div>
+
+<section class="pd-section" id="pdLayout" style="display:none">
+  <div class="pd-container">
+
+    <!-- ─── GALLERY ─── -->
+    <div class="pd-gallery">
+      <div class="pd-thumbs" id="pdThumbRow"></div>
+
+      <div class="pd-main-wrap" id="pdMainWrap">
+        <div class="pd-img-badge" id="pdImgBadge" style="display:none"></div>
+        <div class="pd-zoom-hint" id="pdZoomHint">
+          <i class="fas fa-search-plus"></i> Hover to zoom
+        </div>
+        <div class="pd-main-track" id="pdMainTrack"></div>
+        <div class="pd-zoom-lens" id="pdZoomLens"></div>
+        <button class="pd-img-nav pd-img-prev" id="pdImgPrev" aria-label="Previous image"><i class="fas fa-chevron-left"></i></button>
+        <button class="pd-img-nav pd-img-next" id="pdImgNext" aria-label="Next image"><i class="fas fa-chevron-right"></i></button>
+        <div class="pd-img-counter" id="pdImgCounter"></div>
+      </div>
+      <div class="pd-zoom-result" id="pdZoomResult"></div>
+
+    </div>
+
+    <!-- ─── INFO ─── -->
+    <div class="pd-details">
+
+      <div class="pd-top-row">
+        <span class="pd-brand">Elegance Couture</span>
+        <div class="pd-top-badges" id="pdTopBadges"></div>
+      </div>
+
+      <h1 class="pd-title" id="pdName"></h1>
+
+      <p class="pd-sku-row" id="pdSku"></p>
+
+      <div class="pd-price-block" id="pdPriceRow"></div>
+
+      <p class="pd-short-desc" id="pdShortDesc"></p>
+
+      <div class="pd-divider"></div>
+
+      <div class="pd-variant-groups" id="pdVariantGroups"></div>
+
+      <div class="pd-option-group">
+        <span class="pd-option-label">Quantity</span>
+        <div class="pd-cta-row">
+          <div class="pd-qty-wrap">
+            <button class="pd-qty-btn" id="pdQtyMinus" aria-label="Decrease quantity"><i class="fas fa-minus"></i></button>
+            <span class="pd-qty-val" id="pdQtyVal">1</span>
+            <button class="pd-qty-btn" id="pdQtyPlus" aria-label="Increase quantity"><i class="fas fa-plus"></i></button>
+          </div>
+          <button class="pd-btn-cart" id="pdAddCart"><i class="fas fa-shopping-bag"></i> Add to Cart</button>
+        </div>
+        <p class="pd-stock-note" id="pdStockNote"></p>
+      </div>
+
+      <button class="pd-btn-buy" id="pdBuyNow"><i class="fas fa-bolt"></i> Buy Now</button>
+
+      <div class="pd-trust-row">
+        <div class="pd-trust-item">
+          <i class="fas fa-truck"></i>
+          <div><span class="pd-trust-title">Free Delivery</span><span class="pd-trust-sub">Orders above &#8377;2,999</span></div>
+        </div>
+        <div class="pd-trust-item">
+          <i class="fas fa-undo-alt"></i>
+          <div><span class="pd-trust-title">Easy Returns</span><span class="pd-trust-sub">Within 7 days</span></div>
+        </div>
+        <div class="pd-trust-item">
+          <i class="fas fa-shield-alt"></i>
+          <div><span class="pd-trust-title">Secure Payment</span><span class="pd-trust-sub">100% protected</span></div>
+        </div>
+        <div class="pd-trust-item">
+          <i class="fas fa-star"></i>
+          <div><span class="pd-trust-title">Authentic</span><span class="pd-trust-sub">Handcrafted in India</span></div>
+        </div>
+      </div>
+
+      <div class="pd-share-row">
+        <span class="pd-share-label">Share:</span>
+        <a href="#" class="pd-share-btn" aria-label="Share on WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        <a href="#" class="pd-share-btn" aria-label="Share on Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="#" class="pd-share-btn" aria-label="Share on Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" class="pd-share-btn" aria-label="Copy link" id="pdShareCopy"><i class="fas fa-link"></i></a>
+      </div>
+
+    </div><!-- /pd-details -->
+
+  </div><!-- /pd-container -->
+
+  <!-- ─── TABS ─── -->
+  <div class="pd-tabs-wrap">
+    <div class="pd-tab-bar" role="tablist">
+      <button class="pd-tab-btn pd-tab-active" data-tab="description" role="tab">Description</button>
+      <button class="pd-tab-btn" data-tab="fabric" role="tab">Fabric &amp; Care</button>
+    </div>
+    <div class="pd-tab-panel pd-tab-panel-active" id="tab-description" role="tabpanel"></div>
+    <div class="pd-tab-panel" id="tab-fabric" role="tabpanel"></div>
+  </div>
+</section>
+
+<!-- ─── RELATED PRODUCTS ─── -->
+<section class="pd-related" id="pdRelatedSection" style="display:none">
+  <h2 class="pd-related-title">You May Also Like</h2>
+  <div class="pd-related-grid" id="pdRelatedGrid"></div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'js/product-detail.js' %}"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      ProductDetailPageInit({
+        csrfToken: "{{ csrf_token }}",
+        productSlug: "{{ product_slug }}",
+        productApiUrl: "{% url 'product-api-list' %}",
+        cartApiUrl: "{% url 'cart-api-list' %}",
+        productDetailUrlTemplate: "/product/__SLUG__/",
+        checkoutUrl: "{% url 'checkout-list' %}",
+      });
+    });
+  </script>
+{% endblock %}

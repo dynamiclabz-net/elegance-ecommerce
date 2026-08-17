@@ -1,0 +1,66 @@
+{% extends "frontend/admin/_base.html" %}
+{% load static %}
+
+{% block title %}Dashboard{% endblock %}
+{% block breadcrumb %}Overview{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="row g-3 mb-4" id="stat-tiles">
+  <!-- filled by JS -->
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-8">
+    <div class="e-card">
+      <div class="e-card-header">
+        <h2>Recent Orders</h2>
+        <a href="{% url 'admin-orders-list' %}" class="btn-e-outline">View all</a>
+      </div>
+      <div class="e-card-body p-0">
+        <div style="overflow-x:auto;">
+          <table class="e-table">
+            <thead>
+              <tr>
+                <th>Order</th>
+                <th>Customer</th>
+                <th>Amount</th>
+                <th>Payment</th>
+                <th>Status</th>
+                <th>Placed</th>
+              </tr>
+            </thead>
+            <tbody id="recent-orders-body">
+              <tr><td colspan="6"><div class="e-skeleton" style="height:14px;"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="e-card">
+      <div class="e-card-header">
+        <h2>Order Pipeline</h2>
+      </div>
+      <div class="e-card-body">
+        <div id="order-pipeline" class="d-flex flex-column gap-3"></div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/admin/admin_dashboard.js' %}"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    AdminDashboardInit({
+      csrfToken: "{{ csrf_token }}",
+      ordersApiUrl: "{% url 'admin-order-api-list' %}",
+      orderDetailUrlTemplate: "{% url 'admin-order-detail-detail' pk=0 %}",
+    });
+  });
+</script>
+{% endblock %}

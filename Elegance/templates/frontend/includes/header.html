@@ -1,0 +1,70 @@
+{% load static %}
+<!-- ══════════════════════════════════════════════════
+     TOP ANNOUNCEMENT BAR
+══════════════════════════════════════════════════ -->
+<div class="announcement-bar">
+  <div class="announce-inner">
+    <span>Free shipping on orders above ₹2,999</span>
+    <span class="announce-sep">✦</span>
+    <span>New arrivals every Friday</span>
+    <span class="announce-sep">✦</span>
+    <span>Customised stitching available — <a href="#">Book now</a></span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     NAVBAR
+══════════════════════════════════════════════════ -->
+<nav class="site-nav" id="siteNav">
+  <div class="nav-inner">
+    <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+    <ul class="nav-links nav-links-left" id="navLinks">
+      <li class="nav-item-dropdown">
+        <a href="/shop" class="nav-link">Shop <i class="fas fa-chevron-down nav-chevron"></i></a>
+        <div class="mega-drop">
+          <div class="mega-col">
+            <span class="mega-heading">By Type</span>
+            <a href="/shop">Unstitched Suits</a>
+            <a href="/shop">Semi-Stitched</a>
+            <a href="/shop">Ready-Mades</a>
+            <a href="/shop">Salwar Kameez</a>
+            <a href="/shop">Co-ord Sets</a>
+            <a href="/shop">Tops / Shirts</a>
+          </div>
+          <div class="mega-col">
+            <span class="mega-heading">By Occasion</span>
+            <a href="/shop">Casual Wear</a>
+            <a href="/shop">Work Wear</a>
+            <a href="/shop">Semi-Formal</a>
+            <a href="/shop">Occasion Wear</a>
+            <a href="/shop">Trousseau</a>
+            <a href="/shop">Festive</a>
+          </div>
+          <div class="mega-col mega-col-img">
+            <img src="{% static 'images/nav-new-season.png' %}" alt="New Arrivals" />
+            <span>New Season</span>
+          </div>
+        </div>
+      </li>
+      <li><a href="/home" class="nav-link">Home</a></li>
+      <li><a href="#" class="nav-link">New Arrivals</a></li>
+      <li><a href="#" class="nav-link nav-sale">Sale</a></li>
+    </ul>
+    <a href="/home" class="nav-brand">
+      <img src="{% static 'images/elegance-logo.png' %}" alt="Elegance Logo" class="nav-logo" />
+    </a>
+    <div class="nav-actions">
+      <button class="nav-icon-btn" aria-label="Search" id="searchToggle"><i class="fas fa-search"></i></button>
+      <button class="nav-icon-btn" aria-label="Wishlist"><i class="far fa-heart"></i></button>
+      <a href="{% url 'cart-list' %}" class="nav-icon-btn cart-btn" aria-label="Cart"><i class="fas fa-shopping-bag"></i><span class="cart-badge" data-count="0"></span></a>
+      <a href="{% url 'account-list' %}" class="btn-account">Account</a>
+    </div>
+  </div>
+  <div class="search-bar" id="searchBar">
+    <div class="search-inner">
+      <i class="fas fa-search search-icon-input"></i>
+      <input type="text" placeholder="Search for sarees, suits, co-ords…" class="search-input" id="searchInput" />
+      <button class="search-close" id="searchClose"><i class="fas fa-times"></i></button>
+    </div>
+  </div>
+</nav>

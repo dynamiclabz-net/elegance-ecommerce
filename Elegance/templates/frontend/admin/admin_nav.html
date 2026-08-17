@@ -1,0 +1,39 @@
+{% load static %}
+<aside class="e-sidebar" id="e-sidebar">
+  <div class="e-sidebar-brand">
+    <div class="mark">E</div>
+    <div class="name">Elegance<small>Admin Studio</small></div>
+  </div>
+
+  <nav class="e-nav">
+    <div class="e-nav-section">Overview</div>
+    <a href="{% url 'admin-dashboard-list' %}" class="{% if request.resolver_match.url_name == 'admin-dashboard-list' %}active{% endif %}">
+      <i class="bi bi-grid-1x2"></i> Dashboard
+    </a>
+
+    <div class="e-nav-section">Catalog</div>
+    <a href="{% url 'admin-categories-list' %}" class="{% if request.resolver_match.url_name == 'admin-categories-list' %}active{% endif %}">
+      <i class="bi bi-diagram-3"></i> Categories &amp; Types
+    </a>
+    <a href="{% url 'admin-products-list' %}" class="{% if request.resolver_match.url_name == 'admin-products-list' or request.resolver_match.url_name == 'admin-product-form-list' or request.resolver_match.url_name == 'admin-product-form-detail' %}active{% endif %}">
+      <i class="bi bi-bag"></i> Products
+    </a>
+
+    <div class="e-nav-section">Sales</div>
+    <a href="{% url 'admin-orders-list' %}" class="{% if request.resolver_match.url_name == 'admin-orders-list' or request.resolver_match.url_name == 'admin-order-detail-detail' %}active{% endif %}">
+      <i class="bi bi-receipt"></i> Orders
+    </a>
+  </nav>
+
+  <div class="e-sidebar-footer">
+    <button class="e-logout-btn" id="e-logout-btn">
+      <i class="bi bi-box-arrow-left"></i> Sign out
+    </button>
+  </div>
+</aside>
+
+<script>
+  document.getElementById("e-logout-btn").addEventListener("click", function () {
+    eAdminLogout("{% url 'logout-api-list' %}", "{% url 'admin-login-list' %}");
+  });
+</script>

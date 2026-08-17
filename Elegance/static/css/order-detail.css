@@ -1,0 +1,149 @@
+/* ═══════════════════════════════════════════════════════════════
+   ELEGANCE — Order Detail Page
+   Extends cart.css + checkout.css shared tokens/components.
+   ═══════════════════════════════════════════════════════════════ */
+
+.od-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 26px;
+}
+.od-header .cart-title { margin-bottom: 4px; }
+.od-placed-date { font-size: 13px; color: var(--text-muted); margin: 0; }
+
+.od-status-badge {
+  padding: 8px 18px;
+  border-radius: 30px;
+  font-size: 12px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  font-weight: 600;
+  white-space: nowrap;
+  background: var(--bg-cream);
+  border: 1px solid var(--border-md);
+  color: var(--text-dark);
+}
+.od-status-badge.status-placed,
+.od-status-badge.status-confirmed { color: #8a6d1e; border-color: #e4d9ad; background: #fbf6e6; }
+.od-status-badge.status-shipped,
+.od-status-badge.status-out_for_delivery { color: #2b6a8a; border-color: #bcdcec; background: #eaf5fb; }
+.od-status-badge.status-delivered { color: #2e7d52; border-color: #c3ddc9; background: #eef7f0; }
+.od-status-badge.status-cancelled,
+.od-status-badge.status-returned { color: #b3432b; border-color: #e6c3b8; background: #fbeee9; }
+
+/* ── TIMELINE ── */
+.od-timeline {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 36px;
+  position: relative;
+}
+.od-timeline.is-cancelled { justify-content: flex-start; }
+.od-tl-step {
+  flex: 1;
+  text-align: center;
+  position: relative;
+  color: var(--text-muted);
+}
+.od-tl-step::before {
+  content: "";
+  position: absolute;
+  top: 15px;
+  left: -50%;
+  width: 100%;
+  height: 2px;
+  background: var(--border-md);
+  z-index: 0;
+}
+.od-tl-step:first-child::before { display: none; }
+.od-tl-step.is-done::before { background: var(--gold); }
+.od-tl-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--bg-white);
+  border: 2px solid var(--border-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 10px;
+  position: relative;
+  z-index: 1;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.od-tl-step.is-done .od-tl-dot { border-color: var(--gold); background: var(--gold); color: #fff; }
+.od-tl-step.is-current .od-tl-dot { border-color: var(--gold); color: var(--gold); }
+.od-tl-label { font-size: 12px; letter-spacing: 0.3px; }
+.od-tl-step.is-done .od-tl-label,
+.od-tl-step.is-current .od-tl-label { color: var(--text-dark); font-weight: 600; }
+.od-tl-step.is-cancel .od-tl-dot { border-color: #b3432b; color: #b3432b; }
+
+/* ── ITEMS ── */
+.od-items-list { display: flex; flex-direction: column; gap: 14px; }
+.od-item-row {
+  display: flex;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+.od-item-row:last-child { border-bottom: none; }
+.od-item-img {
+  width: 72px;
+  height: 90px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--bg-cream);
+  flex-shrink: 0;
+}
+.od-item-img img { width: 100%; height: 100%; object-fit: cover; }
+.od-item-info { flex: 1; min-width: 0; }
+.od-item-name { font-size: 14.5px; font-weight: 500; color: var(--text-dark); margin: 0 0 4px; }
+.od-item-meta { font-size: 12.5px; color: var(--text-muted); margin: 0; }
+.od-item-price { font-size: 14px; color: var(--text-dark); font-weight: 600; text-align: right; white-space: nowrap; }
+
+/* ── ADDRESS / TRACKING TEXT ── */
+.od-address-text { font-size: 14px; color: var(--text-mid); line-height: 1.7; margin: 0; }
+
+/* ── PAYMENT META / WHATSAPP ── */
+.od-payment-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12.5px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+.od-payment-status {
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 11.5px;
+  text-transform: uppercase;
+  background: var(--bg-cream);
+}
+.od-payment-status.pay-paid { color: #2e7d52; background: #eef7f0; }
+.od-payment-status.pay-partial { color: #8a6d1e; background: #fbf6e6; }
+.od-payment-status.pay-pending,
+.od-payment-status.pay-failed { color: #b3432b; background: #fbeee9; }
+
+.od-whatsapp-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 12px;
+  border-radius: 4px;
+  border: 1px solid #25d366;
+  color: #1b8a4a;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+.od-whatsapp-link:hover { background: #eafaf0; }
+.od-whatsapp-link i { font-size: 15px; }

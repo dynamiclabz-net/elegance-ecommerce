@@ -1,0 +1,51 @@
+{% load static %}
+<!-- ══════════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════════ -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-col">
+      <img src="{% static 'images/elegance-logo.png' %}" alt="Elegance" class="footer-logo" />
+      <p>Elegance brings you premium ethnic wear for every occasion, celebrating tradition with contemporary style.</p>
+      <div class="footer-socials">
+        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="#" aria-label="Pinterest"><i class="fab fa-pinterest"></i></a>
+        <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <span class="footer-heading">Shop</span>
+      <ul>
+        <li><a href="/shop">New Arrivals</a></li>
+        <li><a href="/shop">Salwar Suits</a></li>
+        <li><a href="/shop">Co-ord Sets</a></li>
+        <li><a href="/shop">Sale</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <span class="footer-heading">Customer Care</span>
+      <ul>
+        <li><a href="#">Contact Us</a></li>
+        <li><a href="#">Shipping Info</a></li>
+        <li><a href="#">Returns</a></li>
+        <li><a href="#">FAQ</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <span class="footer-heading">Newsletter</span>
+      <p>Get 10% off your first order</p>
+      <div class="footer-newsletter">
+        <input type="email" placeholder="Your email" />
+        <button type="button"><i class="fas fa-arrow-right"></i></button>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; {% now "Y" %} ELEGANCE. All rights reserved.</p>
+    <div class="footer-links">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+      <a href="#">Cookie Policy</a>
+    </div>
+  </div>
+</footer>

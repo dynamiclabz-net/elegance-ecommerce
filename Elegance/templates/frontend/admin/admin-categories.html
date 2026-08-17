@@ -1,0 +1,207 @@
+{% extends "frontend/admin/_base.html" %}
+{% load static %}
+
+{% block title %}Categories &amp; Types{% endblock %}
+{% block breadcrumb %}Catalog{% endblock %}
+{% block page_title %}Categories &amp; Types{% endblock %}
+
+{% block content %}
+<div class="e-tabs">
+  <button class="active" data-tab="categories">Categories</button>
+  <button data-tab="subcategories">Sub-Categories</button>
+  <button data-tab="product-types">Product Types</button>
+</div>
+
+<!-- Categories tab -->
+<div class="e-tab-panel" id="tab-categories">
+  <div class="e-card">
+    <div class="e-card-header">
+      <h2>Categories</h2>
+      <button class="btn-e-primary" data-bs-toggle="modal" data-bs-target="#category-modal" onclick="openCategoryModal()">
+        <i class="bi bi-plus-lg"></i> New Category
+      </button>
+    </div>
+    <div class="e-card-body p-0">
+      <div style="overflow-x:auto;">
+        <table class="e-table">
+          <thead>
+            <tr><th>Image</th><th>Name</th><th>Slug</th><th>Sub-categories</th><th>Status</th><th></th></tr>
+          </thead>
+          <tbody id="categories-body">
+            <tr><td colspan="6"><div class="e-skeleton" style="height:14px;"></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Sub-categories tab -->
+<div class="e-tab-panel d-none" id="tab-subcategories">
+  <div class="e-card">
+    <div class="e-card-header">
+      <h2>Sub-Categories</h2>
+      <button class="btn-e-primary" data-bs-toggle="modal" data-bs-target="#subcategory-modal" onclick="openSubCategoryModal()">
+        <i class="bi bi-plus-lg"></i> New Sub-Category
+      </button>
+    </div>
+    <div class="e-card-body p-0">
+      <div style="overflow-x:auto;">
+        <table class="e-table">
+          <thead>
+            <tr><th>Name</th><th>Category</th><th>Slug</th><th>Status</th><th></th></tr>
+          </thead>
+          <tbody id="subcategories-body">
+            <tr><td colspan="5"><div class="e-skeleton" style="height:14px;"></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Product types tab -->
+<div class="e-tab-panel d-none" id="tab-product-types">
+  <div class="e-card">
+    <div class="e-card-header">
+      <h2>Product Types</h2>
+      <button class="btn-e-primary" data-bs-toggle="modal" data-bs-target="#product-type-modal" onclick="openProductTypeModal()">
+        <i class="bi bi-plus-lg"></i> New Product Type
+      </button>
+    </div>
+    <div class="e-card-body p-0">
+      <div style="overflow-x:auto;">
+        <table class="e-table">
+          <thead>
+            <tr><th>Name</th><th>Slug</th><th>Status</th><th></th></tr>
+          </thead>
+          <tbody id="product-types-body">
+            <tr><td colspan="4"><div class="e-skeleton" style="height:14px;"></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Category Modal -->
+<div class="modal fade e-modal" id="category-modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="category-form">
+        <div class="modal-header">
+          <h5 class="modal-title" id="category-modal-title">New Category</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="category-id">
+          <div class="e-field">
+            <label class="e-label">Name <span class="req">*</span></label>
+            <input type="text" class="e-input" id="category-name" required>
+          </div>
+          <div class="e-field">
+            <label class="e-label">Description</label>
+            <textarea class="e-input" id="category-description" rows="3"></textarea>
+          </div>
+          <div class="e-field">
+            <label class="e-label">Image</label>
+            <input type="file" class="e-input" id="category-image" accept="image/*">
+          </div>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="category-is-active" checked>
+            <label class="form-check-label" for="category-is-active" style="font-size:13px;">Active</label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-e-outline" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn-e-primary" id="category-save-btn">Save Category</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Sub-category Modal -->
+<div class="modal fade e-modal" id="subcategory-modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="subcategory-form">
+        <div class="modal-header">
+          <h5 class="modal-title" id="subcategory-modal-title">New Sub-Category</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="subcategory-id">
+          <div class="e-field">
+            <label class="e-label">Category <span class="req">*</span></label>
+            <select class="e-select" id="subcategory-category" required></select>
+          </div>
+          <div class="e-field">
+            <label class="e-label">Name <span class="req">*</span></label>
+            <input type="text" class="e-input" id="subcategory-name" required>
+          </div>
+          <div class="e-field">
+            <label class="e-label">Image</label>
+            <input type="file" class="e-input" id="subcategory-image" accept="image/*">
+          </div>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="subcategory-is-active" checked>
+            <label class="form-check-label" for="subcategory-is-active" style="font-size:13px;">Active</label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-e-outline" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn-e-primary" id="subcategory-save-btn">Save Sub-Category</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Product Type Modal -->
+<div class="modal fade e-modal" id="product-type-modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="product-type-form">
+        <div class="modal-header">
+          <h5 class="modal-title" id="product-type-modal-title">New Product Type</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="product-type-id">
+          <div class="e-field">
+            <label class="e-label">Name <span class="req">*</span></label>
+            <input type="text" class="e-input" id="product-type-name" placeholder="e.g. Casual, Work, Occasion" required>
+          </div>
+          <div class="e-field">
+            <label class="e-label">Description</label>
+            <textarea class="e-input" id="product-type-description" rows="3"></textarea>
+          </div>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="product-type-is-active" checked>
+            <label class="form-check-label" for="product-type-is-active" style="font-size:13px;">Active</label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-e-outline" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn-e-primary" id="product-type-save-btn">Save Product Type</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/admin/admin_categories.js' %}"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    AdminCategoriesInit({
+      csrfToken: "{{ csrf_token }}",
+      categoryApiUrl: "{% url 'category-api-list' %}",
+      subcategoryApiUrl: "{% url 'subcategory-api-list' %}",
+      productTypeApiUrl: "{% url 'product-type-api-list' %}",
+    });
+  });
+</script>
+{% endblock %}

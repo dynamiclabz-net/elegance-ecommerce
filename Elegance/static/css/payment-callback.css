@@ -1,0 +1,33 @@
+/* ═══════════════════════════════════════════════════════════════
+   ELEGANCE — Payment Callback Page
+   ═══════════════════════════════════════════════════════════════ */
+
+.pc-main {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+.pc-card {
+  max-width: 440px;
+  text-align: center;
+  padding: 48px 36px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.pc-icon { font-size: 46px; color: var(--gold); margin-bottom: 20px; display: block; }
+.pc-icon-success { color: #2e7d52; }
+.pc-icon-error { color: #c0392b; }
+.pc-title { font-family: var(--serif); font-size: 24px; font-weight: 500; margin: 0 0 10px; }
+.pc-text { font-size: 14px; color: var(--text-muted); margin: 0 0 24px; }
+.pc-btn {
+  display: inline-block;
+  padding: 13px 28px;
+  background: var(--text-dark);
+  color: var(--bg-white);
+  border-radius: 4px;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+.pc-btn:hover { background: var(--gold); }

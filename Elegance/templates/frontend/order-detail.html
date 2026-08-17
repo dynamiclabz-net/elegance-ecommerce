@@ -1,0 +1,104 @@
+{% extends "frontend/_base.html" %}
+{% load static %}
+
+{% block title %}Order Details{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/cart.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/checkout.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/order-detail.css' %}" />
+{% endblock %}
+
+{% block content %}
+
+<main class="cart-main">
+  <div class="cart-container">
+
+    <div class="cart-breadcrumb">
+      <a href="/home">Home</a> <i class="fas fa-chevron-right"></i>
+      <a href="{% url 'account-list' %}">Account</a> <i class="fas fa-chevron-right"></i>
+      <span>Order Details</span>
+    </div>
+
+    <div class="cart-loading-state" id="odLoadingState">
+      <i class="fas fa-circle-notch fa-spin"></i>
+      <p>Loading order…</p>
+    </div>
+
+    <div class="cart-empty-state" id="odErrorState" style="display:none">
+      <p id="odErrorMsg">Order not found.</p>
+      <a href="{% url 'account-list' %}" class="cart-btn cart-btn-primary">Back to Account</a>
+    </div>
+
+    <div id="odContent" style="display:none">
+
+      <div class="od-header">
+        <div>
+          <h1 class="cart-title">Order <em id="odOrderNumber"></em></h1>
+          <p class="od-placed-date" id="odPlacedDate"></p>
+        </div>
+        <span class="od-status-badge" id="odStatusBadge"></span>
+      </div>
+
+      <!-- Status timeline -->
+      <div class="od-timeline" id="odTimeline"></div>
+
+      <div class="cart-grid">
+        <div class="cart-items-col">
+
+          <section class="co-section">
+            <h2 class="co-section-title"><i class="fas fa-shopping-bag"></i> Items</h2>
+            <div class="od-items-list" id="odItemsList"></div>
+          </section>
+
+          <section class="co-section">
+            <h2 class="co-section-title"><i class="fas fa-map-marker-alt"></i> Shipping Address</h2>
+            <p class="od-address-text" id="odAddressText"></p>
+          </section>
+
+          <section class="co-section" id="odTrackingSection" style="display:none">
+            <h2 class="co-section-title"><i class="fas fa-truck"></i> Tracking</h2>
+            <p class="od-address-text" id="odTrackingText"></p>
+          </section>
+
+        </div>
+
+        <div class="cart-summary-col">
+          <div class="cart-summary-card">
+            <div class="cs-header"><h2 class="cs-title">Payment Summary</h2></div>
+            <div class="cs-breakdown">
+              <div class="cs-row"><span>Subtotal</span><span id="odSubtotal"></span></div>
+              <div class="cs-row"><span>Shipping</span><span id="odShipping"></span></div>
+              <div class="cs-row" id="odAdvanceRow" style="display:none"><span>Paid (Advance)</span><span id="odAdvance"></span></div>
+              <div class="cs-row" id="odBalanceRow" style="display:none"><span>Due on Delivery</span><span id="odBalance"></span></div>
+              <div class="cs-row cs-row-total"><span>Total</span><span id="odTotal"></span></div>
+            </div>
+            <div class="od-payment-meta">
+              <span id="odPaymentMethod"></span>
+              <span class="od-payment-status" id="odPaymentStatus"></span>
+            </div>
+            <a href="#" class="od-whatsapp-link" id="odWhatsappLink" target="_blank" rel="noopener">
+              <i class="fab fa-whatsapp"></i> Need to return this order?
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'js/order-detail.js' %}"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      OrderDetailPageInit({
+        csrfToken: "{{ csrf_token }}",
+        orderId: "{{ order_id }}",
+        myOrderApiUrl: "{% url 'my-order-api-detail' pk=order_id %}",
+      });
+    });
+  </script>
+{% endblock %}

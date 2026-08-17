@@ -1,0 +1,86 @@
+{% extends "frontend/admin/_base.html" %}
+{% load static %}
+
+{% block title %}Orders{% endblock %}
+{% block breadcrumb %}Sales{% endblock %}
+{% block page_title %}Orders{% endblock %}
+
+{% block content %}
+<div class="e-card mb-3">
+  <div class="e-card-body">
+    <div class="row g-2 align-items-end">
+      <div class="col-md-4">
+        <label class="e-label">Search</label>
+        <input type="text" class="e-input" id="filter-search" placeholder="Order #, name, mobile...">
+      </div>
+      <div class="col-md-3">
+        <label class="e-label">Order Status</label>
+        <select class="e-select" id="filter-order-status">
+          <option value="">All</option>
+          <option value="placed">Placed</option>
+          <option value="confirmed">Confirmed</option>
+          <option value="processing">Processing</option>
+          <option value="shipped">Shipped</option>
+          <option value="out_for_delivery">Out for Delivery</option>
+          <option value="delivered">Delivered</option>
+          <option value="cancelled">Cancelled</option>
+          <option value="returned">Returned</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label class="e-label">Payment Method</label>
+        <select class="e-select" id="filter-payment-method">
+          <option value="">All</option>
+          <option value="cod">Cash on Delivery</option>
+          <option value="online">Online Payment</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <button class="btn-e-outline w-100" id="filter-clear-btn">Clear</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="e-card">
+  <div class="e-card-header">
+    <h2>All Orders</h2>
+    <span class="text-muted" id="orders-count" style="font-size:12.5px;"></span>
+  </div>
+  <div class="e-card-body p-0">
+    <div style="overflow-x:auto;">
+      <table class="e-table">
+        <thead>
+          <tr>
+            <th>Order #</th><th>Customer</th><th>Items</th><th>Amount</th>
+            <th>Payment</th><th>Status</th><th>Placed</th><th></th>
+          </tr>
+        </thead>
+        <tbody id="orders-body">
+          <tr><td colspan="8"><div class="e-skeleton" style="height:14px;"></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="e-card-body pt-0 d-flex justify-content-between align-items-center">
+    <span class="text-muted" style="font-size:12.5px;" id="pagination-info"></span>
+    <div class="d-flex gap-2">
+      <button class="btn-e-outline" id="prev-page-btn"><i class="bi bi-chevron-left"></i></button>
+      <button class="btn-e-outline" id="next-page-btn"><i class="bi bi-chevron-right"></i></button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/admin/admin_orders.js' %}"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    AdminOrdersInit({
+      csrfToken: "{{ csrf_token }}",
+      ordersApiUrl: "{% url 'admin-order-api-list' %}",
+      orderDetailUrlTemplate: "{% url 'admin-order-detail-detail' pk=0 %}",
+    });
+  });
+</script>
+{% endblock %}

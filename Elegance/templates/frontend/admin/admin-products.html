@@ -1,0 +1,83 @@
+{% extends "frontend/admin/_base.html" %}
+{% load static %}
+
+{% block title %}Products{% endblock %}
+{% block breadcrumb %}Catalog{% endblock %}
+{% block page_title %}Products{% endblock %}
+
+{% block content %}
+<div class="e-card mb-3">
+  <div class="e-card-body">
+    <div class="row g-2 align-items-end">
+      <div class="col-md-4">
+        <label class="e-label">Search</label>
+        <input type="text" class="e-input" id="filter-search" placeholder="Name, SKU...">
+      </div>
+      <div class="col-md-3">
+        <label class="e-label">Category</label>
+        <select class="e-select" id="filter-category">
+          <option value="">All Categories</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="e-label">Status</label>
+        <select class="e-select" id="filter-status">
+          <option value="">All</option>
+          <option value="true">Active</option>
+          <option value="false">Inactive</option>
+        </select>
+      </div>
+      <div class="col-md-3 d-flex gap-2">
+        <button class="btn-e-outline flex-fill" id="filter-clear-btn">Clear</button>
+        <a href="{% url 'admin-product-form-list' %}" class="btn-e-primary flex-fill text-center">
+          <i class="bi bi-plus-lg"></i> New Product
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="e-card">
+  <div class="e-card-header">
+    <h2>All Products</h2>
+    <span class="text-muted" id="products-count" style="font-size:12.5px;"></span>
+  </div>
+  <div class="e-card-body p-0">
+    <div style="overflow-x:auto;">
+      <table class="e-table">
+        <thead>
+          <tr>
+            <th>Image</th><th>Name</th><th>SKU</th><th>Category</th>
+            <th>Price</th><th>Stock</th><th>Status</th><th></th>
+          </tr>
+        </thead>
+        <tbody id="products-body">
+          <tr><td colspan="8"><div class="e-skeleton" style="height:14px;"></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="e-card-body pt-0 d-flex justify-content-between align-items-center">
+    <span class="text-muted" style="font-size:12.5px;" id="pagination-info"></span>
+    <div class="d-flex gap-2">
+      <button class="btn-e-outline" id="prev-page-btn"><i class="bi bi-chevron-left"></i></button>
+      <button class="btn-e-outline" id="next-page-btn"><i class="bi bi-chevron-right"></i></button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/admin/admin_products.js' %}"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    AdminProductsInit({
+      csrfToken: "{{ csrf_token }}",
+      productApiUrl: "{% url 'product-api-list' %}",
+      categoryApiUrl: "{% url 'category-api-list' %}",
+      productFormUrlTemplate: "{% url 'admin-product-form-detail' pk=0 %}",
+      newProductUrl: "{% url 'admin-product-form-list' %}",
+    });
+  });
+</script>
+{% endblock %}

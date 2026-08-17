@@ -1,0 +1,354 @@
+{% extends "frontend/_base.html" %}
+{% load static %}
+
+{% block title %}My Account{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/account.css' %}" />
+{% endblock %}
+
+{% block content %}
+
+<!-- ══════════════════════════════════════════════════
+     PAGE HEADER
+══════════════════════════════════════════════════ -->
+<section class="account-header">
+  <div class="account-header-inner">
+    <div>
+      <h1 class="account-title">My <em>Account</em></h1>
+      <p class="account-subtitle">Manage your profile, orders &amp; addresses</p>
+    </div>
+    <button class="btn-logout" id="logoutBtn">
+      <i class="fas fa-sign-out-alt"></i> Logout
+    </button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     MAIN CONTENT
+══════════════════════════════════════════════════ -->
+<div class="account-container">
+
+  <!-- ── SIDEBAR NAV ── -->
+  <aside class="account-sidebar">
+    <div class="sidebar-menu">
+      <button class="sidebar-item sidebar-item-active" data-tab="profile">
+        <i class="fas fa-user"></i>
+        <span>My Profile</span>
+      </button>
+      <button class="sidebar-item" data-tab="orders">
+        <i class="fas fa-box-open"></i>
+        <span>My Orders</span>
+        <span class="badge-count" id="ordersBadge" hidden>0</span>
+      </button>
+      <button class="sidebar-item" data-tab="addresses">
+        <i class="fas fa-map-marker-alt"></i>
+        <span>Addresses</span>
+      </button>
+      <button class="sidebar-item" data-tab="wishlist">
+        <i class="fas fa-heart"></i>
+        <span>Wishlist</span>
+      </button>
+      <button class="sidebar-item" data-tab="password">
+        <i class="fas fa-lock"></i>
+        <span>Change Password</span>
+      </button>
+      <button class="sidebar-item" data-tab="settings">
+        <i class="fas fa-cog"></i>
+        <span>Account Settings</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ── CONTENT PANEL ── -->
+  <main class="account-main">
+
+    <!-- ═══ MY PROFILE ═══ -->
+    <div class="account-panel account-panel-active" data-panel="profile">
+      <div class="panel-header">
+        <h2>My Profile</h2>
+      </div>
+
+      <div class="form-help-banner" id="profileIncompleteBanner" style="display:none;">
+        <i class="fas fa-info-circle"></i>
+        <span>Your profile is incomplete. Please add your name and email below so we can personalise your orders.</span>
+      </div>
+
+      <!-- Profile card -->
+      <div class="profile-card">
+        <div class="profile-avatar">
+          <div class="profile-avatar-initials" id="profileAvatarInitials">?</div>
+          <button class="avatar-edit" title="Change avatar" id="avatarEditBtn" type="button">
+            <i class="fas fa-camera"></i>
+          </button>
+        </div>
+        <div class="profile-info">
+          <h3 id="profileDisplayName">—</h3>
+          <p class="member-since" id="profileMemberSince">Member since —</p>
+          <p class="profile-email" id="profileDisplayContact">—</p>
+          <div class="profile-stats">
+            <div class="stat">
+              <span class="stat-val" id="statOrders">0</span>
+              <span class="stat-label">Orders</span>
+            </div>
+            <div class="stat">
+              <span class="stat-val" id="statSpent">₹0</span>
+              <span class="stat-label">Total Spent</span>
+            </div>
+            <div class="stat">
+              <span class="stat-val" id="statRole">Customer</span>
+              <span class="stat-label">Account Type</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edit form -->
+      <div class="profile-form">
+        <h3 class="form-title">Edit Profile Information</h3>
+        <form id="profileForm" class="form-grid">
+          <div class="form-group">
+            <label for="firstName">First Name</label>
+            <input type="text" id="firstName" class="form-control-modern" placeholder="e.g. Priya" required />
+          </div>
+          <div class="form-group">
+            <label for="lastName">Last Name</label>
+            <input type="text" id="lastName" class="form-control-modern" placeholder="e.g. Sharma" required />
+          </div>
+          <div class="form-group form-group-full">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" class="form-control-modern" placeholder="you@example.com" />
+          </div>
+          <div class="form-group">
+            <label for="contactNumber">Mobile Number <span class="field-hint">(login ID — cannot be changed)</span></label>
+            <input type="tel" id="contactNumber" class="form-control-modern" disabled />
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn-primary-modern" id="profileSaveBtn">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ═══ MY ORDERS ═══ -->
+    <div class="account-panel" data-panel="orders">
+      <div class="panel-header">
+        <h2>My Orders</h2>
+        <div class="orders-filter">
+          <button class="filter-chip filter-chip-active" data-filter="all">All</button>
+          <button class="filter-chip" data-filter="delivered">Delivered</button>
+          <button class="filter-chip" data-filter="pending">In Progress</button>
+          <button class="filter-chip" data-filter="cancelled">Cancelled</button>
+        </div>
+      </div>
+
+      <div class="orders-list" id="ordersList">
+        <div class="empty-state">
+          <i class="fas fa-box-open"></i>
+          <p class="empty-title">Loading your orders…</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ ADDRESSES ═══ -->
+    <div class="account-panel" data-panel="addresses">
+      <div class="panel-header">
+        <h2>Saved Addresses</h2>
+        <button class="btn-add-address" id="addAddressBtn" type="button">
+          <i class="fas fa-plus"></i> Add New Address
+        </button>
+      </div>
+
+      <div class="addresses-grid" id="addressesGrid">
+        <div class="empty-state">
+          <i class="fas fa-map-marker-alt"></i>
+          <p class="empty-title">Loading your addresses…</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ WISHLIST ═══ -->
+    <div class="account-panel" data-panel="wishlist">
+      <div class="panel-header">
+        <h2>My Wishlist</h2>
+      </div>
+      <div class="coming-soon">
+        <i class="far fa-heart"></i>
+        <h3>Wishlist is coming soon</h3>
+        <p>Save your favourite pieces here once our wishlist feature goes live with the shop.</p>
+      </div>
+    </div>
+
+    <!-- ═══ CHANGE PASSWORD ═══ -->
+    <div class="account-panel" data-panel="password">
+      <div class="panel-header">
+        <h2>Change Password</h2>
+      </div>
+      <div class="coming-soon">
+        <i class="fas fa-lock"></i>
+        <h3>You sign in with a mobile OTP</h3>
+        <p>Your account is secured with one-time passcodes sent to your mobile number, so there's no password to manage.</p>
+      </div>
+    </div>
+
+    <!-- ═══ ACCOUNT SETTINGS ═══ -->
+    <div class="account-panel" data-panel="settings">
+      <div class="panel-header">
+        <h2>Account Settings</h2>
+      </div>
+      <div class="coming-soon">
+        <i class="fas fa-cog"></i>
+        <h3>More settings are on the way</h3>
+        <p>Notification preferences and account deletion controls will be available here soon.</p>
+      </div>
+    </div>
+
+  </main>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     ADD / EDIT ADDRESS MODAL
+══════════════════════════════════════════════════ -->
+<div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="addressModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addressModalLabel">Add New Address</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form id="addressForm">
+        <div class="modal-body">
+          <input type="hidden" id="addressId" value="" />
+          <div class="form-grid" style="margin-bottom:0;">
+            <div class="form-group form-group-full">
+              <label for="addrFullName">Full Name</label>
+              <input type="text" id="addrFullName" class="form-control-modern" required />
+            </div>
+            <div class="form-group form-group-full">
+              <label for="addrMobile">Mobile Number</label>
+              <input type="tel" id="addrMobile" class="form-control-modern" required />
+            </div>
+            <div class="form-group form-group-full">
+              <label for="addrLine1">Address Line 1</label>
+              <input type="text" id="addrLine1" class="form-control-modern" required />
+            </div>
+            <div class="form-group form-group-full">
+              <label for="addrLine2">Address Line 2 <span class="field-hint">(optional)</span></label>
+              <input type="text" id="addrLine2" class="form-control-modern" />
+            </div>
+            <div class="form-group form-group-full">
+              <label for="addrLandmark">Landmark <span class="field-hint">(optional)</span></label>
+              <input type="text" id="addrLandmark" class="form-control-modern" />
+            </div>
+            <div class="form-group">
+              <label for="addrCity">City</label>
+              <input type="text" id="addrCity" class="form-control-modern" required />
+            </div>
+            <div class="form-group">
+              <label for="addrState">State</label>
+              <input type="text" id="addrState" class="form-control-modern" required />
+            </div>
+            <div class="form-group">
+              <label for="addrPincode">Pincode</label>
+              <input type="text" id="addrPincode" class="form-control-modern" required />
+            </div>
+            <div class="form-group">
+              <label for="addrType">Address Type</label>
+              <select id="addrType" class="form-control-modern">
+                <option value="home">Home</option>
+                <option value="work">Work</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="form-group form-group-full">
+              <label class="checkbox-custom" style="text-transform:none;font-weight:400;">
+                <input type="checkbox" id="addrIsDefault" style="width:16px;height:16px;accent-color:var(--gold);" />
+                <span>Set as default address</span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary-modern" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn-primary-modern" id="addressSaveBtn">Save Address</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     MOBILE OTP LOGIN MODAL (non-dismissable — blocks the page
+     until the visitor verifies their mobile number)
+══════════════════════════════════════════════════ -->
+<div class="modal fade" id="otpLoginModal" tabindex="-1" aria-labelledby="otpLoginModalLabel" aria-hidden="true"
+     data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="otpLoginModalLabel"><i class="fas fa-user-lock me-2"></i>Sign in to your account</h5>
+      </div>
+      <div class="modal-body">
+        <div class="e-login-alert" id="otpAlert" style="display:none;background:#ffebee;color:#c62828;border-radius:6px;padding:10px 14px;font-size:13px;margin-bottom:16px;"></div>
+
+        <!-- Step 1: mobile number -->
+        <div id="otpStepMobile">
+          <p class="form-help-text" style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">
+            Enter your mobile number to sign in or create your Elegance account.
+          </p>
+          <div class="form-group">
+            <label for="otpMobile">Mobile Number</label>
+            <input type="tel" id="otpMobile" class="form-control-modern" placeholder="10-digit mobile number" maxlength="15" autocomplete="tel" />
+          </div>
+          <button type="button" class="btn-primary-modern w-100" style="width:100%;margin-top:16px;" id="otpSendBtn">
+            Send OTP
+          </button>
+        </div>
+
+        <!-- Step 2: OTP verification -->
+        <div id="otpStepVerify" style="display:none;">
+          <p class="form-help-text" style="font-size:13px;color:var(--text-muted);margin-bottom:6px;">
+            Enter the 6-digit OTP sent to <strong id="otpMobileDisplay"></strong>.
+          </p>
+          <p style="font-size:12px;color:var(--gold);margin-bottom:16px;">
+            <i class="fas fa-info-circle"></i> Dev mode: the OTP has been auto-filled below for you.
+          </p>
+          <div class="form-group">
+            <label for="otpCode">One-Time Passcode</label>
+            <input type="text" id="otpCode" class="form-control-modern" placeholder="6-digit OTP" maxlength="6" inputmode="numeric" style="letter-spacing:6px;font-size:18px;text-align:center;" />
+          </div>
+          <button type="button" class="btn-primary-modern w-100" style="width:100%;margin-top:16px;" id="otpVerifyBtn">
+            Verify &amp; Continue
+          </button>
+          <button type="button" class="btn-secondary-modern w-100" style="width:100%;margin-top:10px;" id="otpChangeNumberBtn">
+            Use a different number
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'js/account.js' %}"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      AccountPageInit({
+        csrfToken: "{{ csrf_token }}",
+        sessionApiUrl: "{% url 'session-api-list' %}",
+        otpRequestApiUrl: "{% url 'otp-api-list' %}",
+        otpVerifyUrlTemplate: "{% url 'otp-api-detail' pk=0 %}",
+        logoutApiUrl: "{% url 'logout-api-list' %}",
+        profileApiUrl: "{% url 'profile-api-list' %}",
+        profileUpdateUrlTemplate: "{% url 'profile-api-detail' pk=0 %}",
+        addressApiUrl: "{% url 'address-api-list' %}",
+        addressDetailUrlTemplate: "{% url 'address-api-detail' pk=0 %}",
+        myOrdersApiUrl: "{% url 'my-order-api-list' %}",
+        accountUrl: "{% url 'account-list' %}",
+      });
+    });
+  </script>
+{% endblock %}

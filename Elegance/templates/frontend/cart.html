@@ -1,0 +1,112 @@
+{% extends "frontend/_base.html" %}
+{% load static %}
+
+{% block title %}Your Cart{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/cart.css' %}" />
+{% endblock %}
+
+{% block content %}
+
+<main class="cart-main">
+  <div class="cart-container">
+
+    <div class="cart-page-header">
+      <div class="cart-breadcrumb">
+        <a href="/home">Home</a> <i class="fas fa-chevron-right"></i>
+        <a href="/shop">Shop</a> <i class="fas fa-chevron-right"></i>
+        <span>Cart</span>
+      </div>
+      <div class="cart-title-row">
+        <h1 class="cart-title">Your <em>Cart</em></h1>
+        <span class="cart-count-label" id="cartCountLabel"></span>
+      </div>
+      <div class="checkout-steps">
+        <div class="cs-step cs-active"><div class="cs-dot"><i class="fas fa-shopping-bag"></i></div><span>Cart</span></div>
+        <div class="cs-line"></div>
+        <div class="cs-step"><div class="cs-dot"><i class="fas fa-map-marker-alt"></i></div><span>Address</span></div>
+        <div class="cs-line"></div>
+        <div class="cs-step"><div class="cs-dot"><i class="fas fa-credit-card"></i></div><span>Payment</span></div>
+        <div class="cs-line"></div>
+        <div class="cs-step"><div class="cs-dot"><i class="fas fa-check"></i></div><span>Confirm</span></div>
+      </div>
+    </div>
+
+    <div class="cart-loading-state" id="cartLoadingState">
+      <i class="fas fa-circle-notch fa-spin"></i>
+      <p>Loading your cart…</p>
+    </div>
+
+    <div class="cart-empty-state" id="cartEmptyState" style="display:none">
+      <i class="fas fa-shopping-bag"></i>
+      <h2>Your cart is empty</h2>
+      <p>Looks like you haven&apos;t added anything yet.</p>
+      <a href="/shop" class="cart-btn cart-btn-primary">Continue Shopping</a>
+    </div>
+
+    <div class="cart-grid" id="cartGrid" style="display:none">
+
+      <div class="cart-items-col">
+        <div class="free-shipping-bar" id="freeShippingBar">
+          <div class="fsb-text">
+            <i class="fas fa-truck"></i>
+            <span id="fsbMsg"></span>
+          </div>
+          <div class="fsb-track"><div class="fsb-fill" id="fsbFill" style="width:0%"></div></div>
+        </div>
+
+        <div class="cart-items-list" id="cartItemsList"></div>
+      </div>
+
+      <div class="cart-summary-col">
+        <div class="cart-summary-card">
+          <div class="cs-header">
+            <h2 class="cs-title">Order Summary</h2>
+            <span class="cs-item-count" id="csItemCount"></span>
+          </div>
+
+          <div class="cs-breakdown">
+            <div class="cs-row">
+              <span>Subtotal</span>
+              <span id="subtotalVal">&#8377;0</span>
+            </div>
+            <div class="cs-row">
+              <span>Shipping</span>
+              <span id="shippingVal">&#8377;0</span>
+            </div>
+            <div class="cs-row cs-row-total">
+              <span>Total</span>
+              <span id="totalVal">&#8377;0</span>
+            </div>
+          </div>
+
+          <button class="cart-btn cart-btn-dark cs-checkout-btn" id="checkoutBtn">
+            Proceed to Checkout <i class="fas fa-arrow-right"></i>
+          </button>
+
+          <div class="cs-secure-note">
+            <i class="fas fa-lock"></i> Secure checkout · Cash on Delivery available
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'js/cart.js' %}"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      CartPageInit({
+        csrfToken: "{{ csrf_token }}",
+        cartApiUrl: "{% url 'cart-api-list' %}",
+        checkoutPageUrl: "{% url 'checkout-list' %}",
+        shopUrl: "/shop",
+      });
+    });
+  </script>
+{% endblock %}

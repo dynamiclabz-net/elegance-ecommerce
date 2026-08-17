@@ -1,0 +1,41 @@
+See we have to create an ecommerce website in django
+
+See it needs everything like homepage - shop - product_detail - cart - checkout - user account (past orders - order detail page - addresses - profile)
+
+now see this is for a ladies clothes selling company - Elegance now see there products are like this in tersm of categroy - Stiched / semi-stiched / unstiched / Ready-mades (sub category of ready mades - Salwar Suits, Tops / Shirts, Co-ord Sets) (now see either sub - sub categroy or we can add types to every products - Casual Wear, Work Wear, Semi-Formal Wear, Formal Wear / Ocassion Wear, Trousseau Collection)
+
+So product relations could be 
+1 Category - product
+2 Category - sub category - product
+
+So a product can directly related to a category or can be both category and sub category 
+
+And every products will have type like - Casual Wear, Work Wear, Semi-Formal Wear, Formal Wear / Ocassion Wear, Trousseau Collection. See thie should be also optional 
+
+Next see there will be attributes (completely dynamic) like some products will have colors - sizes - and different things with values 
+
+Next see for cart system we will store cart with 2 things first with csrf_tokne (as session id) or directly assigend to user so an user who is not logged in saves sometihng to the cart stays in the system and when they login we check if there is any cart with the old csrf token than transfer the cart to the user (this is just to save cart of non logged in user)
+
+Next see we also save addresses of a user with option to mark default and like that 
+
+Next see we will have total two payment methods - COD (with partial payment of 20% of total order value) & full online payment with razorpay 
+
+Next see for delivery we are using Velocity (will set this up later for now set everything just dont call any api just let admin cheange status like out for delivery - delviered) like that
+
+Next see we will have admin dashboard 
+- Add/Update/Delete Products - category - sub-category - types (Casual Wear, Work Wear, Semi-Formal Wear, Formal Wear / Ocassion Wear, Trousseau Collection)
+- Check orders (with order detail page to update the status and see all details properly)
+- proper reporting
+
+Next see user should get email updates like order placed - out for delivery - delivered - invoice...
+
+And for return / replacement - no need to develop anything just have to show a contact now with whatsapp linking (wa.me/9999999999?Want to return an order with id - {id}) like this
+
+Now se this is an ideal user flow 
+
+User sees homepage - goes to shop - sees product-detial - adds to cart (if not logged in than create cart with session id for now) - proceeds to checkout (here first ask user info like first name, last name, mobile number (see when user adds number show a bootstrap modal to verify the number with otp.. for now no need to send it just print in console and pass in the frontend and fill the otp directly) than ask for the address & select payment method (for now no payment integration needed just directly move the user but for backend store everything like either partial payment and COD or full payment)) than show a order placed thingy and redirect to order detail page (user side) 
+
+Now see create a account page for user where if user is not logged in than directly show a bootstrap modal to let user enter mobile number and thanb otp thingy (dont send it just print in console and send it to frontend and fill the code directly for now) and than show profile - past orders - address
+
+
+So this is the main ecommerce project we need now see create everything in django only with these apps - UserDetial (for user related things), Product (for category - sub-category - types - products), Order (for cart and orders)
