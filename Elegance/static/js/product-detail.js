@@ -80,11 +80,9 @@ function renderProduct() {
 
   renderTopBadges();
 
-  document.getElementById("tab-description").innerHTML = (p.description || "No description available.")
-    .split(/\n+/).filter(Boolean).map((para) => `<p>${eEscapeHtml(para)}</p>`).join("") || "<p>No description available.</p>";
-  document.getElementById("tab-fabric").innerHTML = (p.fabric || "Fabric details not specified.")
-    .split(/\n+/).filter(Boolean).map((para) => `<p>${eEscapeHtml(para)}</p>`).join("") || "<p>Fabric details not specified.</p>";
-
+  renderDescriptionTab();
+  renderSpecsTab();
+  renderCareTab();
   renderGallery();
   renderPriceRow();
   buildAttributeGroups();
@@ -158,6 +156,8 @@ function renderGallery() {
   } else {
     counter.textContent = `1 / ${totalImgs}`;
   }
+
+  initGalleryZoom();
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -373,7 +373,7 @@ async function addToCart(redirectToCheckout) {
   }
 }
 
-/* ══════════════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════���══════════
    RELATED PRODUCTS
 ══════════════════════════════════════════════════════════════ */
 async function loadRelatedProducts() {
@@ -404,61 +404,160 @@ function renderRelatedCard(p) {
       </div>
     </a>`;
 }
+/* ══════════════════════════════════════════════════════════════
+   PRODUCT DETAILS TAB — freeform key/value spec rows
+══════════════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════════════
+   DESCRIPTION TAB — hidden entirely when the product has no description
+══════════════════════════════════════════════════════════════ */
+function renderDescriptionTab() {
+  const btn = document.querySelector('.pd-tab-btn[data-tab="description"]');
+  const panel = document.getElementById("tab-description");
+  const hasDescription = !!(pdProduct.description && pdProduct.description.trim());
 
-
-  const pdMainWrap   = document.getElementById('pdMainWrap');
-  const pdZoomLens   = document.getElementById('pdZoomLens');
-  const pdZoomResult = document.getElementById('pdZoomResult');
-
-  const LENS_W = 120, LENS_H = 130, ZOOM_FACTOR = 2.8;
-
-  function initZoom() {
-    const activeSlide = pdMainTrack.querySelectorAll('.pd-main-slide')[pdCurrentImg];
-    if (!activeSlide) return;
-    const img = activeSlide.querySelector('img');
-    if (!img || !img.complete || !img.naturalWidth) return;
-
-    const wrapRect = pdMainWrap.getBoundingClientRect();
-    const resultW  = pdZoomResult.offsetWidth || 380;
-    const resultH  = pdZoomResult.offsetHeight || 380;
-
-    // Set result background
-    pdZoomResult.style.backgroundImage  = `url('${img.src}')`;
-    pdZoomResult.style.backgroundRepeat = 'no-repeat';
-
-    const bgW = wrapRect.width  * ZOOM_FACTOR;
-    const bgH = wrapRect.height * ZOOM_FACTOR;
-    pdZoomResult.style.backgroundSize = `${bgW}px ${bgH}px`;
-
-    pdZoomResult.classList.add('active');
-
-    return { wrapRect, bgW, bgH, resultW, resultH };
+  if (!hasDescription) {
+    panel.innerHTML = "";
+    if (btn) btn.style.display = "none";
+    if (btn?.classList.contains("pd-tab-active") || panel.classList.contains("pd-tab-panel-active")) {
+      activateFirstVisibleTab();
+    }
+    return;
   }
 
-  pdMainWrap?.addEventListener('mousemove', e => {
-    const data = initZoom();
-    if (!data) return;
-    const { wrapRect, bgW, bgH } = data;
+  if (btn) btn.style.display = "";
+  panel.innerHTML = pdProduct.description
+    .split(/\n+/).filter(Boolean).map((para) => `<p>${eEscapeHtml(para)}</p>`).join("");
+}
 
-    let lx = e.clientX - wrapRect.left - LENS_W / 2;
-    let ly = e.clientY - wrapRect.top  - LENS_H / 2;
+function activateFirstVisibleTab() {
+  const visibleBtns = Array.from(document.querySelectorAll(".pd-tab-btn")).filter((b) => b.style.display !== "none");
+  if (!visibleBtns.length) return;
+  const active = visibleBtns[0];
+  document.querySelectorAll(".pd-tab-btn").forEach((b) => b.classList.toggle("pd-tab-active", b === active));
+  document.querySelectorAll(".pd-tab-panel").forEach((p) => {
+    p.classList.toggle("pd-tab-panel-active", p.id === `tab-${active.dataset.tab}`);
+  });
+}
 
-    lx = Math.max(0, Math.min(lx, wrapRect.width  - LENS_W));
-    ly = Math.max(0, Math.min(ly, wrapRect.height - LENS_H));
+function renderSpecsTab() {
+  const panel = document.getElementById("tab-details");
+  const specs = pdProduct.specifications || [];
 
-    pdZoomLens.style.width  = LENS_W + 'px';
-    pdZoomLens.style.height = LENS_H + 'px';
-    pdZoomLens.style.left   = lx + 'px';
-    pdZoomLens.style.top    = ly + 'px';
+  if (!specs.length) {
+    panel.innerHTML = `<p class="pd-empty-note">No additional product details available.</p>`;
+    return;
+  }
 
-    // Calc background position for result
-    const rx = (lx / (wrapRect.width  - LENS_W)) * (bgW - (pdZoomResult.offsetWidth  || 380));
-    const ry = (ly / (wrapRect.height - LENS_H)) * (bgH - (pdZoomResult.offsetHeight || 380));
-    pdZoomResult.style.backgroundPosition = `-${rx}px -${ry}px`;
+  panel.innerHTML = `
+    <div class="pd-specs-table">
+      ${specs.map((s) => `
+        <div class="pd-specs-row">
+          <span class="pd-specs-key">${eEscapeHtml(s.key)}</span>
+          <span class="pd-specs-value">${eEscapeHtml(s.value)}</span>
+        </div>`).join("")}
+    </div>`;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   CARE & FABRIC TAB — icon + title + description cards
+══════════════════════════════════════════════════════════════ */
+const PD_CARE_ICON_MAP = {
+  "hand-wash": "fa-hand-paper",
+  "machine-wash": "fa-tshirt",
+  "no-bleach": "fa-tint-slash",
+  "dry-shade": "fa-cloud-sun",
+  "dry-sun": "fa-sun",
+  "low-iron": "fa-temperature-low",
+  "no-iron": "fa-ban",
+  "dry-clean": "fa-tshirt",
+  "no-dry-clean": "fa-times-circle",
+  "store": "fa-box",
+  "delicate": "fa-feather-alt",
+  "general": "fa-info-circle",
+};
+
+function renderCareTab() {
+  const panel = document.getElementById("tab-care");
+  const rows = pdProduct.care_instructions || [];
+
+  if (!rows.length) {
+    panel.innerHTML = `<p class="pd-empty-note">No care instructions available for this product.</p>`;
+    return;
+  }
+
+  panel.innerHTML = `
+    <div class="pd-care-grid">
+      ${rows.map((r) => `
+        <div class="pd-care-card">
+          <span class="pd-care-icon"><i class="fas ${PD_CARE_ICON_MAP[r.icon] || "fa-info-circle"}"></i></span>
+          <h4 class="pd-care-title">${eEscapeHtml(r.title)}</h4>
+          ${r.description ? `<p class="pd-care-desc">${eEscapeHtml(r.description)}</p>` : ""}
+        </div>`).join("")}
+    </div>`;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   IMAGE ZOOM — lens box over the main image + magnified result panel
+══════════════════════════════════════════════════════════════ */
+const PD_LENS_W = 160, PD_LENS_H = 160, PD_ZOOM_FACTOR = 2.4;
+
+function initGalleryZoom() {
+  const mainWrap = document.getElementById("pdMainWrap");
+  const track = document.getElementById("pdMainTrack");
+  const lens = document.getElementById("pdZoomLens");
+  const result = document.getElementById("pdZoomResult");
+  if (!mainWrap || !track || !lens || !result) return;
+
+  // Avoid attaching duplicate listeners if renderGallery() runs more than once.
+  if (mainWrap.dataset.zoomBound === "true") return;
+  mainWrap.dataset.zoomBound = "true";
+
+  function activeImage() {
+    const slides = track.querySelectorAll(".pd-main-slide");
+    const slide = slides[pdCurrentImg] || slides[0];
+    return slide ? slide.querySelector("img") : null;
+  }
+
+  function positionLens(clientX, clientY) {
+    const img = activeImage();
+    if (!img || !img.complete || !img.naturalWidth) return false;
+
+    const wrapRect = mainWrap.getBoundingClientRect();
+
+    let lx = clientX - wrapRect.left - PD_LENS_W / 2;
+    let ly = clientY - wrapRect.top - PD_LENS_H / 2;
+    lx = Math.max(0, Math.min(lx, wrapRect.width - PD_LENS_W));
+    ly = Math.max(0, Math.min(ly, wrapRect.height - PD_LENS_H));
+
+    lens.style.width = PD_LENS_W + "px";
+    lens.style.height = PD_LENS_H + "px";
+    lens.style.left = lx + "px";
+    lens.style.top = ly + "px";
+    lens.classList.add("pd-zoom-lens-active");
+
+    const bgW = wrapRect.width * PD_ZOOM_FACTOR;
+    const bgH = wrapRect.height * PD_ZOOM_FACTOR;
+
+    result.style.backgroundImage = `url('${img.src}')`;
+    result.style.backgroundRepeat = "no-repeat";
+    result.style.backgroundSize = `${bgW}px ${bgH}px`;
+
+    const resultW = result.offsetWidth || 380;
+    const resultH = result.offsetHeight || 380;
+    const rx = (lx / (wrapRect.width - PD_LENS_W)) * (bgW - resultW);
+    const ry = (ly / (wrapRect.height - PD_LENS_H)) * (bgH - resultH);
+    result.style.backgroundPosition = `-${rx}px -${ry}px`;
+    result.classList.add("active");
+    return true;
+  }
+
+  mainWrap.addEventListener("mousemove", (e) => {
+    positionLens(e.clientX, e.clientY);
   });
 
-  pdMainWrap?.addEventListener('mouseleave', () => {
-    pdZoomResult.classList.remove('active');
+  mainWrap.addEventListener("mouseleave", () => {
+    lens.classList.remove("pd-zoom-lens-active");
+    result.classList.remove("active");
   });
+}
 
-  

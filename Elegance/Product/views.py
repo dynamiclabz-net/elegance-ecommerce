@@ -9,12 +9,14 @@ from .models import (
     Category, SubCategory, ProductType,
     Attribute, AttributeValue,
     Product, ProductImage, ProductVariant,
+    ProductSpecification, ProductCareInstruction,
 )
 from .serializers import (
     CategorySerializer, SubCategorySerializer, ProductTypeSerializer,
     AttributeSerializer, AttributeValueSerializer,
     ProductListSerializer, ProductDetailSerializer,
     ProductImageSerializer, ProductVariantSerializer,
+    ProductSpecificationSerializer, ProductCareInstructionSerializer,
 )
 
 
@@ -529,7 +531,7 @@ class ProductViewSet(viewsets.ViewSet):
 
 # ─────────────────────────────────────────────
 # Product Images — multipart upload
-# ─────────────────────────────────────────────
+# ──────────��──────────────────────────────────
 class ProductImageViewSet(viewsets.ViewSet):
     parser_classes = (MultiPartParser, FormParser, JSONParser)
 
@@ -657,6 +659,154 @@ class ProductVariantViewSet(viewsets.ViewSet):
             }, status=status.HTTP_404_NOT_FOUND)
 
         variant.delete()
+        return Response({
+            "success": True, "user_not_logged_in": False, "user_unauthorized": False,
+            "data": {"id": pk, "deleted": True}, "error": None,
+        }, status=status.HTTP_200_OK)
+
+
+# ─────────────────────────────────────────────
+# Product Specifications — freeform key/value rows for the
+# "Product Details" tab (e.g. Occasion -> Festive, Semi-Formal)
+# ─────────────────────────────────────────────
+class ProductSpecificationViewSet(viewsets.ViewSet):
+
+    @handle_exceptions
+    def list(self, request):
+        product_id = request.query_params.get("product")
+        specs = ProductSpecification.objects.all()
+        if product_id:
+            specs = specs.filter(product_id=product_id)
+
+        return Response({
+            "success": True, "user_not_logged_in": False, "user_unauthorized": False,
+            "data": {"specifications": ProductSpecificationSerializer(specs, many=True).data}, "error": None,
+        }, status=status.HTTP_200_OK)
+
+    @handle_exceptions
+    @check_authentication(required_role="admin")
+    def create(self, request):
+        serializer = ProductSpecificationSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response({
+                "success": False, "user_not_logged_in": False, "user_unauthorized": False,
+                "data": None, "error": serializer.errors,
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        spec = serializer.save()
+        return Response({
+            "success": True, "user_not_logged_in": False, "user_unauthorized": False,
+            "data": {"specification": ProductSpecificationSerializer(spec).data}, "error": None,
+        }, status=status.HTTP_201_CREATED)
+
+    @handle_exceptions
+    @check_authentication(required_role="admin")
+    def update(self, request, pk):
+        spec = ProductSpecification.objects.filter(pk=pk).first()
+        if not spec:
+            return Response({
+                "success": False, "user_not_logged_in": False, "user_unauthorized": False,
+                "data": None, "error": "Specification not found."
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = ProductSpecificationSerializer(spec, data=request.data, partial=True)
+        if not serializer.is_valid():
+            return Response({
+                "success": False, "user_not_logged_in": False, "user_unauthorized": False,
+                "data": None, "error": serializer.errors,
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer.save()
+        return Response({
+            "success": True, "user_not_logged_in": False, "user_unauthorized": False,
+            "data": {"specification": serializer.data}, "error": None,
+        }, status=status.HTTP_200_OK)
+
+    @handle_exceptions
+    @check_authentication(required_role="admin")
+    def destroy(self, request, pk):
+        spec = ProductSpecification.objects.filter(pk=pk).first()
+        if not spec:
+            return Response({
+                "success": False, "user_not_logged_in": False, "user_unauthorized": False,
+                "data": None, "error": "Specification not found."
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        spec.delete()
+        return Response({
+            "success": True, "user_not_logged_in": False, "user_unauthorized": False,
+            "data": {"id": pk, "deleted": True}, "error": None,
+        }, status=status.HTTP_200_OK)
+
+
+# ─────────────────────────────────────────────
+# Product Care Instructions — icon + title + description rows for the
+# "Care & Fabric" tab (e.g. Hand Wash Only / Do Not Bleach / Dry in Shade)
+# ─────────────────────────────────────────────
+class ProductCareInstructionViewSet(viewsets.ViewSet):
+
+    @handle_exceptions
+    def list(self, request):
+        product_id = request.query_params.get("product")
+        rows = ProductCareInstruction.objects.all()
+        if product_id:
+            rows = rows.filter(product_id=product_id)
+
+        return Response({
+            "success": True, "user_not_logged_in": False, "user_unauthorized": False,
+            "data": {"care_instructions": ProductCareInstructionSerializer(rows, many=True).data}, "error": None,
+        }, status=status.HTTP_200_OK)
+
+    @handle_exceptions
+    @check_authentication(required_role="admin")
+    def create(self, request):
+        serializer = ProductCareInstructionSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response({
+                "success": False, "user_not_logged_in": False, "user_unauthorized": False,
+                "data": None, "error": serializer.errors,
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        row = serializer.save()
+        return Response({
+            "success": True, "user_not_logged_in": False, "user_unauthorized": False,
+            "data": {"care_instruction": ProductCareInstructionSerializer(row).data}, "error": None,
+        }, status=status.HTTP_201_CREATED)
+
+    @handle_exceptions
+    @check_authentication(required_role="admin")
+    def update(self, request, pk):
+        row = ProductCareInstruction.objects.filter(pk=pk).first()
+        if not row:
+            return Response({
+                "success": False, "user_not_logged_in": False, "user_unauthorized": False,
+                "data": None, "error": "Care instruction not found."
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = ProductCareInstructionSerializer(row, data=request.data, partial=True)
+        if not serializer.is_valid():
+            return Response({
+                "success": False, "user_not_logged_in": False, "user_unauthorized": False,
+                "data": None, "error": serializer.errors,
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer.save()
+        return Response({
+            "success": True, "user_not_logged_in": False, "user_unauthorized": False,
+            "data": {"care_instruction": serializer.data}, "error": None,
+        }, status=status.HTTP_200_OK)
+
+    @handle_exceptions
+    @check_authentication(required_role="admin")
+    def destroy(self, request, pk):
+        row = ProductCareInstruction.objects.filter(pk=pk).first()
+        if not row:
+            return Response({
+                "success": False, "user_not_logged_in": False, "user_unauthorized": False,
+                "data": None, "error": "Care instruction not found."
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        row.delete()
         return Response({
             "success": True, "user_not_logged_in": False, "user_unauthorized": False,
             "data": {"id": pk, "deleted": True}, "error": None,

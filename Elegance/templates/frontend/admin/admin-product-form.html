@@ -109,6 +109,59 @@
         </form>
       </div>
     </div>
+
+    <div class="e-card mb-3">
+      <div class="e-card-header"><h2>Product Details</h2></div>
+      <div class="e-card-body">
+        <div id="specs-locked-note" class="e-empty py-3" style="display:none;">
+          <p>Save the product first to add spec rows.</p>
+        </div>
+        <div id="specs-panel" style="display:none;">
+          <div class="e-field-help mb-2">Freeform key/value rows shown on the "Product Details" tab, e.g. Occasion — Festive, Semi-Formal, Casual.</div>
+          <div id="specs-list" class="d-flex flex-column gap-2 mb-3"></div>
+          <form id="spec-add-form" class="row g-2">
+            <div class="col-5">
+              <input type="text" class="e-input" id="spec-key" placeholder="Key (e.g. Occasion)" required>
+            </div>
+            <div class="col-5">
+              <input type="text" class="e-input" id="spec-value" placeholder="Value (e.g. Festive, Semi-Formal)" required>
+            </div>
+            <div class="col-2">
+              <button type="submit" class="btn-e-outline w-100" id="spec-add-btn">Add</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="e-card">
+      <div class="e-card-header"><h2>Care &amp; Fabric</h2></div>
+      <div class="e-card-body">
+        <div id="care-locked-note" class="e-empty py-3" style="display:none;">
+          <p>Save the product first to add care instructions.</p>
+        </div>
+        <div id="care-panel" style="display:none;">
+          <div class="e-field-help mb-2">Icon cards shown on the "Care &amp; Fabric" tab, e.g. Hand Wash Only, Do Not Bleach, Dry in Shade.</div>          
+          <form id="care-add-form" class="row g-2">
+            <div class="col-12">
+              <label class="e-label">Select Instruction <span class="req">*</span></label>
+              <select class="e-select" id="care-icon"></select>
+            </div>
+            <div class="col-12">
+              <input type="text" class="e-input" id="care-title" placeholder="Title (e.g. Hand Wash Only)" required>
+            </div>
+            <div class="col-12">
+              <input type="text" class="e-input" id="care-description" placeholder="Description (optional)">
+            </div>
+            <div class="col-12 mb-5">
+              <button type="submit" class="btn-e-outline w-100" id="care-add-btn">Add Care Instruction</button>
+            </div>
+          </form>
+          <h5>Added Care Instructions</h5>
+          <div id="care-list" class="d-flex flex-column gap-2 mb-3"></div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="col-lg-4">
@@ -126,42 +179,68 @@
       </div>
     </div>
 
-    <div class="e-card">
+    <div class="e-card mb-3">
       <div class="e-card-header"><h2>Variants</h2></div>
       <div class="e-card-body">
         <div id="variants-locked-note" class="e-empty py-3" style="display:none;">
           <p>Save the product first to add size/color variants.</p>
         </div>
         <div id="variants-panel" style="display:none;">
-          <div id="variants-list" class="d-flex flex-column gap-2 mb-3"></div>
-          <button class="btn-e-outline w-100" data-bs-toggle="modal" data-bs-target="#variant-modal" onclick="openVariantModal()">
-            <i class="bi bi-plus-lg"></i> Add Variant
-          </button>
+
+          <!-- Step 1: choose which attributes (Color, Size, ...) this product varies by -->
+          <div class="pf-variant-step mb-3">
+            <div class="pf-variant-step-title">
+              <span class="pf-variant-step-num">1</span> Variation Types
+            </div>
+            <div class="e-field-help mb-2">Pick the attributes this product varies by (e.g. Color, Size) before adding variants.</div>
+            <div id="variant-type-chips" class="d-flex flex-wrap gap-2 mb-2"></div>
+            <div class="d-flex gap-2">
+              <select class="e-select" id="variant-type-select" style="flex:1;">
+                <option value="">+ Add existing type…</option>
+              </select>
+              <button type="button" class="btn-e-outline" id="variant-type-new-btn" style="white-space:nowrap;">+ New Type</button>
+            </div>
+            <form id="variant-new-type-form" class="d-flex gap-2 mt-2" style="display:none;">
+              <input type="text" class="e-input" id="new-type-name" placeholder="Type name (e.g. Color, Size)" style="flex:1;">
+              <label style="display:flex;align-items:center;gap:5px;font-size:12.5px;white-space:nowrap;">
+                <input type="checkbox" id="new-type-is-color"> Color type
+              </label>
+              <button type="submit" class="btn-e-primary" style="white-space:nowrap;">Add</button>
+            </form>
+          </div>
+
+          <!-- Step 2: add the specific values for each chosen type (with hex swatches for colors) -->
+          <div id="variant-values-area" class="mb-3"></div>
+
+          <!-- Step 3: variants table with per-combination stock / price / edit -->
+          <div class="pf-variant-step">
+            <div class="pf-variant-step-title">
+              <span class="pf-variant-step-num">2</span> Variants &amp; Availability
+            </div>
+            <div id="variants-list" class="d-flex flex-column gap-2 mb-3"></div>
+            <button class="btn-e-outline w-100" type="button" id="variant-add-open-btn">
+              <i class="bi bi-plus-lg"></i> Add Variant
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </div>    
   </div>
 </div>
 
-<!-- Variant Modal -->
+<!-- Variant Modal (add + edit) -->
 <div class="modal fade e-modal" id="variant-modal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
       <form id="variant-form">
         <div class="modal-header">
-          <h5 class="modal-title">Add Variant</h5>
+          <h5 class="modal-title" id="variant-modal-title">Add Variant</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <div id="variant-attributes-area"></div>
-
           <div class="e-field">
-            <label class="e-label">Add a new attribute</label>
-            <div class="d-flex gap-2">
-              <input type="text" class="e-input" id="new-attribute-name" placeholder="e.g. Color, Size">
-              <button type="button" class="btn-e-outline" id="add-attribute-btn">Add</button>
-            </div>
-            <div class="e-field-help">Attributes (Color, Size) are shared across all products.</div>
+            <label class="e-label">Combination</label>
+            <div id="variant-attributes-area"></div>
           </div>
 
           <hr>
@@ -182,6 +261,10 @@
                 <input type="number" class="e-input" id="variant-stock" min="0" value="0" required>
               </div>
             </div>
+          </div>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="variant-active" checked>
+            <label class="form-check-label" for="variant-active" style="font-size:13px;">Active (purchasable on storefront)</label>
           </div>
         </div>
         <div class="modal-footer">
@@ -209,6 +292,8 @@
       attributeValueApiUrl: "{% url 'attribute-value-api-list' %}",
       productImageApiUrl: "{% url 'product-image-api-list' %}",
       productVariantApiUrl: "{% url 'product-variant-api-list' %}",
+      productSpecificationApiUrl: "{% url 'product-specification-api-list' %}",
+      productCareInstructionApiUrl: "{% url 'product-care-instruction-api-list' %}",
       productsListUrl: "{% url 'admin-products-list' %}",
       editUrlTemplate: "{% url 'admin-product-form-detail' pk=0 %}",
     });

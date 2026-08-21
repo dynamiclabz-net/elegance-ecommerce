@@ -1,0 +1,22 @@
+categorise 1,2,3,4,5 
+video with photo
+
+
+
+
+add a confirmation modal after place order button placed
+
+
+if cod than ask for otp before placing order
+
+
+
+
+multiple shipping partner
+
+
+Need help with this order
+
+
+
+

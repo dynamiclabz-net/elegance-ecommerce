@@ -99,6 +99,10 @@ class Attribute(models.Model):
     name = models.CharField(max_length=100, unique=True)
     slug = models.SlugField(max_length=120, unique=True, blank=True)
     is_active = models.BooleanField(default=True)
+    is_color = models.BooleanField(
+        default=False,
+        help_text="Mark as a color attribute so its values show a name + hex swatch instead of plain text.",
+    )
 
     class Meta:
         db_table = "product_attribute"
@@ -117,10 +121,12 @@ class Attribute(models.Model):
 
 class AttributeValue(models.Model):
     """Concrete value for a dynamic attribute, e.g. Red / Blue for Color,
-    S / M / L / XL for Size."""
+    S / M / L / XL for Size. When the parent attribute is a color attribute,
+    hex_code carries the swatch color, e.g. #C0392B for "Red"."""
 
     attribute = models.ForeignKey(Attribute, related_name="values", on_delete=models.CASCADE)
     value = models.CharField(max_length=100)
+    hex_code = models.CharField(max_length=7, blank=True, null=True, help_text="e.g. #C0392B — only used for color attributes.")
     display_order = models.PositiveIntegerField(default=0)
 
     class Meta:
@@ -208,6 +214,65 @@ class Product(models.Model):
     def primary_image(self):
         image = self.images.filter(is_primary=True).first()
         return image or self.images.first()
+
+
+class ProductSpecification(models.Model):
+    """Freeform key/value spec row shown in the product detail page's
+    'Product Details' tab, e.g. Occasion -> Festive, Semi-Formal, Casual.
+    Admin types both the key and the value — fully dynamic, no fixed schema."""
+
+    product = models.ForeignKey(Product, related_name="specifications", on_delete=models.CASCADE)
+    key = models.CharField(max_length=100)
+    value = models.CharField(max_length=255)
+    display_order = models.PositiveIntegerField(default=0)
+
+    created_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        db_table = "product_specification"
+        verbose_name = "Product Specification"
+        verbose_name_plural = "Product Specifications"
+        ordering = ["display_order", "id"]
+
+    def __str__(self):
+        return f"{self.product.name} — {self.key}: {self.value}"
+
+
+class ProductCareInstruction(models.Model):
+    """Icon + title + description row shown in the product detail page's
+    'Care & Fabric' tab, e.g. Hand Wash Only / Do Not Bleach / Dry in Shade."""
+
+    ICON_CHOICES = [
+        ("hand-wash", "Hand Wash Only"),
+        ("machine-wash", "Machine Washable"),
+        ("no-bleach", "Do Not Bleach"),
+        ("dry-shade", "Dry in Shade"),
+        ("dry-sun", "Dry in Sun"),
+        ("low-iron", "Low Iron"),
+        ("no-iron", "Do Not Iron"),
+        ("dry-clean", "Dry Clean"),
+        ("no-dry-clean", "No Dry Clean"),
+        ("store", "Store Carefully"),
+        ("delicate", "Handle Delicately"),
+        ("general", "General Care"),
+    ]
+
+    product = models.ForeignKey(Product, related_name="care_instructions", on_delete=models.CASCADE)
+    icon = models.CharField(max_length=30, choices=ICON_CHOICES, default="general")
+    title = models.CharField(max_length=100)
+    description = models.CharField(max_length=255, blank=True, null=True)
+    display_order = models.PositiveIntegerField(default=0)
+
+    created_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        db_table = "product_care_instruction"
+        verbose_name = "Product Care Instruction"
+        verbose_name_plural = "Product Care Instructions"
+        ordering = ["display_order", "id"]
+
+    def __str__(self):
+        return f"{self.product.name} — {self.title}"
 
 
 class ProductImage(models.Model):

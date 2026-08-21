@@ -4,6 +4,7 @@ from .models import (
     Category, SubCategory, ProductType,
     Attribute, AttributeValue,
     Product, ProductImage, ProductVariant,
+    ProductSpecification, ProductCareInstruction,
 )
 
 
@@ -51,7 +52,7 @@ class AttributeValueSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AttributeValue
-        fields = ("id", "attribute", "attribute_name", "value", "display_order")
+        fields = ("id", "attribute", "attribute_name", "value", "hex_code", "display_order")
         read_only_fields = ("id",)
 
 
@@ -60,8 +61,24 @@ class AttributeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Attribute
-        fields = ("id", "name", "slug", "is_active", "values")
+        fields = ("id", "name", "slug", "is_active", "is_color", "values")
         read_only_fields = ("id", "slug")
+
+
+class ProductSpecificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductSpecification
+        fields = ("id", "product", "key", "value", "display_order", "created_at")
+        read_only_fields = ("id", "created_at")
+
+
+class ProductCareInstructionSerializer(serializers.ModelSerializer):
+    icon_label = serializers.CharField(source="get_icon_display", read_only=True)
+
+    class Meta:
+        model = ProductCareInstruction
+        fields = ("id", "product", "icon", "icon_label", "title", "description", "display_order", "created_at")
+        read_only_fields = ("id", "created_at")
 
 
 class ProductImageSerializer(serializers.ModelSerializer):
@@ -123,6 +140,8 @@ class ProductDetailSerializer(serializers.ModelSerializer):
 
     images = ProductImageSerializer(many=True, read_only=True)
     variants = ProductVariantSerializer(many=True, read_only=True)
+    specifications = ProductSpecificationSerializer(many=True, read_only=True)
+    care_instructions = ProductCareInstructionSerializer(many=True, read_only=True)
     category_name = serializers.CharField(source="category.name", read_only=True)
     subcategory_name = serializers.CharField(source="subcategory.name", read_only=True, default=None)
     product_type_name = serializers.CharField(source="product_type.name", read_only=True, default=None)
@@ -137,7 +156,8 @@ class ProductDetailSerializer(serializers.ModelSerializer):
             "subcategory_name", "product_type", "product_type_name", "sku",
             "short_description", "description", "fabric", "price", "discount_price",
             "effective_price", "discount_percentage", "stock_quantity", "in_stock",
-            "is_active", "is_featured", "images", "variants", "created_at", "updated_at",
+            "is_active", "is_featured", "images", "variants",
+            "specifications", "care_instructions", "created_at", "updated_at",
         )
         read_only_fields = ("id", "slug", "created_at", "updated_at")
 

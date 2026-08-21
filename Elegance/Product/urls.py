@@ -11,6 +11,8 @@ router.register(r"attribute-value-api", AttributeValueViewSet, basename="attribu
 router.register(r"product-api", ProductViewSet, basename="product-api")
 router.register(r"product-image-api", ProductImageViewSet, basename="product-image-api")
 router.register(r"product-variant-api", ProductVariantViewSet, basename="product-variant-api")
+router.register(r"product-specification-api", ProductSpecificationViewSet, basename="product-specification-api")
+router.register(r"product-care-instruction-api", ProductCareInstructionViewSet, basename="product-care-instruction-api")
 
 urlpatterns = [
     path("", include(router.urls)),

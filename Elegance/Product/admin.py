@@ -4,6 +4,7 @@ from .models import (
     Category, SubCategory, ProductType,
     Attribute, AttributeValue,
     Product, ProductImage, ProductVariant,
+    ProductSpecification, ProductCareInstruction,
 )
 
 
@@ -46,12 +47,13 @@ class ProductTypeAdmin(admin.ModelAdmin):
 class AttributeValueInline(admin.TabularInline):
     model = AttributeValue
     extra = 1
-    fields = ("value", "display_order")
+    fields = ("value", "hex_code", "display_order")
 
 
 @admin.register(Attribute)
 class AttributeAdmin(admin.ModelAdmin):
-    list_display = ("name", "slug", "is_active")
+    list_display = ("name", "slug", "is_color", "is_active")
+    list_filter = ("is_color", "is_active")
     search_fields = ("name",)
     prepopulated_fields = {"slug": ("name",)}
     inlines = [AttributeValueInline]
@@ -59,7 +61,7 @@ class AttributeAdmin(admin.ModelAdmin):
 
 @admin.register(AttributeValue)
 class AttributeValueAdmin(admin.ModelAdmin):
-    list_display = ("attribute", "value", "display_order")
+    list_display = ("attribute", "value", "hex_code", "display_order")
     list_filter = ("attribute",)
     search_fields = ("value", "attribute__name")
 
@@ -78,6 +80,18 @@ class ProductVariantInline(admin.TabularInline):
     show_change_link = True
 
 
+class ProductSpecificationInline(admin.TabularInline):
+    model = ProductSpecification
+    extra = 1
+    fields = ("key", "value", "display_order")
+
+
+class ProductCareInstructionInline(admin.TabularInline):
+    model = ProductCareInstruction
+    extra = 1
+    fields = ("icon", "title", "description", "display_order")
+
+
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = (
@@ -88,7 +102,10 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ("name", "sku", "slug")
     prepopulated_fields = {"slug": ("name",)}
     autocomplete_fields = ("category", "subcategory", "product_type")
-    inlines = [ProductImageInline, ProductVariantInline]
+    inlines = [
+        ProductImageInline, ProductVariantInline,
+        ProductSpecificationInline, ProductCareInstructionInline,
+    ]
     ordering = ("-created_at",)
     list_editable = ("is_active", "is_featured")
 
