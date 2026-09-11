@@ -44,7 +44,7 @@ function OrderDetailPageInit(config) {
     if (!wrap) return;
     wrap.innerHTML = (order.items || []).map((item) => `
       <div class="od-item-row">
-        <div class="od-item-img"><img src="${item.product_image || "/static/images/placeholder-product.jpg"}" alt="${eEscapeHtml(item.product_name)}" crossorigin="anonymous"></div>
+        <div class="od-item-img"><img src="${item.image_url || "/static/images/placeholder-product.png"}" alt="${eEscapeHtml(item.product_name)}" crossorigin="anonymous"></div>
         <div class="od-item-info">
           <p class="od-item-name">${eEscapeHtml(item.product_name)}</p>
           <p class="od-item-meta">${item.variant_label ? eEscapeHtml(item.variant_label) + " · " : ""}Qty ${item.quantity}</p>
@@ -106,12 +106,13 @@ function OrderDetailPageInit(config) {
 
     const whatsappLink = document.getElementById("odWhatsappLink");
     if (whatsappLink) {
-      if (order.whatsapp_return_url && order.order_status === "delivered") {
-        whatsappLink.href = order.whatsapp_return_url;
-        whatsappLink.style.display = "flex";
-      } else {
-        whatsappLink.style.display = "none";
-      }
+      const productNames = (order.items || []).map((item) => item.product_name).filter(Boolean).join(", ");
+      const statusText = order.order_status_display || order.order_status;
+      const message = `Hi, I need help with my order #${order.order_number}` +
+        (productNames ? ` (${productNames})` : "") +
+        ` — current status: ${statusText}.`;
+      whatsappLink.href = `https://wa.me/9054413199?text=${encodeURIComponent(message)}`;
+      whatsappLink.style.display = "flex";
     }
   }
 

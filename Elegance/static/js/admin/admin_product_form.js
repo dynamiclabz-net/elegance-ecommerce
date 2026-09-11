@@ -8,6 +8,7 @@ let _pfSelectedAttrValueIds = new Set();
 let _pfActiveAttributeIds = new Set();
 let _pfVariantsCache = [];
 let _pfEditingVariantId = null;
+let _pfBulkSelectedValueIds = new Map(); // attrId -> Set(valueId)
 
 function AdminProductFormInit(config) {
   _pfCfg = config;
@@ -16,11 +17,14 @@ function AdminProductFormInit(config) {
   document.getElementById("product-basic-form").addEventListener("submit", handleProductSave);
   document.getElementById("pf-category").addEventListener("change", handleCategoryChange);
   document.getElementById("pf-image-input").addEventListener("change", handleImageUpload);
+  document.getElementById("pf-video-input").addEventListener("change", handleVideoUpload);
   document.getElementById("variant-form").addEventListener("submit", handleVariantSave);
   document.getElementById("variant-type-select").addEventListener("change", handleVariantTypeSelect);
   document.getElementById("variant-type-new-btn").addEventListener("click", toggleNewTypeForm);
   document.getElementById("variant-new-type-form").addEventListener("submit", handleCreateNewType);
   document.getElementById("variant-add-open-btn").addEventListener("click", () => openVariantModal());
+  document.getElementById("variant-bulk-open-btn").addEventListener("click", openBulkVariantModal);
+  document.getElementById("bulk-variant-form").addEventListener("submit", handleBulkVariantGenerate);
   document.getElementById("spec-add-form").addEventListener("submit", handleSpecAdd);
   document.getElementById("care-add-form").addEventListener("submit", handleCareAdd);
   document.getElementById("care-icon").addEventListener("change", applyCareIconDefaults);
@@ -42,6 +46,8 @@ function AdminProductFormInit(config) {
 function unlockSubPanels() {
   document.getElementById("images-locked-note").style.display = "none";
   document.getElementById("images-panel").style.display = "block";
+  document.getElementById("video-locked-note").style.display = "none";
+  document.getElementById("video-panel").style.display = "block";
   document.getElementById("variants-locked-note").style.display = "none";
   document.getElementById("variants-panel").style.display = "block";
   document.getElementById("specs-locked-note").style.display = "none";
@@ -53,6 +59,8 @@ function unlockSubPanels() {
 function lockSubPanels() {
   document.getElementById("images-locked-note").style.display = "block";
   document.getElementById("images-panel").style.display = "none";
+  document.getElementById("video-locked-note").style.display = "block";
+  document.getElementById("video-panel").style.display = "none";
   document.getElementById("variants-locked-note").style.display = "block";
   document.getElementById("variants-panel").style.display = "none";
   document.getElementById("specs-locked-note").style.display = "block";
@@ -212,6 +220,7 @@ async function loadExistingProduct() {
   if (p.product_type) document.getElementById("pf-product-type").value = p.product_type;
 
   renderImages(p.images || []);
+  renderVideo(p.video_url);
   renderVariants(p.variants || []);
   renderSpecs(p.specifications || []);
   renderCareInstructions(p.care_instructions || []);
@@ -367,6 +376,52 @@ async function deleteImage(imageId) {
     return;
   }
   refreshImages();
+}
+
+/* ───────────── Video (separate from photo gallery) ───────────── */
+
+function renderVideo(videoUrl) {
+  const area = document.getElementById("video-preview-area");
+  if (!videoUrl) {
+    area.innerHTML = `<div class="e-empty py-3"><p>No video uploaded yet.</p></div>`;
+    return;
+  }
+  area.innerHTML = `
+    <video src="${videoUrl}" controls style="width:100%;max-height:220px;border-radius:8px;border:1px solid var(--e-border);background:#000;"></video>
+    <button type="button" class="btn-e-outline w-100 mt-2" onclick="deleteVideo()"><i class="bi bi-trash"></i> Remove Video</button>
+  `;
+}
+
+async function handleVideoUpload(e) {
+  const file = e.target.files && e.target.files[0];
+  if (!file || !_pfProductId) return;
+
+  const formData = new FormData();
+  formData.append("video", file);
+  const url = buildDetailUrlPF(_pfCfg.productVideoApiUrl, _pfProductId);
+  const [success, result] = await callApi("PUT", url, formData, _pfCfg.csrfToken, true);
+
+  e.target.value = "";
+
+  if (!success || !result.success) {
+    eToast(eExtractError(result, "Could not upload video."), "danger");
+    return;
+  }
+
+  eToast("Video uploaded.", "success");
+  renderVideo(result.data.product.video_url);
+}
+
+async function deleteVideo() {
+  if (!eConfirmAction("Remove this product's video?")) return;
+  const url = buildDetailUrlPF(_pfCfg.productVideoApiUrl, _pfProductId);
+  const [success, result] = await callApi("DELETE", url, null, _pfCfg.csrfToken);
+  if (!success || !result.success) {
+    eToast(eExtractError(result, "Could not remove video."), "danger");
+    return;
+  }
+  eToast("Video removed.", "success");
+  renderVideo(null);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -694,6 +749,144 @@ async function deleteVariant(variantId) {
     eToast(eExtractError(result, "Could not delete variant."), "danger");
     return;
   }
+  refreshVariants();
+}
+
+/* ---------- Bulk generate: cartesian product of chosen values per type ----------
+   e.g. Color: [Blue] × Size: [M, L, XL, XXL] -> 4 variants, one shared
+   price/stock. Admin can then edit individual ones (e.g. Green in just
+   2 sizes at a different price) using the normal Add/Edit Variant flow. */
+
+function openBulkVariantModal() {
+  if (!_pfActiveAttributeIds.size) {
+    eToast("Choose at least one Variation Type first.", "danger");
+    return;
+  }
+
+  _pfBulkSelectedValueIds = new Map();
+  document.getElementById("bulk-variant-form").reset();
+  document.getElementById("bulk-variant-sku-prefix").value = document.getElementById("pf-sku").value.trim();
+  document.getElementById("bulk-variant-active").checked = true;
+  renderBulkVariantAttributeArea();
+
+  const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById("bulk-variant-modal"));
+  modal.show();
+}
+
+function renderBulkVariantAttributeArea() {
+  const area = document.getElementById("bulk-variant-attributes-area");
+  const activeAttrs = _pfAttributesCache.filter((a) => _pfActiveAttributeIds.has(a.id));
+
+  area.innerHTML = activeAttrs.map((attr) => `
+    <div class="mb-2">
+      <div style="font-size:12px;font-weight:600;color:var(--e-text-muted);margin-bottom:4px;">${eEscapeHtml(attr.name)}</div>
+      <div class="d-flex flex-wrap gap-2">
+        ${(attr.values || []).map((val) => `
+          <label class="pf-variant-checkbox-tag">
+            <input type="checkbox" value="${val.id}" onchange="toggleBulkAttrValue(${attr.id}, ${val.id}, this.checked)">
+            ${attr.is_color && val.hex_code ? `<span class="pf-color-swatch" style="background:${eEscapeHtml(val.hex_code)};"></span>` : ""}
+            ${eEscapeHtml(val.value)}
+          </label>
+        `).join("") || `<span class="text-muted" style="font-size:12px;">No values yet — add one in Step 1 above.</span>`}
+      </div>
+    </div>
+  `).join("");
+}
+
+function toggleBulkAttrValue(attrId, valueId, checked) {
+  if (!_pfBulkSelectedValueIds.has(attrId)) _pfBulkSelectedValueIds.set(attrId, new Set());
+  const set = _pfBulkSelectedValueIds.get(attrId);
+  if (checked) set.add(valueId);
+  else set.delete(valueId);
+}
+
+// Cartesian product across each attribute's chosen value ids, e.g.
+// [[BlueId], [Mid, Lid, XLid]] -> [[BlueId,Mid], [BlueId,Lid], [BlueId,XLid]].
+function cartesianProduct(groups) {
+  return groups.reduce(
+    (acc, group) => acc.flatMap((combo) => group.map((val) => [...combo, val])),
+    [[]]
+  );
+}
+
+async function handleBulkVariantGenerate(e) {
+  e.preventDefault();
+
+  if (!_pfProductId) {
+    eToast("Save the product first.", "danger");
+    return;
+  }
+
+  const activeAttrs = _pfAttributesCache.filter((a) => _pfActiveAttributeIds.has(a.id));
+  const groups = activeAttrs.map((a) => Array.from(_pfBulkSelectedValueIds.get(a.id) || []));
+
+  if (groups.some((g) => !g.length)) {
+    eToast("Select at least one value for every variation type.", "danger");
+    return;
+  }
+
+  const skuPrefix = document.getElementById("bulk-variant-sku-prefix").value.trim();
+  if (!skuPrefix) {
+    eToast("SKU prefix is required.", "danger");
+    return;
+  }
+  const stockQuantity = Number(document.getElementById("bulk-variant-stock").value || 0);
+  const priceOverride = document.getElementById("bulk-variant-price-override").value || null;
+  const isActive = document.getElementById("bulk-variant-active").checked;
+
+  const valueLookup = new Map();
+  activeAttrs.forEach((attr) => (attr.values || []).forEach((val) => valueLookup.set(val.id, val)));
+
+  const combos = cartesianProduct(groups);
+
+  const existingCombos = _pfVariantsCache.map((v) =>
+    new Set((v.attribute_values_detail || []).map((val) => val.id))
+  );
+
+  const btn = document.getElementById("bulk-variant-save-btn");
+  btn.disabled = true;
+  btn.textContent = "Generating…";
+
+  let created = 0, skipped = 0, failed = 0;
+
+  for (const combo of combos) {
+    const comboSet = new Set(combo);
+    const alreadyExists = existingCombos.some(
+      (existing) => existing.size === comboSet.size && [...existing].every((id) => comboSet.has(id))
+    );
+    if (alreadyExists) {
+      skipped++;
+      continue;
+    }
+
+    const labelSlug = combo
+      .map((id) => valueLookup.get(id)?.value || id)
+      .join("-")
+      .replace(/\s+/g, "")
+      .toUpperCase();
+    const payload = {
+      product: _pfProductId,
+      sku: `${skuPrefix}-${labelSlug}`,
+      price_override: priceOverride,
+      stock_quantity: stockQuantity,
+      is_active: isActive,
+      attribute_values: combo,
+    };
+
+    const [success] = await callApi("POST", _pfCfg.productVariantApiUrl, payload, _pfCfg.csrfToken);
+    if (success) created++;
+    else failed++;
+  }
+
+  btn.disabled = false;
+  btn.textContent = "Generate Variants";
+
+  const summary = [`${created} created`];
+  if (skipped) summary.push(`${skipped} skipped (already existed)`);
+  if (failed) summary.push(`${failed} failed`);
+  eToast(summary.join(", ") + ".", failed ? "danger" : "success");
+
+  bootstrap.Modal.getInstance(document.getElementById("bulk-variant-modal"))?.hide();
   refreshVariants();
 }
 

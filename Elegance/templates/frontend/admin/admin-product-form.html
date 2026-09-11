@@ -180,6 +180,21 @@
     </div>
 
     <div class="e-card mb-3">
+      <div class="e-card-header"><h2>Product Video</h2></div>
+      <div class="e-card-body">
+        <div id="video-locked-note" class="e-empty py-3" style="display:none;">
+          <p>Save the product first to upload a video.</p>
+        </div>
+        <div id="video-panel" style="display:none;">
+          <div class="e-field-help mb-2">Uploaded separately from photos — shown last in the gallery, after all images, on the product page.</div>
+          <div id="video-preview-area" class="mb-3"></div>
+          <label class="e-label">Upload video</label>
+          <input type="file" class="e-input" id="pf-video-input" accept="video/*">
+        </div>
+      </div>
+    </div>
+
+    <div class="e-card mb-3">
       <div class="e-card-header"><h2>Variants</h2></div>
       <div class="e-card-body">
         <div id="variants-locked-note" class="e-empty py-3" style="display:none;">
@@ -217,10 +232,16 @@
             <div class="pf-variant-step-title">
               <span class="pf-variant-step-num">2</span> Variants &amp; Availability
             </div>
+            <div class="e-field-help mb-2">Add variants one at a time, or generate every combination of chosen values at once (e.g. Blue in all sizes) with a shared price/stock — then fine-tune individual ones afterwards.</div>
             <div id="variants-list" class="d-flex flex-column gap-2 mb-3"></div>
-            <button class="btn-e-outline w-100" type="button" id="variant-add-open-btn">
-              <i class="bi bi-plus-lg"></i> Add Variant
-            </button>
+            <div class="d-flex gap-2">
+              <button class="btn-e-outline flex-fill" type="button" id="variant-add-open-btn">
+                <i class="bi bi-plus-lg"></i> Add Variant
+              </button>
+              <button class="btn-e-outline flex-fill" type="button" id="variant-bulk-open-btn">
+                <i class="bi bi-grid-3x3-gap"></i> Bulk Generate
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -275,6 +296,56 @@
     </div>
   </div>
 </div>
+
+<!-- Bulk Generate Variants Modal -->
+<div class="modal fade e-modal" id="bulk-variant-modal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <form id="bulk-variant-form">
+        <div class="modal-header">
+          <h5 class="modal-title">Bulk Generate Variants</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="e-field-help mb-3">Pick one or more values per type. A variant is created for every combination — e.g. Blue + (M, L, XL) creates 3 variants, all sharing the price/stock below. Combinations that already exist are skipped.</div>
+          <div id="bulk-variant-attributes-area"></div>
+
+          <hr>
+          <div class="row g-2">
+            <div class="col-6">
+              <div class="e-field">
+                <label class="e-label">SKU Prefix <span class="req">*</span></label>
+                <input type="text" class="e-input" id="bulk-variant-sku-prefix" placeholder="e.g. product SKU" required>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="e-field">
+                <label class="e-label">Stock Quantity (each) <span class="req">*</span></label>
+                <input type="number" class="e-input" id="bulk-variant-stock" min="0" value="0" required>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="e-field">
+                <label class="e-label">Price Override (₹, optional)</label>
+                <input type="number" class="e-input" id="bulk-variant-price-override" min="0" step="0.01" placeholder="Uses product price if blank">
+              </div>
+            </div>
+            <div class="col-6 d-flex align-items-end">
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="bulk-variant-active" checked>
+                <label class="form-check-label" for="bulk-variant-active" style="font-size:13px;">Active</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-e-outline" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn-e-primary" id="bulk-variant-save-btn">Generate Variants</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
@@ -291,6 +362,7 @@
       attributeApiUrl: "{% url 'attribute-api-list' %}",
       attributeValueApiUrl: "{% url 'attribute-value-api-list' %}",
       productImageApiUrl: "{% url 'product-image-api-list' %}",
+      productVideoApiUrl: "{% url 'product-video-api-list' %}",
       productVariantApiUrl: "{% url 'product-variant-api-list' %}",
       productSpecificationApiUrl: "{% url 'product-specification-api-list' %}",
       productCareInstructionApiUrl: "{% url 'product-care-instruction-api-list' %}",

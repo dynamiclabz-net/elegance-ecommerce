@@ -7,6 +7,7 @@ let coConfig = null;
 let coCart = null;
 let coAddresses = [];
 let coSelectedAddressId = null;
+let coGeneratedOtp = null;
 const CO_FREE_SHIPPING_THRESHOLD = 2999;
 const CO_STANDARD_SHIPPING_CHARGE = 99;
 const CO_ADVANCE_PCT = 20;
@@ -29,7 +30,11 @@ function CheckoutPageInit(config) {
     input.addEventListener("change", renderSummary);
   });
 
-  document.getElementById("placeOrderBtn").addEventListener("click", placeOrder);
+  document.getElementById("placeOrderBtn").addEventListener("click", openConfirmModal);
+  document.getElementById("coConfirmProceedBtn").addEventListener("click", handleConfirmProceed);
+  document.getElementById("coOtpBackBtn").addEventListener("click", showConfirmStep);
+  document.getElementById("coOtpResendBtn").addEventListener("click", generateAndFillOtp);
+  document.getElementById("coOtpVerifyBtn").addEventListener("click", handleOtpVerify);
 }
 
 async function bootstrap() {
@@ -161,16 +166,90 @@ function renderSummary() {
   }
 }
 
-async function placeOrder() {
+/* ══════════════════════════════════════════════════════════════
+   CONFIRMATION MODAL + COD OTP VERIFICATION
+══════════════════════════════════════════════════════════════ */
+function openConfirmModal() {
   if (!coSelectedAddressId) {
     eToast("Please select or add a shipping address.", "error");
     return;
   }
 
+  const address = coAddresses.find((a) => String(a.id) === String(coSelectedAddressId));
   const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
-  const btn = document.getElementById("placeOrderBtn");
-  btn.disabled = true;
-  btn.textContent = "Placing order…";
+  const subtotal = Number(coCart.total_amount);
+  const shipping = subtotal >= CO_FREE_SHIPPING_THRESHOLD ? 0 : CO_STANDARD_SHIPPING_CHARGE;
+  const total = subtotal + shipping;
+
+  const rows = [
+    ["Delivering to", address ? `${address.full_name}, ${address.city}` : "—"],
+    ["Items", `${coCart.total_items} item${coCart.total_items === 1 ? "" : "s"}`],
+    ["Payment Method", paymentMethod === "cod" ? "Cash on Delivery" : "Pay Online"],
+  ];
+
+  if (paymentMethod === "cod") {
+    const advance = Math.round((total * CO_ADVANCE_PCT) / 100);
+    rows.push(["Pay Now (Advance)", eFormatCurrency(advance)]);
+    rows.push(["Pay on Delivery", eFormatCurrency(total - advance)]);
+  }
+
+  document.getElementById("coConfirmRows").innerHTML = rows
+    .map(([label, value]) => `<div class="co-confirm-row"><span>${eEscapeHtml(label)}</span><span>${eEscapeHtml(value)}</span></div>`)
+    .join("") + `<div class="co-confirm-row co-confirm-total"><span>Total Amount</span><span>${eFormatCurrency(total)}</span></div>`;
+
+  showConfirmStep();
+  bootstrap.Modal.getOrCreateInstance(document.getElementById("coConfirmModal")).show();
+}
+
+function showConfirmStep() {
+  document.getElementById("coConfirmStep").style.display = "block";
+  document.getElementById("coOtpStep").style.display = "none";
+}
+
+// Demo-only OTP: generated and shown straight to the frontend (no SMS
+// gateway wired up yet), and pre-filled so the flow can be tested end to end.
+function generateAndFillOtp() {
+  coGeneratedOtp = String(Math.floor(1000 + Math.random() * 9000));
+  const input = document.getElementById("coOtpInput");
+  input.value = coGeneratedOtp;
+  eToast(`OTP sent — auto-filled for you: ${coGeneratedOtp}`, "success");
+}
+
+function handleConfirmProceed() {
+  const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+
+  if (paymentMethod === "cod") {
+    document.getElementById("coConfirmStep").style.display = "none";
+    document.getElementById("coOtpStep").style.display = "block";
+    generateAndFillOtp();
+    return;
+  }
+
+  submitOrder();
+}
+
+function handleOtpVerify() {
+  const entered = document.getElementById("coOtpInput").value.trim();
+  if (!entered) {
+    eToast("Please enter the OTP.", "error");
+    return;
+  }
+  if (entered !== coGeneratedOtp) {
+    eToast("Incorrect OTP. Please try again.", "error");
+    return;
+  }
+  submitOrder();
+}
+
+async function submitOrder() {
+  const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+  const activeBtn = paymentMethod === "cod"
+    ? document.getElementById("coOtpVerifyBtn")
+    : document.getElementById("coConfirmProceedBtn");
+
+  activeBtn.disabled = true;
+  const originalText = activeBtn.innerHTML;
+  activeBtn.textContent = "Placing order…";
 
   const [success, result] = await callApi(
     "POST",
@@ -180,8 +259,8 @@ async function placeOrder() {
   );
 
   if (!success || !result.success) {
-    btn.disabled = false;
-    btn.innerHTML = 'Place Order <i class="fas fa-arrow-right"></i>';
+    activeBtn.disabled = false;
+    activeBtn.innerHTML = originalText;
     eToast(eExtractError(result, "Could not place order."), "error");
     return;
   }

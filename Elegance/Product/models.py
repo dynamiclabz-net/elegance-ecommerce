@@ -168,6 +168,10 @@ class Product(models.Model):
     is_active = models.BooleanField(default=True)
     is_featured = models.BooleanField(default=False)
 
+    # Single showcase video, uploaded separately from the photo gallery.
+    # Shown last in the product-detail gallery, after all photos.
+    video = models.FileField(upload_to="products/videos/", blank=True, null=True)
+
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 

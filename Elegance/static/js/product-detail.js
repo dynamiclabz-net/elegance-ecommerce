@@ -107,23 +107,40 @@ function renderGallery() {
     ? pdProduct.images.slice().sort((a, b) => (a.is_primary ? -1 : 1))
     : [{ image: "/static/images/placeholder-product.png", alt_text: pdProduct.name }];
 
+  // The video (if any) always shows last, after every photo.
+  const hasVideo = !!pdProduct.video_url;
+  const slides = hasVideo ? [...images, { isVideo: true, video: pdProduct.video_url }] : images;
+
   const track = document.getElementById("pdMainTrack");
   const thumbRow = document.getElementById("pdThumbRow");
   const badge = document.getElementById("pdImgBadge");
   const counter = document.getElementById("pdImgCounter");
 
-  track.innerHTML = images
-    .map((img, i) => `
-      <div class="pd-main-slide ${i === 0 ? "pd-main-active" : ""}">
-        <img src="${img.image}" alt="${eEscapeHtml(img.alt_text || pdProduct.name)}" />
-      </div>`)
+  track.innerHTML = slides
+    .map((slide, i) => {
+      if (slide.isVideo) {
+        return `<div class="pd-main-slide ${i === 0 ? "pd-main-active" : ""}">
+          <video class="pd-main-video" src="${slide.video}" controls playsinline></video>
+        </div>`;
+      }
+      return `<div class="pd-main-slide ${i === 0 ? "pd-main-active" : ""}">
+        <img src="${slide.image}" alt="${eEscapeHtml(slide.alt_text || pdProduct.name)}" />
+      </div>`;
+    })
     .join("");
 
-  thumbRow.innerHTML = images
-    .map((img, i) => `
-      <button class="pd-thumb ${i === 0 ? "pd-thumb-active" : ""}" data-idx="${i}" type="button">
-        <img src="${img.image}" alt="" />
-      </button>`)
+  thumbRow.innerHTML = slides
+    .map((slide, i) => {
+      if (slide.isVideo) {
+        return `<button class="pd-thumb pd-thumb-video ${i === 0 ? "pd-thumb-active" : ""}" data-idx="${i}" type="button" aria-label="Product video">
+          <video src="${slide.video}" muted playsinline></video>
+          <span class="pd-thumb-play"><i class="fas fa-play"></i></span>
+        </button>`;
+      }
+      return `<button class="pd-thumb ${i === 0 ? "pd-thumb-active" : ""}" data-idx="${i}" type="button">
+        <img src="${slide.image}" alt="" />
+      </button>`;
+    })
     .join("");
 
   if (pdProduct.is_featured) {
@@ -133,14 +150,21 @@ function renderGallery() {
     badge.style.display = "none";
   }
 
-  const totalImgs = images.length;
+  const totalImgs = slides.length;
   pdCurrentImg = 0;
+  document.getElementById("pdMainWrap").classList.toggle("pd-main-is-video", !!slides[0].isVideo);
+
+  function pauseAllVideos() {
+    track.querySelectorAll("video").forEach((v) => v.pause());
+  }
 
   function goToImage(idx) {
+    pauseAllVideos();
     pdCurrentImg = ((idx % totalImgs) + totalImgs) % totalImgs;
     track.style.transform = `translateX(-${pdCurrentImg * 100}%)`;
     thumbRow.querySelectorAll(".pd-thumb").forEach((t, i) => t.classList.toggle("pd-thumb-active", i === pdCurrentImg));
     counter.textContent = `${pdCurrentImg + 1} / ${totalImgs}`;
+    document.getElementById("pdMainWrap").classList.toggle("pd-main-is-video", !!slides[pdCurrentImg].isVideo);
   }
 
   thumbRow.querySelectorAll(".pd-thumb").forEach((t) => {
@@ -218,27 +242,31 @@ function renderVariantGroups() {
   wrap.innerHTML = pdAttributeGroups
     .map((group) => {
       const isColour = isColourAttribute(group.name);
+      const selectedId = pdSelectedValueIds[group.id];
       const optionsHtml = group.values
         .map((val) => {
-          const disabled = !valueHasStock(group.id, val.id);
+          const disabled = !isValueAvailable(group.id, val.id);
+          const active = String(selectedId) === String(val.id);
           if (isColour) {
             const hex = PD_COLOR_HEX[String(val.value).toLowerCase()];
             if (hex) {
-              return `<button type="button" class="pd-swatch" style="background:${hex}" title="${eEscapeHtml(val.value)}"
+              return `<button type="button" class="pd-swatch${active ? " pd-swatch-active" : ""}" style="background:${hex}" title="${eEscapeHtml(val.value)}"
                 data-attr="${group.id}" data-value="${val.id}" ${disabled ? "disabled" : ""}></button>`;
             }
-            return `<button type="button" class="pd-swatch pd-swatch-plain" title="${eEscapeHtml(val.value)}"
+            return `<button type="button" class="pd-swatch pd-swatch-plain${active ? " pd-swatch-active" : ""}" title="${eEscapeHtml(val.value)}"
               data-attr="${group.id}" data-value="${val.id}" ${disabled ? "disabled" : ""}>${eEscapeHtml(val.value)}</button>`;
           }
-          return `<button type="button" class="pd-size-btn" data-attr="${group.id}" data-value="${val.id}" ${disabled ? "disabled" : ""}>
+          return `<button type="button" class="pd-size-btn${active ? " pd-size-active" : ""}" data-attr="${group.id}" data-value="${val.id}" ${disabled ? "disabled" : ""}>
             ${eEscapeHtml(val.value)}
           </button>`;
         })
         .join("");
 
+      const selectedVal = group.values.find((v) => String(v.id) === String(selectedId));
+
       return `
         <div class="pd-option-group" data-attr-group="${group.id}">
-          <span class="pd-option-label">${eEscapeHtml(group.name)}: <strong data-attr-selected="${group.id}">Select ${eEscapeHtml(group.name)}</strong></span>
+          <span class="pd-option-label">${eEscapeHtml(group.name)}: <strong data-attr-selected="${group.id}">${selectedVal ? eEscapeHtml(selectedVal.value) : `Select ${eEscapeHtml(group.name)}`}</strong></span>
           <div class="${isColour ? "pd-swatch-grid" : "pd-size-grid"}">${optionsHtml}</div>
         </div>`;
     })
@@ -248,31 +276,32 @@ function renderVariantGroups() {
     btn.addEventListener("click", () => {
       const attrId = btn.dataset.attr;
       const valueId = btn.dataset.value;
-      pdSelectedValueIds[attrId] = valueId;
+      // Toggle off if re-clicking the already-selected option.
+      pdSelectedValueIds[attrId] = String(pdSelectedValueIds[attrId]) === String(valueId) ? undefined : valueId;
 
-      wrap.querySelectorAll(`button[data-attr="${attrId}"]`).forEach((b) => {
-        b.classList.toggle("pd-swatch-active", b === btn && b.classList.contains("pd-swatch"));
-        b.classList.toggle("pd-size-active", b === btn && b.classList.contains("pd-size-btn"));
-      });
-
-      const group = pdAttributeGroups.find((g) => String(g.id) === attrId);
-      const selectedVal = group?.values.find((v) => String(v.id) === valueId);
-      const label = wrap.querySelector(`[data-attr-selected="${attrId}"]`);
-      if (label && selectedVal) label.textContent = selectedVal.value;
-
+      // Re-render so every other group's availability updates to reflect
+      // the new selection (e.g. picking a colour blurs out sizes that
+      // colour doesn't come in).
+      renderVariantGroups();
       updateVariantMatch();
     });
   });
 }
 
-// Returns true if at least one active variant containing this attribute value
-// still has stock, given other currently-selected values (best-effort check).
-function valueHasStock(attrId, valueId) {
+// Returns true if this value can still be picked given the values already
+// selected in OTHER groups — i.e. some active, in-stock variant exists that
+// contains both this value and every other currently-selected value.
+function isValueAvailable(attrId, valueId) {
   const variants = pdProduct.variants || [];
+  const otherSelectedIds = Object.entries(pdSelectedValueIds)
+    .filter(([gid, vid]) => gid !== String(attrId) && vid)
+    .map(([, vid]) => String(vid));
+
   return variants.some((v) => {
-    if (!v.is_active) return false;
+    if (!v.is_active || v.stock_quantity <= 0) return false;
     const ids = (v.attribute_values_detail || []).map((av) => String(av.id));
-    return ids.includes(String(valueId)) && v.stock_quantity > 0;
+    if (!ids.includes(String(valueId))) return false;
+    return otherSelectedIds.every((sid) => ids.includes(sid));
   });
 }
 
@@ -373,7 +402,7 @@ async function addToCart(redirectToCheckout) {
   }
 }
 
-/* ═══════════════════════════════════════════════════���══════════
+/* ═��═════════════════════════════════════════════════���══════════
    RELATED PRODUCTS
 ══════════════════════════════════════════════════════════════ */
 async function loadRelatedProducts() {

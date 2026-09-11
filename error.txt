@@ -1,0 +1,1 @@
+in account page once we login the csrf token is not refreshed so either refresh the csrf or refresh the whole page

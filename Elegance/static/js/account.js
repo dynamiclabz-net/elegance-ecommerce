@@ -21,7 +21,7 @@ function AccountPageInit(config) {
   wireOrdersFilter();
   wireAddressModal();
   wireOtpModal();
-  wireAvatarEdit();
+  // wireAvatarEdit();
 
   checkSessionAndBoot();
 }

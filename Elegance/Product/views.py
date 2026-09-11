@@ -593,6 +593,62 @@ class ProductImageViewSet(viewsets.ViewSet):
 
 
 # ─────────────────────────────────────────────
+# Product Video — single showcase video, uploaded/replaced/removed
+# separately from the photo gallery. Keyed by the product's own pk.
+# ─────────────────────────────────────────────
+class ProductVideoViewSet(viewsets.ViewSet):
+    parser_classes = (MultiPartParser, FormParser, JSONParser)
+
+    @handle_exceptions
+    @check_authentication(required_role="admin")
+    def update(self, request, pk):
+        product = Product.objects.filter(pk=pk).first()
+        if not product:
+            return Response({
+                "success": False, "user_not_logged_in": False, "user_unauthorized": False,
+                "data": None, "error": "Product not found."
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        video_file = request.data.get("video")
+        if not video_file:
+            return Response({
+                "success": False, "user_not_logged_in": False, "user_unauthorized": False,
+                "data": None, "error": "No video file provided."
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        if product.video:
+            product.video.delete(save=False)
+        product.video = video_file
+        product.save(update_fields=["video"])
+
+        return Response({
+            "success": True, "user_not_logged_in": False, "user_unauthorized": False,
+            "data": {"product": ProductDetailSerializer(product, context={"request": request}).data},
+            "error": None,
+        }, status=status.HTTP_200_OK)
+
+    @handle_exceptions
+    @check_authentication(required_role="admin")
+    def destroy(self, request, pk):
+        product = Product.objects.filter(pk=pk).first()
+        if not product:
+            return Response({
+                "success": False, "user_not_logged_in": False, "user_unauthorized": False,
+                "data": None, "error": "Product not found."
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        if product.video:
+            product.video.delete(save=False)
+        product.video = None
+        product.save(update_fields=["video"])
+
+        return Response({
+            "success": True, "user_not_logged_in": False, "user_unauthorized": False,
+            "data": {"id": pk, "deleted": True}, "error": None,
+        }, status=status.HTTP_200_OK)
+
+
+# ─────────────────────────────────────────────
 # Product Variants (Color + Size style combinations)
 # ─────────────────────────────────────────────
 class ProductVariantViewSet(viewsets.ViewSet):

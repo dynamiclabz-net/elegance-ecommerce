@@ -16,4 +16,16 @@ router.register(r"product-care-instruction-api", ProductCareInstructionViewSet, 
 
 urlpatterns = [
     path("", include(router.urls)),
+    # ProductVideoViewSet only supports update/destroy (no list/create), so
+    # DefaultRouter can't auto-generate its routes — register them by hand.
+    path(
+        "product-video-api/",
+        ProductVideoViewSet.as_view({"put": "update"}),
+        name="product-video-api-list",
+    ),
+    path(
+        "product-video-api/<int:pk>/",
+        ProductVideoViewSet.as_view({"put": "update", "delete": "destroy"}),
+        name="product-video-api-detail",
+    ),
 ]

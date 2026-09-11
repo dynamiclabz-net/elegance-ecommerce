@@ -148,6 +148,7 @@ class ProductDetailSerializer(serializers.ModelSerializer):
     effective_price = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
     discount_percentage = serializers.IntegerField(read_only=True)
     in_stock = serializers.BooleanField(read_only=True)
+    video_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
@@ -156,10 +157,17 @@ class ProductDetailSerializer(serializers.ModelSerializer):
             "subcategory_name", "product_type", "product_type_name", "sku",
             "short_description", "description", "fabric", "price", "discount_price",
             "effective_price", "discount_percentage", "stock_quantity", "in_stock",
-            "is_active", "is_featured", "images", "variants",
+            "is_active", "is_featured", "images", "variants", "video_url",
             "specifications", "care_instructions", "created_at", "updated_at",
         )
         read_only_fields = ("id", "slug", "created_at", "updated_at")
+
+    def get_video_url(self, obj):
+        if not obj.video:
+            return None
+        request = self.context.get("request")
+        url = obj.video.url
+        return request.build_absolute_uri(url) if request else url
 
     def validate(self, attrs):
         subcategory = attrs.get("subcategory") or getattr(self.instance, "subcategory", None)
