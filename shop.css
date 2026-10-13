@@ -729,7 +729,7 @@ button { cursor: pointer; }
 
 .qv-desc {
   font-size: 13.5px; color: var(--text-mid); line-height: 1.65;
-  margin-bottom: 22px;
+  margin-bottom: 22px; text-align: justify;
 }
 
 .qv-option-label {

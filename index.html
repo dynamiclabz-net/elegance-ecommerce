@@ -34,13 +34,14 @@
 <nav class="site-nav" id="siteNav">
   <div class="nav-inner">
 
-    <!-- Mobile hamburger -->
-    <button class="hamburger" id="hamburger" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
+    <!-- Brand (left) -->
+    <a href="index.html" class="nav-brand">
+      <img src="images/elegance-logo-gold-dash.png" alt="Elegance Logo" class="nav-logo" />
+    </a>
 
-    <!-- Left links -->
-    <ul class="nav-links nav-links-left" id="navLinks">
+    <!-- Menu (centre) -->
+    <ul class="nav-links" id="navLinks">
+      <li><a href="shop.html" class="nav-link">New In</a></li>
       <li class="nav-item-dropdown">
         <a href="shop.html" class="nav-link">Shop <i class="fas fa-chevron-down nav-chevron"></i></a>
         <div class="mega-drop">
@@ -68,17 +69,11 @@
           </div>
         </div>
       </li>
-      <li><a href="shop.html" class="nav-link">New Arrivals</a></li>
-      <li><a href="shop.html" class="nav-link">Occasions</a></li>
+      <li><a href="shop.html" class="nav-link">About us</a></li>
       <li><a href="shop.html" class="nav-link nav-sale">Sale</a></li>
     </ul>
 
-    <!-- Brand -->
-    <a href="index.html" class="nav-brand">
-      <img src="images/elegance-logo-gold-dash.png" alt="Elegance Logo" class="nav-logo" />
-    </a>
-
-    <!-- Right actions -->
+    <!-- Actions (right) -->
     <div class="nav-actions">
       <button class="nav-icon-btn" aria-label="Search" id="searchToggle">
         <i class="fas fa-search"></i>
@@ -90,7 +85,15 @@
         <i class="fas fa-shopping-bag"></i>
         <span class="cart-badge">2</span>
       </a>
-      <a href="account.html" class="btn-account">Account</a>
+      <a href="account.html" class="btn-account">
+        <i class="far fa-user"></i>
+      </a>
+      <button type="button" class="btn-schedule" id="openScheduleCall" aria-haspopup="dialog" aria-controls="scheduleModal">
+        <i class="fas fa-phone-volume"></i><span>Schedule Call</span>
+      </button>
+      <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </div>
 
@@ -220,7 +223,7 @@
 <!-- ══════════════════════════════════════════════════
      MARQUEE TICKER
 ══════════════════════════════════════════════════ -->
-<div class="ticker-bar">
+<!-- <div class="ticker-bar">
   <div class="ticker-track">
     <span>Unstitched Suits</span><span class="t-sep">✦</span>
     <span>Semi Stitched</span><span class="t-sep">✦</span>
@@ -243,137 +246,209 @@
     <span>Work Wear</span><span class="t-sep">✦</span>
     <span>Festive Edit</span><span class="t-sep">✦</span>
   </div>
-</div>
+</div> -->
 
 <!-- ══════════════════════════════════════════════════
-     SECTION 1 — NEW ARRIVALS (IN HIGH DEMAND STYLE)
-     Wide section bg, 4-product card row with wishlist
+     SECTION 1 — NEW ARRIVALS (expanding hover row)
 ══════════════════════════════════════════════════ -->
-<section class="product-section sec-cream" id="new-arrivals">
-  <div class="ps-header">
-    <div class="ps-title-row">
-      <h2 class="ps-title">New Arrivals</h2>
-    </div>
-    <a href="#" class="ps-view-all">View All <i class="fas fa-arrow-right"></i></a>
+<section class="na-section sec-cream" id="new-arrivals">
+  <div class="na-header">
+    <h2 class="na-title">New Arrivals</h2>
+    <a href="shop.html" class="na-shop-all">Shop All <span aria-hidden="true">&rarr;</span></a>
   </div>
 
-  <div class="product-scroll-row" id="newArrivalsRow">
-    <!-- Product Card -->
-    <div class="prod-card">
-      <div class="prod-img-wrap">
-        <img src="images/2026_05_17_13_11_IMG_3466.JPG" alt="Summer Bloom Suit" loading="lazy" />
-        <button class="wish-btn" aria-label="Wishlist"><i class="far fa-heart"></i></button>
-        <div class="prod-quick-add">Quick Add</div>
-      </div>
-      <div class="prod-info">
-        <span class="prod-brand">Elegance Exclusive</span>
-        <p class="prod-name">Pastel Floral Anarkali Suit</p>
-        <div class="prod-price-row">
-          <span class="prod-price">₹4,250</span>
-          <span class="prod-mrp">₹6,000</span>
-          <span class="prod-discount">29% OFF</span>
+  <div class="na-row" id="newArrivalsRow">
+    <article class="na-card is-active" tabindex="0">
+      <div class="na-media">
+        <img class="na-img na-img-primary" src="images/2026_05_17_13_11_IMG_3466.JPG" alt="Pastel Floral Anarkali Suit" loading="lazy" />
+        <img class="na-img na-img-hover" src="images/2026_05_17_13_11_IMG_3465.JPG" alt="" loading="lazy" />
+        <div class="na-actions">
+          <button type="button" class="na-btn na-btn-ghost" data-quick-add>Quick Add</button>
+          <button type="button" class="na-btn na-btn-solid" data-add-cart>Add to Cart</button>
         </div>
       </div>
-    </div>
+      <div class="na-info">
+        <h3 class="na-name">Pastel Floral Anarkali Suit</h3>
+        <span class="na-price">₹4,250</span>
+      </div>
+    </article>
+    <article class="na-card" tabindex="0">
+      <div class="na-media">
+        <img class="na-img na-img-primary" src="images/EC 15955 (6).jpg" alt="Ivory Embroidered Salwar Set" loading="lazy" />
+        <img class="na-img na-img-hover" src="images/EC 17020_2.jpg" alt="" loading="lazy" />
+        <div class="na-actions">
+          <button type="button" class="na-btn na-btn-ghost" data-quick-add>Quick Add</button>
+          <button type="button" class="na-btn na-btn-solid" data-add-cart>Add to Cart</button>
+        </div>
+      </div>
+      <div class="na-info">
+        <h3 class="na-name">Ivory Embroidered Salwar Set</h3>
+        <span class="na-price">₹5,900</span>
+      </div>
+    </article>
+    <article class="na-card" tabindex="0">
+      <div class="na-media">
+        <img class="na-img na-img-primary" src="images/17.png" alt="Zari Work Semi-Stitched Suit" loading="lazy" />
+        <img class="na-img na-img-hover" src="images/6.png" alt="" loading="lazy" />
+        <div class="na-actions">
+          <button type="button" class="na-btn na-btn-ghost" data-quick-add>Quick Add</button>
+          <button type="button" class="na-btn na-btn-solid" data-add-cart>Add to Cart</button>
+        </div>
+      </div>
+      <div class="na-info">
+        <h3 class="na-name">Zari Work Semi-Stitched Suit</h3>
+        <span class="na-price">₹3,750</span>
+      </div>
+    </article>
+    <article class="na-card" tabindex="0">
+      <div class="na-media">
+        <img class="na-img na-img-primary" src="images/EC 17021_3.jpg" alt="Peach Georgette Occasion Suit" loading="lazy" />
+        <img class="na-img na-img-hover" src="images/19.png" alt="" loading="lazy" />
+        <div class="na-actions">
+          <button type="button" class="na-btn na-btn-ghost" data-quick-add>Quick Add</button>
+          <button type="button" class="na-btn na-btn-solid" data-add-cart>Add to Cart</button>
+        </div>
+      </div>
+      <div class="na-info">
+        <h3 class="na-name">Peach Georgette Occasion Suit</h3>
+        <span class="na-price">₹6,800</span>
+      </div>
+    </article>
+  </div>
+</section>
 
-    <div class="prod-card">
-      <div class="prod-img-wrap">
-        <img src="images/EC 15955 (6).jpg" alt="Ivory Blazer" loading="lazy" />
-        <button class="wish-btn" aria-label="Wishlist"><i class="far fa-heart"></i></button>
-        <div class="prod-quick-add">Quick Add</div>
-      </div>
-      <div class="prod-info">
-        <span class="prod-brand">Elegance Couture</span>
-        <p class="prod-name">Ivory Embroidered Salwar Set</p>
-        <div class="prod-price-row">
-          <span class="prod-price">₹5,900</span>
-          <span class="prod-mrp">₹8,200</span>
-          <span class="prod-discount">28% OFF</span>
-        </div>
-      </div>
-    </div>
 
-    <div class="prod-card">
-      <div class="prod-img-wrap">
-        <img src="images/17.png" alt="Golden Hour" loading="lazy" />
-        <button class="wish-btn" aria-label="Wishlist"><i class="far fa-heart"></i></button>
-        <div class="prod-quick-add">Quick Add</div>
-      </div>
-      <div class="prod-info">
-        <span class="prod-brand">Elegance Festive</span>
-        <p class="prod-name">Zari Work Semi-Stitched Suit</p>
-        <div class="prod-price-row">
-          <span class="prod-price">₹3,750</span>
-          <span class="prod-mrp">₹5,500</span>
-          <span class="prod-discount">32% OFF</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="prod-card">
-      <div class="prod-img-wrap">
-        <img src="images/EC 17021_3.jpg" alt="Occasion Wear" loading="lazy" />
-        <button class="wish-btn" aria-label="Wishlist"><i class="far fa-heart"></i></button>
-        <div class="prod-quick-add">Quick Add</div>
-      </div>
-      <div class="prod-info">
-        <span class="prod-brand">Elegance Signature</span>
-        <p class="prod-name">Peach Georgette Occasion Suit</p>
-        <div class="prod-price-row">
-          <span class="prod-price">₹6,800</span>
-          <span class="prod-mrp">₹9,000</span>
-          <span class="prod-discount">24% OFF</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="prod-card">
-      <div class="prod-img-wrap">
-        <img src="images/15.png" alt="Co-ord Set" loading="lazy" />
-        <button class="wish-btn" aria-label="Wishlist"><i class="far fa-heart"></i></button>
-        <div class="prod-quick-add">Quick Add</div>
-      </div>
-      <div class="prod-info">
-        <span class="prod-brand">Elegance Studio</span>
-        <p class="prod-name">Printed Organza Co-ord Set</p>
-        <div class="prod-price-row">
-          <span class="prod-price">₹3,200</span>
-          <span class="prod-mrp">₹4,800</span>
-          <span class="prod-discount">33% OFF</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="prod-card">
-      <div class="prod-img-wrap">
-        <img src="images/2026_05_17_10_14_IMG_3252.JPG" alt="Casual Daily" loading="lazy" />
-        <button class="wish-btn" aria-label="Wishlist"><i class="far fa-heart"></i></button>
-        <div class="prod-quick-add">Quick Add</div>
-      </div>
-      <div class="prod-info">
-        <span class="prod-brand">Elegance Daily</span>
-        <p class="prod-name">Soft Cotton Unstitched Suit</p>
-        <div class="prod-price-row">
-          <span class="prod-price">₹1,850</span>
-          <span class="prod-mrp">₹2,600</span>
-          <span class="prod-discount">29% OFF</span>
-        </div>
-      </div>
-    </div>
+<!-- ══════════════════════════════════════════════════
+     SECTION 6 — SHOP BY CATEGORY (4-card grid)
+══════════════════════════════════════════════════ -->
+<section class="shop-cat-section sec-cream">
+  <div class="shop-cat-header">
+    <span class="shop-cat-eyebrow">Women</span>
+    <h2 class="shop-cat-title">Shop by Category</h2>
   </div>
 
-  <!-- Scroll dots -->
-  <div class="scroll-dots" id="newArrivalsDots">
-    <span class="sdot active"></span>
-    <span class="sdot"></span>
-    <span class="sdot"></span>
+  <div class="shop-cat-grid">
+    <a href="#" class="shop-cat-card">
+      <div class="shop-cat-img">
+        <img src="images/EC 15955 (6).jpg" alt="Unstitched Suits" loading="lazy" />
+      </div>
+      <div class="shop-cat-body">
+        <h3>Unstitched Suits</h3>
+        <i class="fas fa-arrow-right shop-cat-arrow" aria-hidden="true"></i>
+      </div>
+    </a>
+    <a href="#" class="shop-cat-card">
+      <div class="shop-cat-img">
+        <img src="images/2026_05_17_13_11_IMG_3466.JPG" alt="Semi Stitched" loading="lazy" />
+      </div>
+      <div class="shop-cat-body">
+        <h3>Semi Stitched</h3>
+        <i class="fas fa-arrow-right shop-cat-arrow" aria-hidden="true"></i>
+      </div>
+    </a>
+    <a href="#" class="shop-cat-card">
+      <div class="shop-cat-img">
+        <img src="images/19.png" alt="Trousseau" loading="lazy" />
+      </div>
+      <div class="shop-cat-body">
+        <h3>Trousseau</h3>
+        <i class="fas fa-arrow-right shop-cat-arrow" aria-hidden="true"></i>
+      </div>
+    </a>
+    <a href="#" class="shop-cat-card">
+      <div class="shop-cat-img">
+        <img src="images/15.png" alt="Co-ord Sets" loading="lazy" />
+      </div>
+      <div class="shop-cat-body">
+        <h3>Co-ord Sets</h3>
+        <i class="fas fa-arrow-right shop-cat-arrow" aria-hidden="true"></i>
+      </div>
+    </a>
+  </div>
+
+  <a href="#" class="shop-cat-all">Shop All <span aria-hidden="true">&rarr;</span></a>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     ELEGANCE BESTSELLERS — auto-scrolling marquee
+═══════��══════════════════════════════════════════ -->
+<section class="bs-section sec-white" id="elegance-bestsellers" aria-labelledby="bsTitle">
+  <div class="bs-header">
+    <span class="bs-eyebrow">The Elegance Edit</span>
+    <h2 class="bs-title" id="bsTitle">Bestsellers</h2>
+  </div>
+
+  <div class="bs-marquee" id="bsMarquee">
+    <div class="bs-track" id="bsTrack">
+      <a href="shop.html" class="bs-card">
+        <div class="bs-media">
+          <img class="bs-img bs-img-primary" src="images/15.png" alt="Rosewater Printed Co-ord Set" loading="lazy" />
+          <img class="bs-img bs-img-hover" src="images/2026_05_17_10_14_IMG_3252.JPG" alt="" loading="lazy" />
+        </div>
+        <div class="bs-info">
+          <h3 class="bs-name">Rosewater Printed Co-ord Set</h3>
+          <span class="bs-price">₹3,200</span>
+        </div>
+      </a>
+      <a href="shop.html" class="bs-card">
+        <div class="bs-media">
+          <img class="bs-img bs-img-primary" src="images/2026_05_17_10_14_IMG_3252.JPG" alt="Soft Cotton Unstitched Suit" loading="lazy" />
+          <img class="bs-img bs-img-hover" src="images/15.png" alt="" loading="lazy" />
+        </div>
+        <div class="bs-info">
+          <h3 class="bs-name">Soft Cotton Unstitched Suit</h3>
+          <span class="bs-price">₹1,850</span>
+        </div>
+      </a>
+      <a href="shop.html" class="bs-card">
+        <div class="bs-media">
+          <img class="bs-img bs-img-primary" src="images/EC 17020_2.jpg" alt="Ivory Silk Chanderi Kameez" loading="lazy" />
+          <img class="bs-img bs-img-hover" src="images/EC 15955 (6).jpg" alt="" loading="lazy" />
+        </div>
+        <div class="bs-info">
+          <h3 class="bs-name">Ivory Silk Chanderi Kameez</h3>
+          <span class="bs-price">₹5,900</span>
+        </div>
+      </a>
+      <a href="shop.html" class="bs-card">
+        <div class="bs-media">
+          <img class="bs-img bs-img-primary" src="images/6.png" alt="Zari Embroidered Festive Suit" loading="lazy" />
+          <img class="bs-img bs-img-hover" src="images/17.png" alt="" loading="lazy" />
+        </div>
+        <div class="bs-info">
+          <h3 class="bs-name">Zari Embroidered Festive Suit</h3>
+          <span class="bs-price">₹7,200</span>
+        </div>
+      </a>
+      <a href="shop.html" class="bs-card">
+        <div class="bs-media">
+          <img class="bs-img bs-img-primary" src="images/19.png" alt="Peach Organza Occasion Suit" loading="lazy" />
+          <img class="bs-img bs-img-hover" src="images/EC 17021_3.jpg" alt="" loading="lazy" />
+        </div>
+        <div class="bs-info">
+          <h3 class="bs-name">Peach Organza Occasion Suit</h3>
+          <span class="bs-price">₹6,800</span>
+        </div>
+      </a>
+      <a href="shop.html" class="bs-card">
+        <div class="bs-media">
+          <img class="bs-img bs-img-primary" src="images/2026_05_17_13_11_IMG_3465.JPG" alt="Pastel Floral Anarkali Suit" loading="lazy" />
+          <img class="bs-img bs-img-hover" src="images/2026_05_17_13_11_IMG_3466.JPG" alt="" loading="lazy" />
+        </div>
+        <div class="bs-info">
+          <h3 class="bs-name">Pastel Floral Anarkali Suit</h3>
+          <span class="bs-price">₹4,250</span>
+        </div>
+      </a>
+    </div>
   </div>
 </section>
 
 <!-- ══════════════════════════════════════════════════
      SECTION 2 — SHOP BY OCCASION (BENTO GRID)
 ══════════════════════════════════════════════════ -->
-<section class="occasion-section" id="occasions">
+<section class="occasion-section" id="occasions" style="display: none;">
   <div class="occ-header">
     <h2 class="occ-title">Shop By Occasion</h2>
   </div>
@@ -434,7 +509,7 @@
       <div class="divider-line"></div>
       <div class="divider-title-wrap">
         <h2 class="cat-sec-title">Salwar Suits</h2>
-        <a href="#" class="cat-view-all">View All</a>
+        <a href="#" class="cat-view-all">Shop All</a>
       </div>
       <div class="divider-line"></div>
     </div>
@@ -558,13 +633,13 @@
 <!-- ══════════════════════════════════════════════════
      SECTION 5 — CO-ORD SETS (WITH DIVIDER TITLE + CAROUSEL)
 ══════════════════════════════════════════════════ -->
-<section class="cat-carousel-section sec-white" id="coord-sets">
+<section class="cat-carousel-section sec-white" id="coord-sets" style="display: none;">
   <div class="cat-sec-header">
     <div class="cat-title-divider">
       <div class="divider-line"></div>
       <div class="divider-title-wrap">
         <h2 class="cat-sec-title">Co-ord Sets</h2>
-        <a href="#" class="cat-view-all">View All</a>
+        <a href="#" class="cat-view-all">Shop All</a>
       </div>
       <div class="divider-line"></div>
     </div>
@@ -656,82 +731,15 @@
 </section>
 
 <!-- ══════════════════════════════════════════════════
-     SECTION 6 — SHOP BY CATEGORY (5-column visual grid)
-══════════════════════════════════════════════════ -->
-<section class="shop-cat-section sec-cream">
-  <div class="shop-cat-header">
-    <h2 class="shop-cat-title">Shop by Category</h2>
-    <p class="shop-cat-sub">Explore our curated collections for every style</p>
-  </div>
-
-  <div class="shop-cat-grid">
-    <div class="shop-cat-card">
-      <div class="shop-cat-img">
-        <img src="images/EC 15955 (6).jpg" alt="Unstitched Suits" loading="lazy" />
-        <div class="shop-cat-overlay"></div>
-      </div>
-      <div class="shop-cat-body">
-        <h3>Unstitched Suits</h3>
-        <a href="#" class="shop-cat-link">Shop <i class="fas fa-arrow-right"></i></a>
-      </div>
-    </div>
-
-    <div class="shop-cat-card">
-      <div class="shop-cat-img">
-        <img src="images/2026_05_17_13_11_IMG_3466.JPG" alt="Semi Stitched" loading="lazy" />
-        <div class="shop-cat-overlay"></div>
-      </div>
-      <div class="shop-cat-body">
-        <h3>Semi Stitched</h3>
-        <a href="#" class="shop-cat-link">Shop <i class="fas fa-arrow-right"></i></a>
-      </div>
-    </div>
-
-    <div class="shop-cat-card shop-cat-card-tall">
-      <div class="shop-cat-img">
-        <img src="images/19.png" alt="Trousseau" loading="lazy" />
-        <div class="shop-cat-overlay"></div>
-      </div>
-      <div class="shop-cat-body">
-        <h3>Trousseau</h3>
-        <a href="#" class="shop-cat-link">Shop <i class="fas fa-arrow-right"></i></a>
-      </div>
-    </div>
-
-    <div class="shop-cat-card">
-      <div class="shop-cat-img">
-        <img src="images/15.png" alt="Co-ord Sets" loading="lazy" />
-        <div class="shop-cat-overlay"></div>
-      </div>
-      <div class="shop-cat-body">
-        <h3>Co-ord Sets</h3>
-        <a href="#" class="shop-cat-link">Shop <i class="fas fa-arrow-right"></i></a>
-      </div>
-    </div>
-
-    <div class="shop-cat-card">
-      <div class="shop-cat-img">
-        <img src="images/6.png" alt="Casual Wear" loading="lazy" />
-        <div class="shop-cat-overlay"></div>
-      </div>
-      <div class="shop-cat-body">
-        <h3>Casual Wear</h3>
-        <a href="#" class="shop-cat-link">Shop <i class="fas fa-arrow-right"></i></a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════════════════
      SECTION 7 — OCCASION WEAR (WITH DIVIDER TITLE + CAROUSEL)
 ══════════════════════════════════════════════════ -->
-<section class="cat-carousel-section sec-white" id="occasion-wear">
+<section class="cat-carousel-section sec-white" id="occasion-wear" style="display: none;">
   <div class="cat-sec-header">
     <div class="cat-title-divider">
       <div class="divider-line"></div>
       <div class="divider-title-wrap">
         <h2 class="cat-sec-title">Occasion Wear</h2>
-        <a href="#" class="cat-view-all">View All</a>
+        <a href="#" class="cat-view-all">Shop All</a>
       </div>
       <div class="divider-line"></div>
     </div>
@@ -890,6 +898,60 @@
       <div class="reel-caption">Office chic — never compromise on style</div>
     </div>
 
+        <div class="reel-portrait-card">
+      <div class="reel-portrait-img">
+        <img src="images/2026_05_17_13_11_IMG_3466.JPG" alt="Reel 1" loading="lazy" />
+        <div class="reel-play-btn"><i class="fas fa-play"></i></div>
+        <button class="reel-cart-btn"><i class="fas fa-shopping-bag"></i></button>
+      </div>
+      <div class="reel-caption">Pastel florals — a must-own this season</div>
+    </div>
+
+    <div class="reel-portrait-card">
+      <div class="reel-portrait-img">
+        <img src="images/15.png" alt="Reel 2" loading="lazy" />
+        <div class="reel-play-btn"><i class="fas fa-play"></i></div>
+        <button class="reel-cart-btn"><i class="fas fa-shopping-bag"></i></button>
+      </div>
+      <div class="reel-caption">Co-ord sets you&apos;ll live in all summer</div>
+    </div>
+
+    <div class="reel-portrait-card">
+      <div class="reel-portrait-img">
+        <img src="images/EC 17021_3.jpg" alt="Reel 3" loading="lazy" />
+        <div class="reel-play-btn"><i class="fas fa-play"></i></div>
+        <button class="reel-cart-btn"><i class="fas fa-shopping-bag"></i></button>
+      </div>
+      <div class="reel-caption">Occasion wear that turns every head</div>
+    </div>
+
+    <div class="reel-portrait-card">
+      <div class="reel-portrait-img">
+        <img src="images/6.png" alt="Reel 4" loading="lazy" />
+        <div class="reel-play-btn"><i class="fas fa-play"></i></div>
+        <button class="reel-cart-btn"><i class="fas fa-shopping-bag"></i></button>
+      </div>
+      <div class="reel-caption">Casual everyday grace in every piece</div>
+    </div>
+
+    <div class="reel-portrait-card">
+      <div class="reel-portrait-img">
+        <img src="images/19.png" alt="Reel 5" loading="lazy" />
+        <div class="reel-play-btn"><i class="fas fa-play"></i></div>
+        <button class="reel-cart-btn"><i class="fas fa-shopping-bag"></i></button>
+      </div>
+      <div class="reel-caption">Trousseau dreams — embellished &amp; golden</div>
+    </div>
+
+    <div class="reel-portrait-card">
+      <div class="reel-portrait-img">
+        <img src="images/2026_05_17_10_14_IMG_3252.JPG" alt="Reel 6" loading="lazy" />
+        <div class="reel-play-btn"><i class="fas fa-play"></i></div>
+        <button class="reel-cart-btn"><i class="fas fa-shopping-bag"></i></button>
+      </div>
+      <div class="reel-caption">Office chic — never compromise on style</div>
+    </div>
+
   </div>
 </section>
 
@@ -899,9 +961,9 @@
 <section class="product-section sec-ivory" id="bestsellers">
   <div class="ps-header">
     <div class="ps-title-row">
-      <h2 class="ps-title">In High Demand</h2>
+      <h2 class="ps-title">Most Trendy</h2>
     </div>
-    <a href="#" class="ps-view-all">View All <i class="fas fa-arrow-right"></i></a>
+    <a href="#" class="ps-view-all">Shop All <i class="fas fa-arrow-right"></i></a>
   </div>
 
   <div class="product-scroll-row prod-row-wide" id="bestsellersRow">
@@ -1049,14 +1111,14 @@
   <div class="benefits-grid">
     <div class="benefit-card">
       <div class="benefit-icon"><i class="fas fa-truck"></i></div>
-      <h3 class="benefit-title">Free Shipping</h3>
-      <p class="benefit-text">On orders above ₹2,500 across India</p>
+      <h3 class="benefit-title">Fast Shipping</h3>
+      <p class="benefit-text">Get your order delivered quickly across India.</p>
     </div>
 
     <div class="benefit-card">
       <div class="benefit-icon"><i class="fas fa-undo"></i></div>
       <h3 class="benefit-title">Easy Returns</h3>
-      <p class="benefit-text">30-day hassle-free return policy</p>
+      <p class="benefit-text">15-day hassle-free return policy</p>
     </div>
 
     <div class="benefit-card">
@@ -1073,7 +1135,7 @@
 
     <div class="benefit-card">
       <div class="benefit-icon"><i class="fas fa-phone"></i></div>
-      <h3 class="benefit-title">24/7 Support</h3>
+      <h3 class="benefit-title">Easy Exchange</h3>
       <p class="benefit-text">Live chat, email & phone support</p>
     </div>
 
@@ -1088,7 +1150,7 @@
 <!-- ══════════════════════════════════════════════════
      SECTION 12 — LOOKBOOK / EDITORIAL
 ══════════════════════════════════════════════════ -->
-<section class="lookbook-section sec-cream">
+<section class="lookbook-section sec-cream" style="display: none;">
   <div class="lookbook-header">
     <h2 class="lookbook-title">Style Inspiration</h2>
     <p class="lookbook-subtitle">How our customers style their Elegance collection</p>
@@ -1225,6 +1287,104 @@
     </div>
   </div>
 </footer>
+
+<!-- ══════════════════════════════════════════════════
+     SCHEDULE A CALL — MODAL
+══════════════════════════════════════════════════ -->
+<div class="sc-modal" id="scheduleModal" role="dialog" aria-modal="true" aria-labelledby="scTitle" aria-hidden="true">
+  <div class="sc-backdrop" data-sc-close></div>
+
+  <div class="sc-dialog">
+    <button type="button" class="sc-close" aria-label="Close" data-sc-close><i class="fas fa-times"></i></button>
+
+    <aside class="sc-aside">
+      <span class="sc-aside-logo">Elegance</span>
+      <div class="sc-aside-body">
+        <span class="sc-kicker">Personal Styling Concierge</span>
+        <h2 class="sc-aside-title">Let&apos;s talk <em>couture.</em></h2>
+        <p class="sc-aside-text">Pick a time that suits you and one of our stylists will call you &mdash; no pressure, just a conversation about what you&apos;re looking for.</p>
+      </div>
+      <ul class="sc-perks">
+        <li><i class="fas fa-cut"></i> Custom stitching &amp; fittings</li>
+        <li><i class="far fa-gem"></i> Bridal &amp; trousseau guidance</li>
+        <li><i class="fas fa-palette"></i> Fabric &amp; colour advice</li>
+      </ul>
+    </aside>
+
+    <div class="sc-panel">
+      <form class="sc-form" id="scheduleForm" novalidate>
+        <header class="sc-form-head">
+          <h3 id="scTitle">Schedule a call</h3>
+          <p>Takes less than a minute. We&apos;ll call you within your chosen window.</p>
+        </header>
+
+        <div class="sc-field">
+          <input type="text" id="scName" name="name" class="sc-input" placeholder=" " autocomplete="name" required />
+          <label for="scName" class="sc-label">Your name</label>
+          <span class="sc-error" data-error-for="scName"></span>
+        </div>
+
+        <div class="sc-field sc-field-phone">
+          <span class="sc-prefix">+91</span>
+          <input type="tel" id="scPhone" name="phone" class="sc-input" placeholder=" " inputmode="numeric" autocomplete="tel-national" maxlength="10" required />
+          <label for="scPhone" class="sc-label">Mobile number</label>
+          <span class="sc-error" data-error-for="scPhone"></span>
+        </div>
+
+        <fieldset class="sc-group">
+          <legend>Preferred day</legend>
+          <div class="sc-chips sc-days" id="scDays" role="radiogroup" aria-label="Preferred day"></div>
+          <div class="sc-cal" id="scCal" hidden>
+            <div class="sc-cal-head">
+              <button type="button" class="sc-cal-nav" id="scCalPrev" aria-label="Previous month"><i class="fas fa-chevron-left"></i></button>
+              <span class="sc-cal-title" id="scCalTitle" aria-live="polite"></span>
+              <button type="button" class="sc-cal-nav" id="scCalNext" aria-label="Next month"><i class="fas fa-chevron-right"></i></button>
+            </div>
+            <div class="sc-cal-week" aria-hidden="true"><span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span></div>
+            <div class="sc-cal-grid" id="scCalGrid"></div>
+            <p class="sc-cal-note">Bookings open up to 3 months ahead.</p>
+          </div>
+        </fieldset>
+
+        <fieldset class="sc-group">
+          <legend>Preferred time</legend>
+          <div class="sc-chips sc-slots" id="scSlots" role="radiogroup" aria-label="Preferred time">
+            <button type="button" class="sc-chip sc-slot" role="radio" aria-checked="false" data-slot="Morning" data-end="13"><i class="far fa-sun"></i><strong>Morning</strong><small>10 AM &ndash; 1 PM</small></button>
+            <button type="button" class="sc-chip sc-slot" role="radio" aria-checked="false" data-slot="Afternoon" data-end="17"><i class="fas fa-cloud-sun"></i><strong>Afternoon</strong><small>1 PM &ndash; 5 PM</small></button>
+            <button type="button" class="sc-chip sc-slot" role="radio" aria-checked="false" data-slot="Evening" data-end="20"><i class="far fa-moon"></i><strong>Evening</strong><small>5 PM &ndash; 8 PM</small></button>
+          </div>
+          <span class="sc-error" id="scSlotError"></span>
+        </fieldset>
+
+        <fieldset class="sc-group">
+          <legend>I&apos;d like help with <span class="sc-optional">(optional)</span></legend>
+          <div class="sc-tags" id="scTopics">
+            <button type="button" class="sc-tag" aria-pressed="false">Custom stitching</button>
+            <button type="button" class="sc-tag" aria-pressed="false">Bridal / Trousseau</button>
+            <button type="button" class="sc-tag" aria-pressed="false">Styling advice</button>
+            <button type="button" class="sc-tag" aria-pressed="false">Order query</button>
+          </div>
+        </fieldset>
+
+        <button type="submit" class="sc-submit" id="scSubmit">
+          <span class="sc-submit-label">Request a call back</span>
+          <i class="fas fa-arrow-right"></i>
+        </button>
+        <p class="sc-fineprint"><i class="fas fa-lock"></i> Your number is only used to call you about this request.</p>
+      </form>
+
+      <div class="sc-success" id="scSuccess" hidden>
+        <div class="sc-check" aria-hidden="true">
+          <svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="24" /><path d="M15 27l8 8 14-16" /></svg>
+        </div>
+        <h3>You&apos;re all set, <span id="scSuccessName"></span>.</h3>
+        <p>A stylist will call <strong id="scSuccessPhone"></strong> on</p>
+        <div class="sc-summary" id="scSuccessWhen"></div>
+        <button type="button" class="sc-done" data-sc-close>Back to shopping</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- Back to Top -->
 <button class="back-to-top" id="backToTop" aria-label="Back to top">

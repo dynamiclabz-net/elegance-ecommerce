@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
   hamburger?.addEventListener('click', () => {
     const open = navLinks.classList.toggle('mobile-open');
     hamburger.classList.toggle('open', open);
+    hamburger.setAttribute('aria-expanded', open ? 'true' : 'false');
   });
 
   window.addEventListener('resize', () => {
@@ -307,9 +308,328 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  makeDraggable(document.getElementById('newArrivalsRow'));
   makeDraggable(document.getElementById('bestsellersRow'));
   makeDraggable(document.getElementById('reelsRow'));
+
+
+  /* ── NEW ARRIVALS — expanding hover row ── */
+  const naRow = document.getElementById('newArrivalsRow');
+  if (naRow) {
+    const naCards = [...naRow.querySelectorAll('.na-card')];
+    const setActive = card => naCards.forEach(c => c.classList.toggle('is-active', c === card));
+    naCards.forEach(card => {
+      card.addEventListener('mouseenter', () => setActive(card));
+      card.addEventListener('focusin', () => setActive(card));
+    });
+    naRow.addEventListener('mouseleave', () => setActive(naCards[0]));
+  }
+
+  function bumpCartBadge() {
+    const badge = document.querySelector('.cart-badge');
+    if (!badge) return;
+    badge.textContent = parseInt(badge.textContent || '0', 10) + 1;
+    badge.style.transform = 'scale(1.5)';
+    setTimeout(() => { badge.style.transform = ''; }, 300);
+  }
+
+  document.querySelectorAll('[data-quick-add], [data-add-cart]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (btn.classList.contains('is-added')) return;
+      const original = btn.textContent;
+      btn.textContent = 'Added ✓';
+      btn.classList.add('is-added');
+      if (btn.hasAttribute('data-add-cart')) bumpCartBadge();
+      setTimeout(() => {
+        btn.textContent = original;
+        btn.classList.remove('is-added');
+      }, 1500);
+    });
+  });
+
+
+  /* ── BESTSELLERS — endless marquee (pauses on hover) ── */
+  const bsTrack = document.getElementById('bsTrack');
+  if (bsTrack) {
+    [...bsTrack.children].forEach(card => {
+      const clone = card.cloneNode(true);
+      clone.setAttribute('aria-hidden', 'true');
+      clone.tabIndex = -1;
+      bsTrack.appendChild(clone);
+    });
+  }
+
+
+  /* ── SCHEDULE A CALL — modal ── */
+  const scModal = document.getElementById('scheduleModal');
+  if (scModal) {
+    const scForm     = document.getElementById('scheduleForm');
+    const scSuccess  = document.getElementById('scSuccess');
+    const scDays     = document.getElementById('scDays');
+    const scSlots    = [...scModal.querySelectorAll('.sc-slot')];
+    const scNameEl   = document.getElementById('scName');
+    const scPhoneEl  = document.getElementById('scPhone');
+    const scSlotErr  = document.getElementById('scSlotError');
+    const scSubmit   = document.getElementById('scSubmit');
+    const scOpeners  = document.querySelectorAll('#openScheduleCall');
+    let lastFocus = null;
+    let selectedDay = null;
+    let selectedSlot = null;
+
+    const dayFmt = new Intl.DateTimeFormat('en-IN', { weekday: 'short' });
+    const dateFmt = new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'short' });
+    const longFmt = new Intl.DateTimeFormat('en-IN', { weekday: 'long', day: 'numeric', month: 'long' });
+
+    const scCal      = document.getElementById('scCal');
+    const scCalGrid  = document.getElementById('scCalGrid');
+    const scCalTitle = document.getElementById('scCalTitle');
+    const scCalPrev  = document.getElementById('scCalPrev');
+    const scCalNext  = document.getElementById('scCalNext');
+    const monthFmt   = new Intl.DateTimeFormat('en-IN', { month: 'long', year: 'numeric' });
+    const fullFmt    = new Intl.DateTimeFormat('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    const QUICK_DAYS = 5;
+    const MAX_DAYS_AHEAD = 90;
+    let calMonth = null;
+
+    const startOfDay = d => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    const sameDay = (a, b) => !!a && !!b && a.toDateString() === b.toDateString();
+    const minDate = () => startOfDay(new Date());
+    const maxDate = () => { const m = minDate(); m.setDate(m.getDate() + MAX_DAYS_AHEAD); return m; };
+
+    function setMoreLabel(date) {
+      const more = scDays.querySelector('.sc-day-more');
+      if (!more) return;
+      more.innerHTML = date
+        ? `<small>${dayFmt.format(date)}</small><strong>${date.getDate()}</strong><small>${date.toLocaleString('en-IN', { month: 'short' })}</small>`
+        : '<i class="far fa-calendar-alt"></i><strong>More</strong><small>dates</small>';
+    }
+
+    function renderCalendar() {
+      const first = new Date(calMonth.getFullYear(), calMonth.getMonth(), 1);
+      const daysInMonth = new Date(first.getFullYear(), first.getMonth() + 1, 0).getDate();
+      const min = minDate();
+      const max = maxDate();
+      scCalTitle.textContent = monthFmt.format(first);
+      scCalPrev.disabled = first <= new Date(min.getFullYear(), min.getMonth(), 1);
+      scCalNext.disabled = first >= new Date(max.getFullYear(), max.getMonth(), 1);
+
+      scCalGrid.innerHTML = '';
+      for (let i = 0; i < first.getDay(); i++) scCalGrid.appendChild(document.createElement('span'));
+      for (let n = 1; n <= daysInMonth; n++) {
+        const d = new Date(first.getFullYear(), first.getMonth(), n);
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'sc-cal-day';
+        btn.textContent = n;
+        btn.setAttribute('aria-label', fullFmt.format(d));
+        btn.disabled = d < min || d > max;
+        btn.classList.toggle('is-today', sameDay(d, min));
+        const picked = sameDay(d, selectedDay);
+        btn.classList.toggle('is-selected', picked);
+        btn.setAttribute('aria-pressed', picked ? 'true' : 'false');
+        btn.addEventListener('click', () => pickCalendarDate(d));
+        scCalGrid.appendChild(btn);
+      }
+    }
+
+    function toggleCalendar(open) {
+      const more = scDays.querySelector('.sc-day-more');
+      const show = typeof open === 'boolean' ? open : scCal.hidden;
+      if (show) {
+        const base = selectedDay || minDate();
+        calMonth = new Date(base.getFullYear(), base.getMonth(), 1);
+        renderCalendar();
+      }
+      scCal.hidden = !show;
+      more?.setAttribute('aria-expanded', show ? 'true' : 'false');
+      if (show) scCal.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+
+    function pickCalendarDate(date) {
+      const offset = Math.round((date - minDate()) / 86400000);
+      const quick = offset < QUICK_DAYS ? scDays.querySelector(`.sc-day[data-offset="${offset}"]`) : null;
+      const more = scDays.querySelector('.sc-day-more');
+      if (quick) {
+        quick.click();
+      } else {
+        selectDay(date, more);
+        setMoreLabel(date);
+      }
+      toggleCalendar(false);
+    }
+
+    scCalPrev.addEventListener('click', () => { calMonth.setMonth(calMonth.getMonth() - 1); renderCalendar(); });
+    scCalNext.addEventListener('click', () => { calMonth.setMonth(calMonth.getMonth() + 1); renderCalendar(); });
+
+    function buildDays() {
+      scDays.innerHTML = '';
+      const today = new Date();
+      for (let i = 0; i < QUICK_DAYS; i++) {
+        const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() + i);
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'sc-chip sc-day';
+        btn.setAttribute('role', 'radio');
+        btn.setAttribute('aria-checked', 'false');
+        btn.dataset.offset = i;
+        btn.innerHTML = `<small>${i === 0 ? 'Today' : i === 1 ? 'Tmrw' : dayFmt.format(d)}</small><strong>${d.getDate()}</strong><small>${d.toLocaleString('en-IN', { month: 'short' })}</small>`;
+        btn.addEventListener('click', () => selectDay(d, btn));
+        scDays.appendChild(btn);
+      }
+
+      const more = document.createElement('button');
+      more.type = 'button';
+      more.className = 'sc-chip sc-day sc-day-more';
+      more.setAttribute('role', 'radio');
+      more.setAttribute('aria-checked', 'false');
+      more.setAttribute('aria-haspopup', 'true');
+      more.setAttribute('aria-expanded', 'false');
+      more.setAttribute('aria-controls', 'scCal');
+      more.setAttribute('aria-label', 'Pick another date from the calendar');
+      more.addEventListener('click', () => toggleCalendar());
+      scDays.appendChild(more);
+      setMoreLabel(null);
+    }
+
+    function refreshSlots() {
+      const isToday = selectedDay && selectedDay.toDateString() === new Date().toDateString();
+      const hour = new Date().getHours();
+      scSlots.forEach(slot => {
+        slot.disabled = !!isToday && Number(slot.dataset.end) <= hour + 1;
+        if (slot.disabled && slot === selectedSlot) clearSlot();
+      });
+    }
+
+    function clearSlot() {
+      selectedSlot = null;
+      scSlots.forEach(s => { s.classList.remove('is-selected'); s.setAttribute('aria-checked', 'false'); });
+    }
+
+    function selectDay(date, btn) {
+      selectedDay = date;
+      scDays.querySelectorAll('.sc-day').forEach(b => {
+        const on = b === btn;
+        b.classList.toggle('is-selected', on);
+        b.setAttribute('aria-checked', on ? 'true' : 'false');
+      });
+      if (!btn.classList.contains('sc-day-more')) {
+        setMoreLabel(null);
+        if (!scCal.hidden) toggleCalendar(false);
+      }
+      refreshSlots();
+    }
+
+    scSlots.forEach(slot => slot.addEventListener('click', () => {
+      if (slot.disabled) return;
+      selectedSlot = slot;
+      scSlots.forEach(s => {
+        const on = s === slot;
+        s.classList.toggle('is-selected', on);
+        s.setAttribute('aria-checked', on ? 'true' : 'false');
+      });
+      scSlotErr.textContent = '';
+    }));
+
+    scModal.querySelectorAll('.sc-tag').forEach(tag => tag.addEventListener('click', () => {
+      const on = tag.classList.toggle('is-selected');
+      tag.setAttribute('aria-pressed', on ? 'true' : 'false');
+    }));
+
+    function resetModal() {
+      scForm.reset();
+      scForm.hidden = false;
+      scSuccess.hidden = true;
+      scModal.querySelectorAll('.sc-field').forEach(f => f.classList.remove('has-error'));
+      scModal.querySelectorAll('.sc-error').forEach(el => { el.textContent = ''; });
+      scModal.querySelectorAll('.sc-tag').forEach(t => { t.classList.remove('is-selected'); t.setAttribute('aria-pressed', 'false'); });
+      clearSlot();
+      scCal.hidden = true;
+      buildDays();
+      selectedDay = null;
+      scSubmit.classList.remove('is-loading');
+      scSubmit.disabled = false;
+      const first = scDays.querySelector('.sc-day');
+      if (first) first.click();
+    }
+
+    function openModal() {
+      lastFocus = document.activeElement;
+      resetModal();
+      scModal.classList.add('open');
+      scModal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      setTimeout(() => scNameEl.focus(), 350);
+    }
+
+    function closeModal() {
+      scModal.classList.remove('open');
+      scModal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      lastFocus?.focus?.();
+    }
+
+    scOpeners.forEach(btn => btn.addEventListener('click', openModal));
+    scModal.querySelectorAll('[data-sc-close]').forEach(el => el.addEventListener('click', closeModal));
+
+    document.addEventListener('keydown', e => {
+      if (!scModal.classList.contains('open')) return;
+      if (e.key === 'Escape') { closeModal(); return; }
+      if (e.key !== 'Tab') return;
+      const focusable = [...scModal.querySelectorAll('button, input, [href]')].filter(el => !el.disabled && el.offsetParent !== null);
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    });
+
+    scPhoneEl.addEventListener('input', () => {
+      scPhoneEl.value = scPhoneEl.value.replace(/\D/g, '').slice(0, 10);
+    });
+
+    function setError(input, message) {
+      const field = input.closest('.sc-field');
+      field.classList.toggle('has-error', !!message);
+      field.querySelector('.sc-error').textContent = message || '';
+    }
+
+    [scNameEl, scPhoneEl].forEach(el => el.addEventListener('input', () => setError(el, '')));
+
+    /* Replace with a real request (fetch to your backend / CRM) when one is available. */
+    function submitScheduleCall(payload) {
+      return new Promise(resolve => setTimeout(() => resolve(payload), 900));
+    }
+
+    scForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      const name = scNameEl.value.trim();
+      const phone = scPhoneEl.value.trim();
+      let valid = true;
+
+      if (name.length < 2) { setError(scNameEl, 'Please tell us your name'); valid = false; }
+      if (!/^[6-9]\d{9}$/.test(phone)) { setError(scPhoneEl, 'Enter a valid 10-digit mobile number'); valid = false; }
+      if (!selectedSlot) { scSlotErr.textContent = 'Choose a time window'; valid = false; }
+      if (!valid) {
+        (scModal.querySelector('.has-error .sc-input') || scSlots[0]).focus();
+        return;
+      }
+
+      const topics = [...scModal.querySelectorAll('.sc-tag.is-selected')].map(t => t.textContent);
+      scSubmit.classList.add('is-loading');
+      scSubmit.disabled = true;
+
+      await submitScheduleCall({ name, phone: '+91' + phone, date: selectedDay.toISOString(), slot: selectedSlot.dataset.slot, topics });
+
+      document.getElementById('scSuccessName').textContent = name.split(' ')[0];
+      document.getElementById('scSuccessPhone').textContent = '+91 ' + phone.replace(/(\d{5})(\d{5})/, '$1 $2');
+      document.getElementById('scSuccessWhen').innerHTML =
+        `<strong>${longFmt.format(selectedDay)}</strong><span>${selectedSlot.dataset.slot} &middot; ${selectedSlot.querySelector('small').textContent}</span>`;
+      scForm.hidden = true;
+      scSuccess.hidden = false;
+    });
+  }
+
 
   /* Trigger scroll event on load */
   window.dispatchEvent(new Event('scroll'));
