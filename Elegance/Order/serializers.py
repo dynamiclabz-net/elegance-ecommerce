@@ -1,6 +1,8 @@
 from rest_framework import serializers
 
-from .models import Cart, CartItem, Order, OrderItem, Payment, OrderStatusHistory, PincodeRange
+from .models import (
+    Cart, CartItem, Order, OrderItem, Payment, OrderStatusHistory, PincodeRange, Shipment, ShipmentEvent,
+)
 from .shipping import normalize_state, validate_range
 
 
@@ -91,8 +93,64 @@ class OrderStatusHistorySerializer(serializers.ModelSerializer):
         read_only_fields = ("id", "changed_at")
 
 
+class ShipmentEventSerializer(serializers.ModelSerializer):
+    status_display = serializers.CharField(source="get_status_display", read_only=True)
+
+    class Meta:
+        model = ShipmentEvent
+        fields = ("id", "status", "status_display", "raw_status", "activity", "location", "occurred_at")
+
+
+class ShipmentSerializer(serializers.ModelSerializer):
+    """Everything the admin needs: partner ids, pickup address, documents, errors."""
+
+    provider_display = serializers.CharField(source="get_provider_display", read_only=True)
+    status_display = serializers.CharField(source="get_status_display", read_only=True)
+    events = ShipmentEventSerializer(many=True, read_only=True)
+    is_final = serializers.BooleanField(read_only=True)
+    is_api_provider = serializers.BooleanField(read_only=True)
+    created_by_name = serializers.CharField(source="created_by.full_name", read_only=True, default=None)
+
+    class Meta:
+        model = Shipment
+        fields = (
+            "id", "provider", "provider_display", "status", "status_display", "is_active", "is_final",
+            "is_api_provider", "provider_order_id", "provider_shipment_id", "awb_code", "courier_id",
+            "courier_name", "pickup_location", "pickup_address", "pickup_date", "pickup_token",
+            "pickup_requested", "weight_kg", "length_cm", "breadth_cm", "height_cm", "shipping_cost",
+            "cod_amount", "label_url", "invoice_url", "manifest_url", "tracking_url",
+            "estimated_delivery", "last_status_text", "last_synced_at", "note", "error_message",
+            "created_by_name", "created_at", "cancelled_at", "events",
+        )
+
+
+class CustomerShipmentSerializer(serializers.ModelSerializer):
+    """What a customer may see: courier, AWB, tracking link and the scan timeline."""
+
+    provider_display = serializers.CharField(source="get_provider_display", read_only=True)
+    status_display = serializers.CharField(source="get_status_display", read_only=True)
+    events = ShipmentEventSerializer(many=True, read_only=True)
+    is_manual = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Shipment
+        fields = (
+            "id", "provider", "provider_display", "status", "status_display", "is_manual", "awb_code",
+            "courier_name", "pickup_date", "tracking_url", "estimated_delivery", "last_status_text",
+            "last_synced_at", "events",
+        )
+
+    def get_is_manual(self, obj):
+        return obj.provider == "manual"
+
+
 class OrderListSerializer(serializers.ModelSerializer):
     """Lightweight serializer for the admin orders table."""
+
+    is_approved = serializers.BooleanField(read_only=True)
+    shipment_status = serializers.SerializerMethodField()
+    shipment_status_display = serializers.SerializerMethodField()
+    courier_partner = serializers.CharField(read_only=True)
 
     customer_name = serializers.CharField(source="shipping_full_name", read_only=True)
     order_status_display = serializers.CharField(source="get_order_status_display", read_only=True)
@@ -107,11 +165,27 @@ class OrderListSerializer(serializers.ModelSerializer):
             "id", "order_number", "user", "customer_name", "shipping_mobile",
             "order_status", "order_status_display", "payment_status", "payment_status_display",
             "payment_method", "payment_method_display", "total_amount", "item_count", "items",
-            "placed_at",
+            "placed_at", "is_approved", "courier_partner", "tracking_id",
+            "shipment_status", "shipment_status_display",
         )
 
     def get_item_count(self, obj):
         return obj.items.count()
+
+    def _active_shipment(self, obj):
+        # Use the prefetched list when the view provides one to avoid N+1 queries.
+        shipments = getattr(obj, "_prefetched_objects_cache", {}).get("shipments")
+        if shipments is not None:
+            return next((s for s in shipments if s.is_active), None)
+        return obj.active_shipment
+
+    def get_shipment_status(self, obj):
+        shipment = self._active_shipment(obj)
+        return shipment.status if shipment else None
+
+    def get_shipment_status_display(self, obj):
+        shipment = self._active_shipment(obj)
+        return shipment.get_status_display() if shipment else None
 
     def get_items(self, obj):
         # Lightweight item summary (used by the customer "My Orders" cards).
@@ -131,11 +205,30 @@ class OrderDetailSerializer(serializers.ModelSerializer):
     payment_method_display = serializers.CharField(source="get_payment_method_display", read_only=True)
     is_cod = serializers.BooleanField(read_only=True)
     whatsapp_return_url = serializers.CharField(read_only=True)
+    is_approved = serializers.BooleanField(read_only=True)
+    amount_to_collect = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
+    shipment = serializers.SerializerMethodField()
+    shipments = serializers.SerializerMethodField()
+
+    def get_shipment(self, obj):
+        """The active shipment, or the most recent one if none is active."""
+        shipment = obj.active_shipment or obj.shipments.order_by("-created_at").first()
+        if not shipment:
+            return None
+        serializer = ShipmentSerializer if self.context.get("admin") else CustomerShipmentSerializer
+        return serializer(shipment, context=self.context).data
+
+    def get_shipments(self, obj):
+        # Booking history (including cancelled attempts) is admin-only.
+        if not self.context.get("admin"):
+            return []
+        return ShipmentSerializer(obj.shipments.all(), many=True, context=self.context).data
 
     class Meta:
         model = Order
         fields = (
-            "id", "order_number", "user",
+            "id", "order_number", "user", "is_approved", "approved_at", "amount_to_collect",
+            "shipment", "shipments",
             "shipping_full_name", "shipping_mobile", "shipping_address_line1",
             "shipping_address_line2", "shipping_city", "shipping_state",
             "shipping_pincode", "shipping_country",

@@ -113,6 +113,15 @@ class AdminOrderDetailPageViewSet(viewsets.ViewSet):
         return render(request, "frontend/admin/admin-order-detail.html", {"order_id": pk})
 
 
+class AdminPackingSlipPageViewSet(viewsets.ViewSet):
+    """GET /admin-packing-slip/<id>/ -> printable packing slip for an order."""
+
+    @handle_exceptions
+    @check_authentication(required_role="admin")
+    def retrieve(self, request, pk):
+        return render(request, "frontend/admin/admin-packing-slip.html", {"order_id": pk})
+
+
 # ─────────────────────────────────────────────
 # Customer — account page
 # ─────────────────────────────────────────────

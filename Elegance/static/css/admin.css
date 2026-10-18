@@ -507,3 +507,27 @@ a { text-decoration: none; color: var(--e-primary); }
   .e-main { margin-left: 0; }
   .e-content { padding: 1.25rem; }
 }
+
+/* ── Order fulfilment / shipping ─────────────────────────────── */
+.fulfil-step { display: flex; align-items: flex-start; justify-content: space-between; gap: 1.25rem; flex-wrap: wrap; }
+.fulfil-step > div { flex: 1 1 320px; }
+.ship-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 1rem 1.5rem; font-size: 13.5px; }
+.ship-k { font-size: 11.5px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--e-text-muted); margin-bottom: 0.2rem; }
+.ship-address { font-size: 13.5px; line-height: 1.65; background: var(--e-surface-muted); border-radius: 8px; padding: 0.75rem 0.9rem; }
+.ship-alert { border-radius: 8px; padding: 0.7rem 0.9rem; font-size: 13px; margin-bottom: 1rem; }
+.ship-alert.danger { background: var(--e-danger-tint); color: var(--e-danger); }
+.ship-manual-box { background: var(--e-surface-muted); border-radius: 8px; padding: 0.9rem; }
+.ship-timeline { list-style: none; margin: 0; padding: 0 0 0 1rem; border-left: 2px solid var(--e-border); }
+.ship-timeline li { position: relative; padding: 0 0 0.9rem 0.9rem; }
+.ship-timeline li::before { content: ""; position: absolute; left: -1.38rem; top: 0.35rem; width: 9px; height: 9px; border-radius: 50%; background: var(--e-primary); }
+.ship-event-title { font-size: 13px; }
+.ship-provider-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.6rem; }
+.ship-provider { display: flex; gap: 0.6rem; align-items: flex-start; border: 1px solid var(--e-border); border-radius: 8px; padding: 0.7rem 0.8rem; cursor: pointer; }
+.ship-provider:has(input:checked) { border-color: var(--e-primary); background: var(--e-surface-muted); }
+.ship-provider.disabled { opacity: 0.55; cursor: not-allowed; }
+.ship-provider small { display: block; color: var(--e-text-muted); font-size: 11.8px; line-height: 1.4; }
+.ship-rate-list { display: flex; flex-direction: column; gap: 0.4rem; }
+.ship-rate { display: flex; align-items: center; gap: 0.75rem; border: 1px solid var(--e-border); border-radius: 8px; padding: 0.55rem 0.8rem; font-size: 13px; cursor: pointer; }
+.ship-rate:has(input:checked) { border-color: var(--e-primary); background: var(--e-surface-muted); }
+.ship-rate-name { flex: 1; }
+.ship-cod-note { margin-top: 1rem; font-size: 13px; background: var(--e-surface-muted); border-radius: 8px; padding: 0.65rem 0.85rem; }

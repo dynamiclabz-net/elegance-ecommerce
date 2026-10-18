@@ -13,6 +13,14 @@
 <div id="order-detail-content" style="display:none;">
   <div class="row g-3">
     <div class="col-lg-8">
+      <div class="e-card mb-3" id="fulfilment-card">
+        <div class="e-card-header">
+          <h2>Fulfilment</h2>
+          <span id="fulfilment-badge"></span>
+        </div>
+        <div class="e-card-body" id="fulfilment-body"></div>
+      </div>
+
       <div class="e-card mb-3">
         <div class="e-card-header">
           <h2>Items</h2>
@@ -70,18 +78,23 @@
               <label class="e-label">Note</label>
               <textarea class="e-input" id="update-note" rows="2" placeholder="Optional note visible in status history"></textarea>
             </div>
-            <hr>
-            <div class="e-field">
-              <label class="e-label">Courier Partner</label>
-              <input type="text" class="e-input" id="update-courier">
+            <div id="manual-tracking-fields">
+              <hr>
+              <div class="e-field">
+                <label class="e-label">Courier Partner</label>
+                <input type="text" class="e-input" id="update-courier">
+              </div>
+              <div class="e-field">
+                <label class="e-label">Tracking ID</label>
+                <input type="text" class="e-input" id="update-tracking-id">
+              </div>
+              <div class="e-field">
+                <label class="e-label">Tracking URL</label>
+                <input type="text" class="e-input" id="update-tracking-url">
+              </div>
             </div>
-            <div class="e-field">
-              <label class="e-label">Tracking ID</label>
-              <input type="text" class="e-input" id="update-tracking-id">
-            </div>
-            <div class="e-field">
-              <label class="e-label">Tracking URL</label>
-              <input type="text" class="e-input" id="update-tracking-url">
+            <div class="e-field-help mb-3" id="status-managed-note" style="display:none;">
+              Courier, tracking and delivery status are managed by the active shipment. Use the Fulfilment card to change them.
             </div>
             <button type="submit" class="btn-e-primary w-100" id="status-update-btn">Save Changes</button>
           </form>
@@ -100,6 +113,102 @@
     </div>
   </div>
 </div>
+
+<div class="modal fade e-modal" id="ship-modal" tabindex="-1" aria-labelledby="ship-modal-title" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ship-modal-title">Ship this order</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="ship-modal-loading" class="e-empty"><p>Loading delivery options...</p></div>
+        <form id="ship-form" style="display:none;" novalidate>
+          <div id="ship-env-note" class="e-field-help mb-3"></div>
+
+          <div class="e-field">
+            <label class="e-label">Delivery partner</label>
+            <div id="ship-providers" class="ship-provider-grid"></div>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-md-7">
+              <div class="e-field">
+                <label class="e-label" for="ship-pickup-location">Pickup address</label>
+                <select class="e-select" id="ship-pickup-location"></select>
+                <div class="e-field-help" id="ship-pickup-preview"></div>
+              </div>
+            </div>
+            <div class="col-md-5">
+              <div class="e-field">
+                <label class="e-label" for="ship-pickup-date">Pickup day</label>
+                <select class="e-select" id="ship-pickup-date"></select>
+                <div class="e-field-help">The delivery person will come to the pickup address on this day.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="e-field">
+            <label class="e-label">Parcel (packed)</label>
+            <div class="row g-2">
+              <div class="col-6 col-md-3"><input type="number" step="0.01" min="0.01" class="e-input" id="ship-weight" aria-label="Weight in kg" placeholder="Weight kg"></div>
+              <div class="col-6 col-md-3"><input type="number" step="0.1" min="0.1" class="e-input" id="ship-length" aria-label="Length in cm" placeholder="Length cm"></div>
+              <div class="col-6 col-md-3"><input type="number" step="0.1" min="0.1" class="e-input" id="ship-breadth" aria-label="Breadth in cm" placeholder="Breadth cm"></div>
+              <div class="col-6 col-md-3"><input type="number" step="0.1" min="0.1" class="e-input" id="ship-height" aria-label="Height in cm" placeholder="Height cm"></div>
+            </div>
+            <div class="e-field-help">Weight (kg) and L x B x H (cm). Prefilled from the items; adjust to the real packed parcel.</div>
+          </div>
+
+          <div id="ship-api-section">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <label class="e-label mb-0">Courier</label>
+              <button type="button" class="btn-e-outline" id="ship-rates-btn">Check courier rates</button>
+            </div>
+            <div id="ship-rates" class="ship-rate-list">
+              <div class="e-field-help">Optional. Leave unselected to let the partner auto-assign the recommended courier.</div>
+            </div>
+          </div>
+
+          <div id="ship-manual-section" style="display:none;">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <div class="e-field">
+                  <label class="e-label" for="ship-courier-name">Delivered by</label>
+                  <input type="text" class="e-input" id="ship-courier-name" maxlength="150" placeholder="Own delivery - Ramesh / Porter">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="e-field">
+                  <label class="e-label" for="ship-manual-cost">Delivery cost you pay (optional)</label>
+                  <input type="number" step="0.01" min="0" class="e-input" id="ship-manual-cost" placeholder="0">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="e-field">
+                  <label class="e-label" for="ship-manual-ref">Reference / booking no. (optional)</label>
+                  <input type="text" class="e-input" id="ship-manual-ref" maxlength="100">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="e-field">
+                  <label class="e-label" for="ship-manual-url">Tracking link (optional)</label>
+                  <input type="url" class="e-input" id="ship-manual-url" placeholder="https://">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ship-cod-note" id="ship-cod-note" style="display:none;"></div>
+          <div class="e-field-error" id="ship-error" role="alert"></div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-e-outline" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn-e-primary" id="ship-submit-btn" disabled>Book &amp; schedule pickup</button>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
@@ -111,6 +220,7 @@
       orderId: {{ order_id }},
       adminOrderApiUrl: "{% url 'admin-order-api-list' %}",
       ordersListUrl: "{% url 'admin-orders-list' %}",
+      packingSlipUrl: "{% url 'admin-packing-slip-detail' order_id %}",
     });
   });
 </script>

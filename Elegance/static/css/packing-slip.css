@@ -1,0 +1,40 @@
+* { box-sizing: border-box; }
+body { margin: 0; background: #f2f2ef; color: #1c1c1c; font: 14px/1.5 "Helvetica Neue", Arial, sans-serif; }
+
+.slip-toolbar { display: flex; align-items: center; gap: 1rem; padding: 0.8rem 1.25rem; background: #1c1c1c; color: #fff; }
+.slip-toolbar button { background: #fff; color: #1c1c1c; border: 0; border-radius: 6px; padding: 0.5rem 1rem; font-weight: 600; cursor: pointer; }
+#slip-toolbar-note { font-size: 13px; opacity: 0.85; }
+
+.slip { max-width: 800px; margin: 1.5rem auto; background: #fff; padding: 2rem 2.25rem; border: 1px solid #ddd; }
+.slip[hidden] { display: none; }
+.slip-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; border-bottom: 2px solid #1c1c1c; padding-bottom: 1rem; margin-bottom: 1.25rem; }
+.slip-head h1 { margin: 0 0 0.2rem; font-size: 22px; }
+.slip-sub { color: #555; font-size: 13px; }
+.slip-pay { text-align: right; display: flex; flex-direction: column; gap: 0.2rem; }
+.slip-cod, .slip-paid { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; border: 2px solid #1c1c1c; padding: 0.15rem 0.5rem; align-self: flex-end; }
+.slip-paid { border-style: dashed; }
+
+.slip-cols { display: flex; gap: 1.5rem; margin-bottom: 1.5rem; }
+.slip-cols > div { flex: 1; font-size: 13px; }
+.slip-cols h2 { margin: 0 0 0.35rem; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: #666; }
+address { font-style: normal; }
+.muted { color: #777; font-size: 12px; }
+
+.slip-items { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
+.slip-items th, .slip-items td { text-align: left; padding: 0.55rem 0.5rem; border-bottom: 1px solid #ddd; vertical-align: top; }
+.slip-items th { font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #666; border-bottom: 2px solid #1c1c1c; }
+.num { text-align: right !important; white-space: nowrap; }
+
+.slip-totals { margin-left: auto; width: 260px; font-size: 13.5px; }
+.slip-totals div { display: flex; justify-content: space-between; padding: 0.2rem 0; }
+.slip-totals .grand { border-top: 2px solid #1c1c1c; margin-top: 0.3rem; padding-top: 0.5rem; font-weight: 700; font-size: 15px; }
+.slip-foot { margin-top: 2rem; padding-top: 0.8rem; border-top: 1px dashed #aaa; color: #555; font-size: 12px; }
+
+@media (max-width: 640px) { .slip-cols { flex-direction: column; } .slip { padding: 1.25rem; } }
+
+@media print {
+  body { background: #fff; }
+  .no-print { display: none !important; }
+  .slip { margin: 0; border: 0; max-width: none; padding: 0; }
+  @page { size: A4; margin: 14mm; }
+}

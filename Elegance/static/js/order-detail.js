@@ -70,16 +70,49 @@ function OrderDetailPageInit(config) {
     const section = document.getElementById("odTrackingSection");
     const text = document.getElementById("odTrackingText");
     if (!section || !text) return;
-    if (order.tracking_id) {
+    const eventsEl = document.getElementById("odTrackingEvents");
+    const shipment = order.shipment;
+    const closed = ["cancelled", "returned"].includes(order.order_status);
+
+    if (shipment && shipment.status !== "cancelled" && shipment.status !== "failed" && !closed) {
+      const courier = shipment.courier_name || shipment.provider_display;
+      const eta = shipment.estimated_delivery
+        ? new Date(shipment.estimated_delivery).toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" })
+        : "";
+      const pickup = shipment.pickup_date
+        ? new Date(shipment.pickup_date + "T00:00:00").toLocaleDateString("en-IN", { day: "numeric", month: "short" })
+        : "";
+      section.style.display = "block";
+      text.innerHTML = `
+        <strong>${eEscapeHtml(shipment.status_display)}</strong>
+        ${shipment.last_status_text && shipment.last_status_text !== shipment.status_display ? ` - ${eEscapeHtml(shipment.last_status_text)}` : ""}<br>
+        ${shipment.is_manual ? "Delivered by" : "Courier"}: <strong>${eEscapeHtml(courier)}</strong><br>
+        ${shipment.awb_code ? `${shipment.is_manual ? "Reference" : "Tracking No"}: <strong>${eEscapeHtml(shipment.awb_code)}</strong><br>` : ""}
+        ${pickup && ["booked", "pickup_scheduled"].includes(shipment.status) ? `Pickup scheduled: ${eEscapeHtml(pickup)}<br>` : ""}
+        ${eta ? `Expected delivery: <strong>${eEscapeHtml(eta)}</strong><br>` : ""}
+        ${isSafeUrl(shipment.tracking_url) ? `<a href="${eEscapeHtml(shipment.tracking_url)}" target="_blank" rel="noopener">Track on courier site <i class="fas fa-external-link-alt"></i></a>` : ""}
+      `;
+      eventsEl.innerHTML = (shipment.events || []).map((ev) => `
+        <li>
+          <span class="od-track-activity">${eEscapeHtml(ev.activity || ev.status_display)}</span>
+          <span class="od-track-meta">${new Date(ev.occurred_at).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "numeric", minute: "2-digit" })}${ev.location ? " · " + eEscapeHtml(ev.location) : ""}</span>
+        </li>`).join("");
+    } else if (order.tracking_id && !closed) {
       section.style.display = "block";
       text.innerHTML = `
         ${order.courier_partner ? `Courier: <strong>${eEscapeHtml(order.courier_partner)}</strong><br>` : ""}
         Tracking No: <strong>${eEscapeHtml(order.tracking_id)}</strong>
-        ${order.tracking_url ? `<br><a href="${order.tracking_url}" target="_blank" rel="noopener">Track Shipment <i class="fas fa-external-link-alt"></i></a>` : ""}
+        ${isSafeUrl(order.tracking_url) ? `<br><a href="${eEscapeHtml(order.tracking_url)}" target="_blank" rel="noopener">Track Shipment <i class="fas fa-external-link-alt"></i></a>` : ""}
       `;
+      eventsEl.innerHTML = "";
     } else {
       section.style.display = "none";
+      eventsEl.innerHTML = "";
     }
+  }
+
+  function isSafeUrl(url) {
+    return typeof url === "string" && /^https?:\/\//i.test(url);
   }
 
   function renderSummary(order) {

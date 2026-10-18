@@ -12,5 +12,6 @@ router.register(r"checkout-api", CheckoutViewSet, basename="checkout-api")
 router.register(r"payment-verify-api", PaymentVerifyViewSet, basename="payment-verify-api")
 
 urlpatterns = [
+    path("webhooks/shiprocket/", ShiprocketWebhookView.as_view(), name="shiprocket-webhook"),
     path("", include(router.urls)),
 ]

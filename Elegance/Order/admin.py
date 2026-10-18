@@ -1,6 +1,8 @@
 from django.contrib import admin
 
-from .models import Cart, CartItem, Order, OrderItem, Payment, OrderStatusHistory, PincodeRange
+from .models import (
+    Cart, CartItem, Order, OrderItem, Payment, OrderStatusHistory, PincodeRange, Shipment, ShipmentEvent,
+)
 
 
 class CartItemInline(admin.TabularInline):
@@ -79,7 +81,8 @@ class OrderAdmin(admin.ModelAdmin):
             )
         }),
         ("Amounts", {"fields": ("subtotal", "discount_amount", "shipping_charge", "total_amount")}),
-        ("Delivery (Velocity)", {"fields": ("courier_partner", "tracking_id", "tracking_url")}),
+        ("Approval", {"fields": ("approved_at", "approved_by")}),
+        ("Delivery (synced from the active shipment)", {"fields": ("courier_partner", "tracking_id", "tracking_url")}),
         ("Timeline", {
             "fields": (
                 "confirmed_at", "shipped_at", "out_for_delivery_at", "delivered_at", "cancelled_at",
@@ -120,6 +123,28 @@ class OrderStatusHistoryAdmin(admin.ModelAdmin):
     search_fields = ("order__order_number",)
     autocomplete_fields = ("order", "changed_by")
     ordering = ("-changed_at",)
+
+
+class ShipmentEventInline(admin.TabularInline):
+    model = ShipmentEvent
+    extra = 0
+    fields = ("occurred_at", "status", "raw_status", "activity", "location")
+    readonly_fields = fields
+    can_delete = False
+    ordering = ("-occurred_at",)
+
+
+@admin.register(Shipment)
+class ShipmentAdmin(admin.ModelAdmin):
+    list_display = (
+        "order", "provider", "status", "courier_name", "awb_code", "pickup_date", "is_active", "created_at",
+    )
+    list_filter = ("provider", "status", "is_active", "pickup_date")
+    search_fields = ("order__order_number", "awb_code", "provider_order_id", "provider_shipment_id")
+    autocomplete_fields = ("order", "created_by")
+    readonly_fields = ("created_at", "updated_at", "last_synced_at")
+    inlines = [ShipmentEventInline]
+    ordering = ("-created_at",)
 
 
 @admin.register(PincodeRange)

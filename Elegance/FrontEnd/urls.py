@@ -11,6 +11,7 @@ router.register(r"admin-products", AdminProductsPageViewSet, basename="admin-pro
 router.register(r"admin-product-form", AdminProductFormPageViewSet, basename="admin-product-form")
 router.register(r"admin-orders", AdminOrdersPageViewSet, basename="admin-orders")
 router.register(r"admin-order-detail", AdminOrderDetailPageViewSet, basename="admin-order-detail")
+router.register(r"admin-packing-slip", AdminPackingSlipPageViewSet, basename="admin-packing-slip")
 
 # Customer-facing pages
 router.register(r"account", AccountPageViewSet, basename="account")

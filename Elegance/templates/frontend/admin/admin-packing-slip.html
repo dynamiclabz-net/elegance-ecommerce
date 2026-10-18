@@ -1,0 +1,62 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Packing slip</title>
+  <link rel="stylesheet" href="{% static 'css/packing-slip.css' %}">
+</head>
+<body>
+  <div class="slip-toolbar no-print">
+    <button type="button" id="slip-print-btn">Print packing slip</button>
+    <span id="slip-toolbar-note">Loading order...</span>
+  </div>
+
+  <main class="slip" id="slip" hidden>
+    <header class="slip-head">
+      <div>
+        <h1 id="slip-store">Packing slip</h1>
+        <div class="slip-sub" id="slip-order-meta"></div>
+      </div>
+      <div class="slip-pay" id="slip-pay"></div>
+    </header>
+
+    <section class="slip-cols">
+      <div>
+        <h2>Ship to</h2>
+        <address id="slip-ship-to"></address>
+      </div>
+      <div>
+        <h2>Pickup from</h2>
+        <address id="slip-pickup"></address>
+      </div>
+      <div>
+        <h2>Delivery</h2>
+        <div id="slip-delivery"></div>
+      </div>
+    </section>
+
+    <table class="slip-items">
+      <thead><tr><th>Item</th><th>SKU</th><th class="num">Qty</th><th class="num">Price</th><th class="num">Total</th></tr></thead>
+      <tbody id="slip-items-body"></tbody>
+    </table>
+
+    <section class="slip-totals" id="slip-totals"></section>
+    <footer class="slip-foot">Thank you for your order. Please pack securely and attach the courier label on the outside of the parcel.</footer>
+  </main>
+
+  <script src="{% static 'js/api_caller.js' %}"></script>
+  <script src="{% static 'js/admin/admin_utils.js' %}"></script>
+  <script src="{% static 'js/admin/admin_packing_slip.js' %}"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      PackingSlipInit({
+        csrfToken: "{{ csrf_token }}",
+        orderId: {{ order_id }},
+        adminOrderApiUrl: "{% url 'admin-order-api-list' %}",
+      });
+    });
+  </script>
+</body>
+</html>

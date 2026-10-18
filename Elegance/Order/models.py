@@ -140,10 +140,17 @@ class Order(models.Model):
     cod_advance_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     cod_balance_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
-    # Delivery partner (Velocity — wired up later, admin updates status manually for now)
-    courier_partner = models.CharField(max_length=50, default="Velocity", blank=True)
+    # Denormalised from the active Shipment so lists and old pages keep working.
+    courier_partner = models.CharField(max_length=50, default="", blank=True)
     tracking_id = models.CharField(max_length=100, blank=True, null=True)
-    tracking_url = models.URLField(blank=True, null=True)
+    tracking_url = models.URLField(max_length=500, blank=True, null=True)
+
+    # Admin approval — the gate between "customer paid" and "we will ship it".
+    approved_at = models.DateTimeField(null=True, blank=True)
+    approved_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name="approved_orders", on_delete=models.SET_NULL,
+        null=True, blank=True,
+    )
 
     placed_at = models.DateTimeField(default=timezone.now)
     confirmed_at = models.DateTimeField(null=True, blank=True)
@@ -186,6 +193,22 @@ class Order(models.Model):
     @property
     def is_cod(self):
         return self.payment_method == "cod"
+
+    @property
+    def is_approved(self):
+        return self.approved_at is not None
+
+    @property
+    def active_shipment(self):
+        """The shipment currently responsible for delivering this order."""
+        return self.shipments.filter(is_active=True).order_by("-created_at").first()
+
+    @property
+    def amount_to_collect(self):
+        """Cash the courier must collect on delivery (0 for prepaid orders)."""
+        if not self.is_cod:
+            return 0
+        return self.cod_balance_amount if self.payment_status == "partial" else self.total_amount
 
     @property
     def whatsapp_return_url(self):
@@ -345,3 +368,136 @@ class PincodeRange(models.Model):
     def save(self, *args, **kwargs):
         self.full_clean(validate_constraints=False)
         super().save(*args, **kwargs)
+
+
+SHIPMENT_PROVIDER_CHOICES = (
+    ("shiprocket", "Shiprocket"),
+    ("velocity", "Velocity"),
+    ("manual", "Manual / Own delivery"),
+)
+
+SHIPMENT_STATUS_CHOICES = (
+    ("pending", "Booking in progress"),
+    ("booked", "Booked"),
+    ("pickup_scheduled", "Pickup scheduled"),
+    ("picked_up", "Picked up"),
+    ("in_transit", "In transit"),
+    ("out_for_delivery", "Out for delivery"),
+    ("delivered", "Delivered"),
+    ("undelivered", "Delivery attempt failed"),
+    ("rto_initiated", "Returning to seller"),
+    ("rto_delivered", "Returned to seller"),
+    ("cancelled", "Cancelled"),
+    ("failed", "Booking failed"),
+)
+
+# Shipment statuses after which the courier is no longer expected to send updates.
+SHIPMENT_FINAL_STATUSES = ("delivered", "rto_delivered", "cancelled", "failed")
+
+
+class Shipment(models.Model):
+    """One booking with a delivery partner for an order.
+
+    An order can have several shipments over its life (e.g. the first was
+    cancelled and re-booked with another courier), but at most one is
+    `is_active`. Booking with an API partner is several remote calls; progress
+    is saved after each one so a partial failure can be resumed instead of
+    creating duplicates at the partner."""
+
+    order = models.ForeignKey(Order, related_name="shipments", on_delete=models.CASCADE)
+    provider = models.CharField(max_length=20, choices=SHIPMENT_PROVIDER_CHOICES)
+    status = models.CharField(max_length=20, choices=SHIPMENT_STATUS_CHOICES, default="pending")
+    is_active = models.BooleanField(default=True)
+
+    # Partner identifiers
+    provider_order_id = models.CharField(max_length=100, blank=True, default="")
+    provider_shipment_id = models.CharField(max_length=100, blank=True, default="")
+    awb_code = models.CharField(max_length=100, blank=True, default="", db_index=True)
+    courier_id = models.CharField(max_length=50, blank=True, default="")
+    courier_name = models.CharField(max_length=150, blank=True, default="")
+
+    # Pickup
+    pickup_location = models.CharField(max_length=150, blank=True, default="")
+    pickup_address = models.JSONField(default=dict, blank=True)
+    pickup_date = models.DateField(null=True, blank=True)
+    pickup_token = models.CharField(max_length=100, blank=True, default="")
+    pickup_requested = models.BooleanField(default=False)
+
+    # Parcel
+    weight_kg = models.DecimalField(max_digits=6, decimal_places=2, default=0.5)
+    length_cm = models.DecimalField(max_digits=6, decimal_places=1, default=30)
+    breadth_cm = models.DecimalField(max_digits=6, decimal_places=1, default=25)
+    height_cm = models.DecimalField(max_digits=6, decimal_places=1, default=5)
+
+    # Money
+    shipping_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    cod_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    # Documents
+    label_url = models.URLField(max_length=700, blank=True, default="")
+    invoice_url = models.URLField(max_length=700, blank=True, default="")
+    manifest_url = models.URLField(max_length=700, blank=True, default="")
+
+    # Tracking
+    tracking_url = models.URLField(max_length=700, blank=True, default="")
+    estimated_delivery = models.DateTimeField(null=True, blank=True)
+    last_status_text = models.CharField(max_length=255, blank=True, default="")
+    last_synced_at = models.DateTimeField(null=True, blank=True)
+
+    # Admin / diagnostics
+    note = models.CharField(max_length=255, blank=True, default="")
+    error_message = models.TextField(blank=True, default="")
+    booking_payload = models.JSONField(default=dict, blank=True)
+
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name="created_shipments", on_delete=models.SET_NULL,
+        null=True, blank=True,
+    )
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+    cancelled_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        db_table = "order_shipment"
+        ordering = ["-created_at"]
+        indexes = [models.Index(fields=["order", "is_active"])]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["order"], condition=models.Q(is_active=True), name="one_active_shipment_per_order",
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.order.order_number} via {self.get_provider_display()} ({self.status})"
+
+    @property
+    def is_final(self):
+        return self.status in SHIPMENT_FINAL_STATUSES
+
+    @property
+    def is_api_provider(self):
+        return self.provider != "manual"
+
+
+class ShipmentEvent(models.Model):
+    """A single tracking scan/update for a shipment, shown as the timeline."""
+
+    shipment = models.ForeignKey(Shipment, related_name="events", on_delete=models.CASCADE)
+    status = models.CharField(max_length=20, choices=SHIPMENT_STATUS_CHOICES)
+    raw_status = models.CharField(max_length=150, blank=True, default="")
+    activity = models.CharField(max_length=500, blank=True, default="")
+    location = models.CharField(max_length=255, blank=True, default="")
+    occurred_at = models.DateTimeField(default=timezone.now)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        db_table = "order_shipment_event"
+        ordering = ["-occurred_at", "-id"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["shipment", "occurred_at", "raw_status", "activity"], name="unique_shipment_event",
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.shipment_id}: {self.raw_status or self.status}"

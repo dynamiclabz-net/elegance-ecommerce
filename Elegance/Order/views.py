@@ -11,14 +11,21 @@ from utils.decorators import handle_exceptions, check_authentication
 from Product.models import Product, ProductVariant
 from UserDetail.models import Address
 
-from rest_framework.decorators import action
+import hmac
 
+from django.conf import settings
+from rest_framework.decorators import action
+from rest_framework.views import APIView
+
+from . import fulfilment
+from .couriers import CourierError, get_courier, provider_catalog
 from .models import (
     Cart, CartItem, Order, OrderItem, Payment, OrderStatusHistory, PincodeRange, ORDER_STATUS_CHOICES,
+    Shipment,
 )
 from .serializers import (
     CartSerializer, OrderListSerializer, OrderDetailSerializer, OrderStatusHistorySerializer,
-    PincodeRangeSerializer,
+    PincodeRangeSerializer, ShipmentSerializer,
 )
 from .shipping import find_rate, normalize_pincode, quote_shipping, validate_range
 
@@ -45,9 +52,15 @@ class AdminOrderViewSet(viewsets.ViewSet):
     @check_authentication(required_role="admin")
     def list(self, request):
         params = request.query_params
-        orders = Order.objects.select_related("user")
+        orders = Order.objects.select_related("user").prefetch_related("shipments")
 
         search = params.get("search")
+        if params.get("needs_action") == "approval":
+            orders = orders.filter(approved_at__isnull=True, order_status__in=["placed", "confirmed"])
+        elif params.get("needs_action") == "shipping":
+            orders = orders.filter(
+                approved_at__isnull=False, order_status="processing",
+            ).exclude(shipments__is_active=True)
         if search:
             orders = orders.filter(
                 Q(order_number__icontains=search)
@@ -117,11 +130,23 @@ class AdminOrderViewSet(viewsets.ViewSet):
                 "data": None, "error": "Order not found."
             }, status=status.HTTP_404_NOT_FOUND)
 
+        return self._order_response(request, order)
+
+    @staticmethod
+    def _order_response(request, order, **extra):
+        data = {"order": OrderDetailSerializer(order, context={"request": request, "admin": True}).data}
+        data.update(extra)
         return Response({
             "success": True, "user_not_logged_in": False, "user_unauthorized": False,
-            "data": {"order": OrderDetailSerializer(order, context={"request": request}).data},
-            "error": None,
+            "data": data, "error": None,
         }, status=status.HTTP_200_OK)
+
+    @staticmethod
+    def _fail(message, code=status.HTTP_400_BAD_REQUEST):
+        return Response({
+            "success": False, "user_not_logged_in": False, "user_unauthorized": False,
+            "data": None, "error": message,
+        }, status=code)
 
     @handle_exceptions
     @check_authentication(required_role="admin")
@@ -143,14 +168,21 @@ class AdminOrderViewSet(viewsets.ViewSet):
                     "data": None, "error": f"Invalid order_status. Must be one of {sorted(VALID_STATUSES)}."
                 }, status=status.HTTP_400_BAD_REQUEST)
 
-            order.order_status = new_status
-            timestamp_field = STATUS_TIMESTAMP_FIELD.get(new_status)
-            if timestamp_field and not getattr(order, timestamp_field):
-                setattr(order, timestamp_field, timezone.now())
+            if new_status == "cancelled" and order.order_status != "cancelled":
+                try:
+                    fulfilment.cancel_order(order, request.user, note)
+                except fulfilment.FulfilmentError as exc:
+                    return self._fail(str(exc))
+                order.refresh_from_db()
+            elif new_status != order.order_status:
+                order.order_status = new_status
+                timestamp_field = STATUS_TIMESTAMP_FIELD.get(new_status)
+                if timestamp_field and not getattr(order, timestamp_field):
+                    setattr(order, timestamp_field, timezone.now())
 
-            OrderStatusHistory.objects.create(
-                order=order, status=new_status, note=note, changed_by=request.user,
-            )
+                OrderStatusHistory.objects.create(
+                    order=order, status=new_status, note=note, changed_by=request.user,
+                )
 
         # Optional tracking info update (courier partner set up later — admin fills manually for now)
         for field in ("tracking_id", "tracking_url", "courier_partner"):
@@ -162,11 +194,169 @@ class AdminOrderViewSet(viewsets.ViewSet):
 
         order.save()
 
+        return self._order_response(request, order)
+
+    # ── fulfilment actions ────────────────────────────────────────────────
+    @handle_exceptions
+    @check_authentication(required_role="admin")
+    @action(detail=True, methods=["post"], url_path="approve")
+    def approve(self, request, pk):
+        order = Order.objects.filter(pk=pk).first()
+        if not order:
+            return self._fail("Order not found.", status.HTTP_404_NOT_FOUND)
+        try:
+            fulfilment.approve_order(order, request.user, request.data.get("note", ""))
+        except fulfilment.FulfilmentError as exc:
+            return self._fail(str(exc))
+        return self._order_response(request, order)
+
+    @handle_exceptions
+    @check_authentication(required_role="admin")
+    @action(detail=True, methods=["get"], url_path="shipping-options")
+    def shipping_options(self, request, pk):
+        """Everything the 'Ship this order' form needs in one call."""
+        order = Order.objects.filter(pk=pk).first()
+        if not order:
+            return self._fail("Order not found.", status.HTTP_404_NOT_FOUND)
         return Response({
             "success": True, "user_not_logged_in": False, "user_unauthorized": False,
-            "data": {"order": OrderDetailSerializer(order, context={"request": request}).data},
+            "data": {
+                "providers": provider_catalog(),
+                "pickup_dates": [d.isoformat() for d in fulfilment.pickup_date_options()],
+                "parcel": fulfilment.default_parcel(order),
+                "amount_to_collect": str(order.amount_to_collect),
+                "store_whatsapp": settings.STORE_WHATSAPP_NUMBER,
+                "environment": settings.SHIPPING_ENV,
+            },
             "error": None,
         }, status=status.HTTP_200_OK)
+
+    @handle_exceptions
+    @check_authentication(required_role="admin")
+    @action(detail=False, methods=["get"], url_path="pickup-locations")
+    def pickup_locations(self, request):
+        provider = request.query_params.get("provider", "")
+        try:
+            courier = get_courier(provider)
+            if not courier.available or not courier.is_configured():
+                return self._fail(f"{courier.label} is not available. {courier.configuration_hint()}".strip())
+            locations = courier.list_pickup_locations()
+        except CourierError as exc:
+            return self._fail(str(exc))
+        return Response({
+            "success": True, "user_not_logged_in": False, "user_unauthorized": False,
+            "data": {"locations": locations}, "error": None,
+        }, status=status.HTTP_200_OK)
+
+    @handle_exceptions
+    @check_authentication(required_role="admin")
+    @action(detail=True, methods=["get"], url_path="courier-rates")
+    def courier_rates(self, request, pk):
+        """Live courier options and prices for this order (Shiprocket)."""
+        order = Order.objects.filter(pk=pk).first()
+        if not order:
+            return self._fail("Order not found.", status.HTTP_404_NOT_FOUND)
+        provider = request.query_params.get("provider", "")
+        pickup_pincode = request.query_params.get("pickup_pincode", "")
+        try:
+            weight = fulfilment._positive_decimal(
+                request.query_params.get("weight_kg") or fulfilment.default_parcel(order)["weight_kg"],
+                "Weight (kg)", 50,
+            )
+            courier = get_courier(provider)
+            if not courier.available or not courier.is_configured():
+                return self._fail(f"{courier.label} is not available. {courier.configuration_hint()}".strip())
+            if not pickup_pincode:
+                return self._fail("Choose a pickup address first.")
+            couriers = courier.serviceability(order, pickup_pincode, weight, order.amount_to_collect)
+        except (CourierError, fulfilment.FulfilmentError) as exc:
+            return self._fail(str(exc))
+        return Response({
+            "success": True, "user_not_logged_in": False, "user_unauthorized": False,
+            "data": {"couriers": couriers}, "error": None,
+        }, status=status.HTTP_200_OK)
+
+    @handle_exceptions
+    @check_authentication(required_role="admin")
+    @action(detail=True, methods=["post"], url_path="ship")
+    def ship(self, request, pk):
+        """Book the order with the chosen delivery partner for the chosen pickup day."""
+        order = Order.objects.filter(pk=pk).first()
+        if not order:
+            return self._fail("Order not found.", status.HTTP_404_NOT_FOUND)
+        try:
+            shipment, warnings = fulfilment.create_shipment(order, request.user, request.data)
+        except (fulfilment.FulfilmentError, CourierError) as exc:
+            return self._fail(str(exc))
+        order.refresh_from_db()
+        return self._order_response(
+            request, order, warnings=warnings, partial=bool(shipment.error_message and not warnings),
+        )
+
+    @handle_exceptions
+    @check_authentication(required_role="admin")
+    @action(detail=True, methods=["post"], url_path="shipment-action")
+    def shipment_action(self, request, pk):
+        """retry | refresh_documents | sync | cancel | set_status | reschedule"""
+        order = Order.objects.filter(pk=pk).first()
+        if not order:
+            return self._fail("Order not found.", status.HTTP_404_NOT_FOUND)
+        shipment = order.active_shipment
+        if not shipment:
+            return self._fail("This order has no active shipment.")
+
+        action_name = request.data.get("action")
+        warnings = []
+        try:
+            if action_name == "retry":
+                _, warnings = fulfilment.retry_shipment(shipment, request.user, request.data.get("pickup_date"))
+            elif action_name == "refresh_documents":
+                warnings = fulfilment.refresh_documents(shipment)
+            elif action_name == "sync":
+                if not shipment.is_api_provider:
+                    return self._fail("Manual shipments have no partner tracking to sync.")
+                fulfilment.sync_shipment(shipment)
+            elif action_name == "cancel":
+                fulfilment.cancel_shipment(shipment, request.user, request.data.get("reason", ""))
+            elif action_name == "set_status":
+                fulfilment.update_manual_status(
+                    shipment, request.user, request.data.get("status"), request.data.get("note", ""),
+                )
+            elif action_name == "reschedule":
+                fulfilment.update_manual_pickup(shipment, request.data.get("pickup_date"))
+            else:
+                return self._fail("Unknown shipment action.")
+        except (fulfilment.FulfilmentError, CourierError) as exc:
+            return self._fail(str(exc))
+
+        order.refresh_from_db()
+        return self._order_response(request, order, warnings=warnings)
+
+
+# ─────────────────────────────────────────────
+# Delivery partner webhooks
+# ─────────────────────────────────────────────
+class ShiprocketWebhookView(APIView):
+    """POST /order-api/webhooks/shiprocket/
+
+    Configure in Shiprocket (Settings > API > Webhooks) with this URL and a
+    secret token; Shiprocket echoes the token in the `x-api-key` header."""
+
+    authentication_classes = []
+    permission_classes = []
+
+    def post(self, request):
+        expected = settings.SHIPROCKET_CREDENTIALS.get(settings.SHIPPING_ENV, {}).get("WEBHOOK_TOKEN", "")
+        provided = request.headers.get("x-api-key", "")
+        if not expected or not hmac.compare_digest(expected, provided):
+            return Response({"success": False, "error": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        try:
+            matched = fulfilment.handle_webhook("shiprocket", request.data if isinstance(request.data, dict) else {})
+        except Exception as exc:  # never make the partner retry forever on our bug
+            print(f"Shiprocket webhook error: {exc}")
+            matched = False
+        return Response({"success": True, "matched": matched}, status=status.HTTP_200_OK)
 
 
 # ─────────────────────────────────────────────
@@ -196,9 +386,12 @@ class MyOrderViewSet(viewsets.ViewSet):
                 "data": None, "error": "Order not found."
             }, status=status.HTTP_404_NOT_FOUND)
 
+        fulfilment.refresh_if_stale(order.active_shipment)
+        order.refresh_from_db()
+
         return Response({
             "success": True, "user_not_logged_in": False, "user_unauthorized": False,
-            "data": {"order": OrderDetailSerializer(order, context={"request": request}).data},
+            "data": {"order": OrderDetailSerializer(order, context={"request": request, "admin": False}).data},
             "error": None,
         }, status=status.HTTP_200_OK)
 
@@ -326,7 +519,7 @@ class CartViewSet(viewsets.ViewSet):
 
 # ─────────────────────────────────────────────
 # Checkout — places the order from the current cart
-# ─────────────────────────────────────────────
+# ────────────────────────────────────────────���
 class CheckoutViewSet(viewsets.ViewSet):
     """POST /order-api/checkout-api/  -> create Order (+ initial Payment record) from the cart.
 
@@ -519,7 +712,7 @@ class CheckoutViewSet(viewsets.ViewSet):
 # ─────────────────────────────────────────────
 # Payment verification — called by the payment-callback page after the
 # (simulated) redirect back from Razorpay.
-# ──────────────────��─────────────────��────────
+# ────────────────────────────────────��────────
 class PaymentVerifyViewSet(viewsets.ViewSet):
     """POST /order-api/payment-verify-api/
     body: {order_id, razorpay_payment_id, razorpay_order_id, razorpay_signature}"""

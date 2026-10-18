@@ -147,3 +147,12 @@
 }
 .od-whatsapp-link:hover { background: #eafaf0; }
 .od-whatsapp-link i { font-size: 15px; }
+
+/* Shipment scan timeline */
+.od-track-events { list-style: none; margin: 1rem 0 0; padding: 0 0 0 0.9rem; border-left: 2px solid rgba(0, 0, 0, 0.12); }
+.od-track-events:empty { display: none; }
+.od-track-events li { position: relative; padding: 0 0 0.85rem 0.9rem; display: flex; flex-direction: column; gap: 0.1rem; }
+.od-track-events li::before { content: ""; position: absolute; left: -1.3rem; top: 0.4rem; width: 9px; height: 9px; border-radius: 50%; background: currentColor; opacity: 0.55; }
+.od-track-events li:first-child::before { opacity: 1; }
+.od-track-activity { font-size: 0.92rem; }
+.od-track-meta { font-size: 0.8rem; opacity: 0.65; }
