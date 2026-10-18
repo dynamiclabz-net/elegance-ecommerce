@@ -49,7 +49,7 @@
     {% endfor %}
   </div>
 
-  <div class="hb-thumbs" id="hbThumbs">
+  <div class="hb-thumbs" id="hbThumbs" style="display: none;">
     {% for b in banners %}
     <button class="hb-thumb{% if forloop.first %} hb-thumb-active{% endif %}" data-idx="{{ forloop.counter0 }}">
       <div class="hb-thumb-img" style="background-image:url('{{ b.image }}')"></div>
