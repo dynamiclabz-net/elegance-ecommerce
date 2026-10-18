@@ -23,6 +23,9 @@
     <a href="{% url 'admin-orders-list' %}" class="{% if request.resolver_match.url_name == 'admin-orders-list' or request.resolver_match.url_name == 'admin-order-detail-detail' %}active{% endif %}">
       <i class="bi bi-receipt"></i> Orders
     </a>
+    <a href="{% url 'admin-pincodes-list' %}" class="{% if request.resolver_match.url_name == 'admin-pincodes-list' %}active{% endif %}">
+      <i class="bi bi-truck"></i> Delivery Rates
+    </a>
   </nav>
 
   <div class="e-sidebar-footer">

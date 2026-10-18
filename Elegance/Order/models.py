@@ -290,3 +290,58 @@ class OrderStatusHistory(models.Model):
 
     def __str__(self):
         return f"{self.order.order_number} -> {self.status}"
+
+
+class PincodeRange(models.Model):
+    """Delivery price for a contiguous range of 6-digit Indian pincodes.
+
+    The price is owned by the range; `state` is stored purely as a label so
+    admins can scan and filter the table. Ranges must never overlap — that
+    rule is enforced in `clean()` (and therefore on every `save()`), so the
+    API, the Django admin and the Excel import script all share it."""
+
+    state = models.CharField(max_length=100, db_index=True)
+    pincode_start = models.PositiveIntegerField()
+    pincode_end = models.PositiveIntegerField()
+    price = models.DecimalField(max_digits=8, decimal_places=2)
+    is_active = models.BooleanField(default=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("pincode_start",)
+        indexes = [models.Index(fields=["pincode_start", "pincode_end"], name="pincode_range_lookup_idx")]
+        constraints = [
+            models.CheckConstraint(
+                check=models.Q(pincode_start__lte=models.F("pincode_end")),
+                name="pincode_range_start_lte_end",
+            ),
+            models.CheckConstraint(
+                check=models.Q(pincode_start__gte=100000, pincode_end__lte=999999),
+                name="pincode_range_six_digits",
+            ),
+            models.CheckConstraint(check=models.Q(price__gte=0), name="pincode_range_price_non_negative"),
+        ]
+
+    def __str__(self):
+        return f"{self.state}: {self.pincode_start}-{self.pincode_end} (Rs {self.price})"
+
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        from .shipping import normalize_state, validate_range
+
+        self.state = normalize_state(self.state)
+        if not self.state:
+            raise ValidationError({"state": "State is required."})
+
+        errors, _conflicts = validate_range(self.pincode_start, self.pincode_end, exclude_pk=self.pk)
+        if errors:
+            raise ValidationError(errors)
+
+        if self.price is None or self.price < 0:
+            raise ValidationError({"price": "Price cannot be negative."})
+
+    def save(self, *args, **kwargs):
+        self.full_clean(validate_constraints=False)
+        super().save(*args, **kwargs)

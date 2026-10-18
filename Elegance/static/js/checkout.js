@@ -8,9 +8,95 @@ let coCart = null;
 let coAddresses = [];
 let coSelectedAddressId = null;
 let coGeneratedOtp = null;
-const CO_FREE_SHIPPING_THRESHOLD = 2999;
-const CO_STANDARD_SHIPPING_CHARGE = 99;
 const CO_ADVANCE_PCT = 20;
+
+// status: "idle" (no pincode yet) | "loading" | "ok" | "unserviceable" | "error"
+let coShipping = { status: "idle", pincode: null, charge: 0, state: "", message: "", isFree: false };
+let coShippingRequestId = 0;
+
+function coShippingCharge() {
+  return coShipping.status === "ok" ? Number(coShipping.charge) : 0;
+}
+
+function coSelectedAddress() {
+  return coAddresses.find((a) => String(a.id) === String(coSelectedAddressId)) || null;
+}
+
+async function fetchShippingQuote(pincode) {
+  const requestId = ++coShippingRequestId;
+  const [success, result] = await callApi(
+    "GET",
+    `${coConfig.pincodeRateApiUrl}?pincode=${encodeURIComponent(pincode)}`,
+    null,
+    ""
+  );
+  if (requestId !== coShippingRequestId) return null; // a newer lookup superseded this one
+
+  if (!success || !result.success) {
+    return { status: "error", pincode, charge: 0, state: "", isFree: false, message: eExtractError(result, "Could not check delivery for this pincode.") };
+  }
+
+  const quote = result.data.shipping;
+  return {
+    status: quote.serviceable ? "ok" : "unserviceable",
+    pincode: quote.pincode,
+    charge: quote.shipping_charge,
+    state: quote.state || "",
+    isFree: quote.is_free_shipping,
+    message: quote.message || "",
+  };
+}
+
+async function refreshShippingForSelectedAddress() {
+  const address = coSelectedAddress();
+  if (!address) {
+    coShipping = { status: "idle", pincode: null, charge: 0, state: "", message: "", isFree: false };
+    renderSummary();
+    return;
+  }
+
+  coShipping = { ...coShipping, status: "loading", pincode: address.pincode };
+  renderSummary();
+
+  const quote = await fetchShippingQuote(address.pincode);
+  if (!quote) return;
+  coShipping = quote;
+  renderSummary();
+}
+
+function setupPincodeHint() {
+  const input = document.querySelector('#coAddressForm input[name="pincode"]');
+  const hint = document.getElementById("coPincodeHint");
+  let timer = null;
+
+  input.addEventListener("input", () => {
+    input.value = input.value.replace(/\D/g, "").slice(0, 6);
+    clearTimeout(timer);
+    hint.className = "co-pincode-hint";
+
+    if (input.value.length < 6) {
+      hint.textContent = "";
+      return;
+    }
+
+    hint.textContent = "Checking delivery…";
+    timer = setTimeout(async () => {
+      const pincode = input.value;
+      const quote = await fetchShippingQuote(pincode);
+      if (!quote || input.value !== pincode) return;
+
+      if (quote.status === "ok") {
+        hint.className = "co-pincode-hint co-pincode-ok";
+        hint.textContent = quote.isFree
+          ? `Delivering to ${quote.state} — free shipping on this order.`
+          : `Delivering to ${quote.state} — shipping ${eFormatCurrency(quote.charge)}.`;
+      } else {
+        hint.className = "co-pincode-hint co-pincode-bad";
+        hint.textContent = quote.message;
+      }
+    }, 300);
+  });
+}
 
 function CheckoutPageInit(config) {
   coConfig = config;
@@ -25,6 +111,7 @@ function CheckoutPageInit(config) {
     document.getElementById("coAddAddressBtn").style.display = "";
   });
   document.getElementById("coAddressForm").addEventListener("submit", handleAddAddress);
+  setupPincodeHint();
 
   document.querySelectorAll('input[name="paymentMethod"]').forEach((input) => {
     input.addEventListener("change", renderSummary);
@@ -56,6 +143,7 @@ async function bootstrap() {
   renderAddresses();
   renderSummaryItems();
   renderSummary();
+  refreshShippingForSelectedAddress();
   eRefreshCartBadge(coConfig.cartApiUrl);
 }
 
@@ -88,7 +176,10 @@ function renderAddresses() {
     .join("");
 
   list.querySelectorAll('input[name="coAddress"]').forEach((input) => {
-    input.addEventListener("change", () => (coSelectedAddressId = input.value));
+    input.addEventListener("change", () => {
+      coSelectedAddressId = input.value;
+      refreshShippingForSelectedAddress();
+    });
   });
 }
 
@@ -117,9 +208,11 @@ async function handleAddAddress(e) {
   coAddresses.push(result.data.address);
   coSelectedAddressId = result.data.address.id;
   form.reset();
+  document.getElementById("coPincodeHint").textContent = "";
   document.getElementById("coAddressForm").style.display = "none";
   document.getElementById("coAddAddressBtn").style.display = "";
   renderAddresses();
+  refreshShippingForSelectedAddress();
   eToast("Address saved", "success");
 }
 
@@ -142,13 +235,33 @@ function renderSummaryItems() {
 
 function renderSummary() {
   const subtotal = Number(coCart.total_amount);
-  const shipping = subtotal >= CO_FREE_SHIPPING_THRESHOLD ? 0 : CO_STANDARD_SHIPPING_CHARGE;
+  const shipping = coShippingCharge();
   const total = subtotal + shipping;
   const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
 
   document.getElementById("subtotalVal").textContent = eFormatCurrency(subtotal);
-  document.getElementById("shippingVal").textContent = shipping === 0 ? "Free" : eFormatCurrency(shipping);
+  document.getElementById("shippingVal").textContent = {
+    idle: "Enter pincode",
+    loading: "Calculating…",
+    error: "Unavailable",
+    unserviceable: "Not deliverable",
+    ok: shipping === 0 ? "Free" : eFormatCurrency(shipping),
+  }[coShipping.status];
   document.getElementById("totalVal").textContent = eFormatCurrency(total);
+
+  const note = document.getElementById("shippingNote");
+  const noteText = {
+    idle: "Select or add an address to see delivery cost.",
+    loading: "",
+    error: coShipping.message,
+    unserviceable: coShipping.message,
+    ok: coShipping.state ? `Delivering to ${coShipping.state} (${coShipping.pincode})` : "",
+  }[coShipping.status];
+  note.textContent = noteText;
+  note.className = "cs-shipping-note" + (["error", "unserviceable"].includes(coShipping.status) ? " cs-shipping-bad" : "");
+  note.style.display = noteText ? "" : "none";
+
+  document.getElementById("placeOrderBtn").disabled = coShipping.status !== "ok";
 
   const advanceRow = document.getElementById("advanceRow");
   const balanceRow = document.getElementById("balanceRow");
@@ -175,15 +288,21 @@ function openConfirmModal() {
     return;
   }
 
-  const address = coAddresses.find((a) => String(a.id) === String(coSelectedAddressId));
+  if (coShipping.status !== "ok") {
+    eToast(coShipping.message || "Delivery cost is still being calculated.", "error");
+    return;
+  }
+
+  const address = coSelectedAddress();
   const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
   const subtotal = Number(coCart.total_amount);
-  const shipping = subtotal >= CO_FREE_SHIPPING_THRESHOLD ? 0 : CO_STANDARD_SHIPPING_CHARGE;
+  const shipping = coShippingCharge();
   const total = subtotal + shipping;
 
   const rows = [
     ["Delivering to", address ? `${address.full_name}, ${address.city}` : "—"],
     ["Items", `${coCart.total_items} item${coCart.total_items === 1 ? "" : "s"}`],
+    ["Shipping", shipping === 0 ? "Free" : eFormatCurrency(shipping)],
     ["Payment Method", paymentMethod === "cod" ? "Cash on Delivery" : "Pay Online"],
   ];
 

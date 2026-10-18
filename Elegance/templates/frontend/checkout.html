@@ -63,9 +63,10 @@
               <input type="text" name="state" placeholder="State" required />
             </div>
             <div class="co-form-row">
-              <input type="text" name="pincode" placeholder="Pincode" required />
+              <input type="text" name="pincode" placeholder="Pincode" inputmode="numeric" maxlength="6" pattern="[1-9][0-9]{5}" required />
               <input type="text" name="country" placeholder="Country" value="India" required />
             </div>
+            <p class="co-pincode-hint" id="coPincodeHint" role="status" aria-live="polite"></p>
             <label class="co-checkbox"><input type="checkbox" name="save_address" checked /> Save this address for later</label>
             <div class="co-form-actions">
               <button type="button" class="co-cancel-btn" id="coCancelAddressBtn">Cancel</button>
@@ -109,6 +110,7 @@
           <div class="cs-breakdown">
             <div class="cs-row"><span>Subtotal</span><span id="subtotalVal">&#8377;0</span></div>
             <div class="cs-row"><span>Shipping</span><span id="shippingVal">&#8377;0</span></div>
+            <p class="cs-shipping-note" id="shippingNote" role="status" aria-live="polite" style="display:none"></p>
             <div class="cs-row" id="advanceRow" style="display:none"><span>Pay Now (Advance)</span><span id="advanceVal">&#8377;0</span></div>
             <div class="cs-row" id="balanceRow" style="display:none"><span>Pay on Delivery</span><span id="balanceVal">&#8377;0</span></div>
             <div class="cs-row cs-row-total"><span>Total</span><span id="totalVal">&#8377;0</span></div>
@@ -178,6 +180,7 @@
         cartApiUrl: "{% url 'cart-api-list' %}",
         addressApiUrl: "{% url 'address-api-list' %}",
         checkoutApiUrl: "{% url 'checkout-api-list' %}",
+        pincodeRateApiUrl: "{% url 'pincode-rate-api-list' %}",
         cartPageUrl: "{% url 'cart-list' %}",
       });
     });

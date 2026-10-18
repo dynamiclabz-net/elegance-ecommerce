@@ -66,6 +66,14 @@ class AdminCategoriesPageViewSet(viewsets.ViewSet):
         return render(request, "frontend/admin/admin-categories.html")
 
 
+class AdminPincodesPageViewSet(viewsets.ViewSet):
+
+    @handle_exceptions
+    @check_authentication(required_role="admin")
+    def list(self, request):
+        return render(request, "frontend/admin/admin-pincodes.html")
+
+
 class AdminProductsPageViewSet(viewsets.ViewSet):
 
     @handle_exceptions

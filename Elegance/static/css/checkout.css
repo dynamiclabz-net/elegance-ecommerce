@@ -197,3 +197,12 @@
   padding: 0;
   text-decoration: underline;
 }
+
+/* Delivery / shipping feedback */
+.co-pincode-hint { font-size: 12.5px; color: var(--text-muted); margin: -4px 0 4px; min-height: 0; }
+.co-pincode-hint:empty { display: none; }
+.co-pincode-ok { color: #2f7d4f; }
+.co-pincode-bad { color: #b3392f; }
+.cs-shipping-note { font-size: 12px; color: var(--text-muted); margin: -4px 0 10px; line-height: 1.5; }
+.cs-shipping-bad { color: #b3392f; font-weight: 500; }
+#placeOrderBtn:disabled { opacity: 0.5; cursor: not-allowed; }

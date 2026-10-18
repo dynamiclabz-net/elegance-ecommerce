@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Cart, CartItem, Order, OrderItem, Payment, OrderStatusHistory
+from .models import Cart, CartItem, Order, OrderItem, Payment, OrderStatusHistory, PincodeRange
 
 
 class CartItemInline(admin.TabularInline):
@@ -120,3 +120,11 @@ class OrderStatusHistoryAdmin(admin.ModelAdmin):
     search_fields = ("order__order_number",)
     autocomplete_fields = ("order", "changed_by")
     ordering = ("-changed_at",)
+
+
+@admin.register(PincodeRange)
+class PincodeRangeAdmin(admin.ModelAdmin):
+    list_display = ("state", "pincode_start", "pincode_end", "price", "is_active", "updated_at")
+    list_filter = ("is_active", "state")
+    search_fields = ("state",)
+    ordering = ("pincode_start",)

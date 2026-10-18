@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from .models import Cart, CartItem, Order, OrderItem, Payment, OrderStatusHistory
+from .models import Cart, CartItem, Order, OrderItem, Payment, OrderStatusHistory, PincodeRange
+from .shipping import normalize_state, validate_range
 
 
 class CartItemSerializer(serializers.ModelSerializer):
@@ -151,3 +152,31 @@ class OrderDetailSerializer(serializers.ModelSerializer):
             "id", "order_number", "subtotal", "discount_amount", "total_amount",
             "cod_advance_amount", "cod_balance_amount", "placed_at",
         )
+
+
+class PincodeRangeSerializer(serializers.ModelSerializer):
+    pincode_start = serializers.IntegerField()
+    pincode_end = serializers.IntegerField()
+    price = serializers.DecimalField(max_digits=8, decimal_places=2, min_value=0)
+
+    class Meta:
+        model = PincodeRange
+        fields = ("id", "state", "pincode_start", "pincode_end", "price", "is_active", "created_at", "updated_at")
+        read_only_fields = ("id", "created_at", "updated_at")
+
+    def validate_state(self, value):
+        state = normalize_state(value)
+        if not state:
+            raise serializers.ValidationError("State is required.")
+        return state
+
+    def validate(self, attrs):
+        instance = self.instance
+        start = attrs.get("pincode_start", getattr(instance, "pincode_start", None))
+        end = attrs.get("pincode_end", getattr(instance, "pincode_end", None))
+
+        errors, conflicts = validate_range(start, end, exclude_pk=getattr(instance, "pk", None))
+        if errors:
+            self.conflicts = conflicts
+            raise serializers.ValidationError({"pincode_range": errors})
+        return attrs

@@ -1,0 +1,130 @@
+{% extends "frontend/admin/_base.html" %}
+{% load static %}
+
+{% block title %}Delivery Rates{% endblock %}
+{% block breadcrumb %}Sales{% endblock %}
+{% block page_title %}Delivery Rates{% endblock %}
+
+{% block content %}
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3"><div class="e-stat"><div class="label">Pincode ranges</div><div class="value" id="stat-total">&mdash;</div></div></div>
+  <div class="col-6 col-lg-3"><div class="e-stat"><div class="label">Active ranges</div><div class="value" id="stat-active">&mdash;</div></div></div>
+  <div class="col-6 col-lg-3"><div class="e-stat"><div class="label">States covered</div><div class="value" id="stat-states">&mdash;</div></div></div>
+  <div class="col-6 col-lg-3"><div class="e-stat"><div class="label">Price band</div><div class="value" id="stat-band">&mdash;</div></div></div>
+</div>
+
+<div class="e-card">
+  <div class="e-card-header">
+    <h2>Pincode ranges</h2>
+    <button class="btn-e-primary" onclick="openRangeModal()">
+      <i class="bi bi-plus-lg"></i> New Range
+    </button>
+  </div>
+
+  <div class="e-card-body" style="padding-bottom:0.2rem;">
+    <div class="row g-2">
+      <div class="col-12 col-md-5">
+        <input type="search" class="e-input" id="filter-search" placeholder="Search a state or a pincode, e.g. 380015">
+      </div>
+      <div class="col-6 col-md-4">
+        <select class="e-select" id="filter-state"><option value="">All states</option></select>
+      </div>
+      <div class="col-6 col-md-3">
+        <select class="e-select" id="filter-active">
+          <option value="">Any status</option>
+          <option value="true">Active</option>
+          <option value="false">Inactive</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="e-card-body p-0 mt-3">
+    <div style="overflow-x:auto;">
+      <table class="e-table">
+        <thead>
+          <tr><th>State</th><th>Pincode range</th><th>Delivery price</th><th>Status</th><th></th></tr>
+        </thead>
+        <tbody id="ranges-body">
+          <tr><td colspan="5"><div class="e-skeleton" style="height:14px;"></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="e-card-body d-flex justify-content-between align-items-center" id="ranges-pager" style="font-size:13px;">
+    <span id="pager-summary" class="text-muted"></span>
+    <div class="d-flex gap-2">
+      <button class="btn-e-outline" id="pager-prev">Previous</button>
+      <button class="btn-e-outline" id="pager-next">Next</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade e-modal" id="range-modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="range-form" novalidate>
+        <div class="modal-header">
+          <h5 class="modal-title" id="range-modal-title">New Pincode Range</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="range-id">
+
+          <div class="e-field">
+            <label class="e-label" for="range-state">State <span class="req">*</span></label>
+            <input type="text" class="e-input" id="range-state" list="state-options" placeholder="e.g. Gujarat" autocomplete="off" required>
+            <datalist id="state-options"></datalist>
+            <div class="e-field-help">Used as a label only &mdash; the price is decided by the pincode range.</div>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-6">
+              <div class="e-field">
+                <label class="e-label" for="range-start">From pincode <span class="req">*</span></label>
+                <input type="text" inputmode="numeric" maxlength="6" class="e-input" id="range-start" placeholder="380001" required>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="e-field">
+                <label class="e-label" for="range-end">To pincode <span class="req">*</span></label>
+                <input type="text" inputmode="numeric" maxlength="6" class="e-input" id="range-end" placeholder="396590" required>
+              </div>
+            </div>
+          </div>
+
+          <div id="range-validation" class="mb-3" role="alert" aria-live="polite"></div>
+
+          <div class="e-field">
+            <label class="e-label" for="range-price">Delivery price (&#8377;) <span class="req">*</span></label>
+            <input type="number" class="e-input" id="range-price" min="0" step="1" placeholder="49" required>
+          </div>
+
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="range-is-active" checked>
+            <label class="form-check-label" for="range-is-active" style="font-size:13px;">Active (customers can order to these pincodes)</label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-e-outline" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn-e-primary" id="range-save-btn">Save Range</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/admin/admin_pincodes.js' %}"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    AdminPincodesInit({
+      csrfToken: "{{ csrf_token }}",
+      apiUrl: "{% url 'admin-pincode-rate-api-list' %}",
+      validateUrl: "{% url 'admin-pincode-rate-api-validate' %}",
+    });
+  });
+</script>
+{% endblock %}

@@ -11,13 +11,16 @@ from utils.decorators import handle_exceptions, check_authentication
 from Product.models import Product, ProductVariant
 from UserDetail.models import Address
 
-from .models import Cart, CartItem, Order, OrderItem, Payment, OrderStatusHistory, ORDER_STATUS_CHOICES
+from rest_framework.decorators import action
+
+from .models import (
+    Cart, CartItem, Order, OrderItem, Payment, OrderStatusHistory, PincodeRange, ORDER_STATUS_CHOICES,
+)
 from .serializers import (
     CartSerializer, OrderListSerializer, OrderDetailSerializer, OrderStatusHistorySerializer,
+    PincodeRangeSerializer,
 )
-
-FREE_SHIPPING_THRESHOLD = Decimal("2999")
-STANDARD_SHIPPING_CHARGE = Decimal("99")
+from .shipping import find_rate, normalize_pincode, quote_shipping, validate_range
 
 STATUS_TIMESTAMP_FIELD = {
     "confirmed": "confirmed_at",
@@ -394,19 +397,28 @@ class CheckoutViewSet(viewsets.ViewSet):
                 "shipping_pincode": request.data.get("pincode"),
                 "shipping_country": request.data.get("country", "India"),
             }
-            if request.data.get("save_address"):
-                Address.objects.create(
-                    user=request.user,
-                    full_name=shipping_fields["shipping_full_name"],
-                    mobile=shipping_fields["shipping_mobile"],
-                    address_line1=shipping_fields["shipping_address_line1"],
-                    address_line2=shipping_fields["shipping_address_line2"],
-                    city=shipping_fields["shipping_city"],
-                    state=shipping_fields["shipping_state"],
-                    pincode=shipping_fields["shipping_pincode"],
-                    country=shipping_fields["shipping_country"],
-                    is_default=not Address.objects.filter(user=request.user).exists(),
-                )
+
+        # Reject undeliverable pincodes before anything is persisted.
+        if find_rate(shipping_fields["shipping_pincode"]) is None:
+            return Response({
+                "success": False, "user_not_logged_in": False, "user_unauthorized": False,
+                "data": None,
+                "error": f"Sorry, we don't deliver to pincode {shipping_fields['shipping_pincode']} yet.",
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        if not address_id and request.data.get("save_address"):
+            Address.objects.create(
+                user=request.user,
+                full_name=shipping_fields["shipping_full_name"],
+                mobile=shipping_fields["shipping_mobile"],
+                address_line1=shipping_fields["shipping_address_line1"],
+                address_line2=shipping_fields["shipping_address_line2"],
+                city=shipping_fields["shipping_city"],
+                state=shipping_fields["shipping_state"],
+                pincode=shipping_fields["shipping_pincode"],
+                country=shipping_fields["shipping_country"],
+                is_default=not Address.objects.filter(user=request.user).exists(),
+            )
 
         # Validate stock + compute totals server-side (never trust client prices).
         subtotal = Decimal("0")
@@ -420,7 +432,7 @@ class CheckoutViewSet(viewsets.ViewSet):
                 }, status=status.HTTP_400_BAD_REQUEST)
             subtotal += item.unit_price * item.quantity
 
-        shipping_charge = Decimal("0") if subtotal >= FREE_SHIPPING_THRESHOLD else STANDARD_SHIPPING_CHARGE
+        shipping_charge = quote_shipping(shipping_fields["shipping_pincode"], subtotal).shipping_charge
         discount_amount = Decimal("0")
         total_amount = (subtotal - discount_amount + shipping_charge).quantize(Decimal("1"), ROUND_HALF_UP)
 
@@ -507,7 +519,7 @@ class CheckoutViewSet(viewsets.ViewSet):
 # ─────────────────────────────────────────────
 # Payment verification — called by the payment-callback page after the
 # (simulated) redirect back from Razorpay.
-# ─────────────────────────────────────────────
+# ──────────────────��─────────────────��────────
 class PaymentVerifyViewSet(viewsets.ViewSet):
     """POST /order-api/payment-verify-api/
     body: {order_id, razorpay_payment_id, razorpay_order_id, razorpay_signature}"""
@@ -574,3 +586,165 @@ class PaymentVerifyViewSet(viewsets.ViewSet):
             "data": {"order": OrderDetailSerializer(order, context={"request": request}).data},
             "error": None,
         }, status=status.HTTP_200_OK)
+
+
+# ─────────────────────────────────────────────
+# Shipping — pincode range pricing
+# ─────────────────────────────────────────────
+def _pincode_response(success, data=None, error=None, http_status=status.HTTP_200_OK):
+    return Response({
+        "success": success, "user_not_logged_in": False, "user_unauthorized": False,
+        "data": data, "error": error,
+    }, status=http_status)
+
+
+class AdminPincodeRateViewSet(viewsets.ViewSet):
+    """GET    /order-api/admin-pincode-rate-api/            -> list ranges (search/filter/paginate) + stats
+    GET     /order-api/admin-pincode-rate-api/{pk}/        -> one range
+    POST    /order-api/admin-pincode-rate-api/             -> create a range
+    PUT     /order-api/admin-pincode-rate-api/{pk}/        -> update a range
+    DELETE  /order-api/admin-pincode-rate-api/{pk}/        -> delete a range
+    POST    /order-api/admin-pincode-rate-api/validate/    -> dry-run overlap check for the form"""
+
+    MAX_PAGE_SIZE = 200
+
+    @handle_exceptions
+    @check_authentication(required_role="admin")
+    def list(self, request):
+        params = request.query_params
+        ranges = PincodeRange.objects.all()
+
+        search = (params.get("search") or "").strip()
+        if search:
+            query = Q(state__icontains=search)
+            if search.isdigit():
+                number = int(search)
+                query |= Q(pincode_start__lte=number, pincode_end__gte=number)
+            ranges = ranges.filter(query)
+
+        state = params.get("state")
+        if state:
+            ranges = ranges.filter(state=state)
+
+        is_active = params.get("is_active")
+        if is_active in ("true", "false"):
+            ranges = ranges.filter(is_active=(is_active == "true"))
+
+        total_count = ranges.count()
+        page = max(int(params.get("page", 1)), 1)
+        page_size = min(max(int(params.get("page_size", 25)), 1), self.MAX_PAGE_SIZE)
+        start = (page - 1) * page_size
+
+        everything = PincodeRange.objects.all()
+        prices = list(everything.values_list("price", flat=True))
+        stats = {
+            "total_ranges": len(prices),
+            "active_ranges": everything.filter(is_active=True).count(),
+            "states_covered": everything.values("state").distinct().count(),
+            "min_price": str(min(prices)) if prices else None,
+            "max_price": str(max(prices)) if prices else None,
+        }
+
+        return _pincode_response(True, {
+            "ranges": PincodeRangeSerializer(ranges[start:start + page_size], many=True).data,
+            "total_count": total_count,
+            "page": page,
+            "page_size": page_size,
+            "stats": stats,
+            "states": list(everything.order_by("state").values_list("state", flat=True).distinct()),
+        })
+
+    @handle_exceptions
+    @check_authentication(required_role="admin")
+    def retrieve(self, request, pk):
+        instance = PincodeRange.objects.filter(pk=pk).first()
+        if not instance:
+            return _pincode_response(False, error="Pincode range not found.", http_status=status.HTTP_404_NOT_FOUND)
+        return _pincode_response(True, {"range": PincodeRangeSerializer(instance).data})
+
+    @staticmethod
+    def _save(serializer):
+        """Runs validation and saves. Returns (response, None) on failure."""
+        if not serializer.is_valid():
+            errors = serializer.errors
+            first = next(iter(errors.values()))
+            message = first[0] if isinstance(first, (list, tuple)) else str(first)
+            return _pincode_response(
+                False,
+                data={"errors": errors, "conflicts": getattr(serializer, "conflicts", [])},
+                error=str(message),
+                http_status=status.HTTP_400_BAD_REQUEST,
+            )
+        return None
+
+    @handle_exceptions
+    @check_authentication(required_role="admin")
+    def create(self, request):
+        serializer = PincodeRangeSerializer(data=request.data)
+        failure = self._save(serializer)
+        if failure:
+            return failure
+        instance = serializer.save()
+        return _pincode_response(
+            True, {"range": PincodeRangeSerializer(instance).data}, http_status=status.HTTP_201_CREATED
+        )
+
+    @handle_exceptions
+    @check_authentication(required_role="admin")
+    def update(self, request, pk):
+        instance = PincodeRange.objects.filter(pk=pk).first()
+        if not instance:
+            return _pincode_response(False, error="Pincode range not found.", http_status=status.HTTP_404_NOT_FOUND)
+        serializer = PincodeRangeSerializer(instance, data=request.data, partial=True)
+        failure = self._save(serializer)
+        if failure:
+            return failure
+        instance = serializer.save()
+        return _pincode_response(True, {"range": PincodeRangeSerializer(instance).data})
+
+    @handle_exceptions
+    @check_authentication(required_role="admin")
+    def destroy(self, request, pk):
+        instance = PincodeRange.objects.filter(pk=pk).first()
+        if not instance:
+            return _pincode_response(False, error="Pincode range not found.", http_status=status.HTTP_404_NOT_FOUND)
+        instance.delete()
+        return _pincode_response(True, {"deleted": True})
+
+    @action(detail=False, methods=["post"], url_path="validate")
+    @handle_exceptions
+    @check_authentication(required_role="admin")
+    def validate(self, request):
+        def to_int(value):
+            try:
+                return int(str(value).strip())
+            except (TypeError, ValueError):
+                return None
+
+        errors, conflicts = validate_range(
+            to_int(request.data.get("pincode_start")),
+            to_int(request.data.get("pincode_end")),
+            exclude_pk=to_int(request.data.get("id")),
+        )
+        return _pincode_response(True, {"valid": not errors, "errors": errors, "conflicts": conflicts})
+
+
+class PincodeRateViewSet(viewsets.ViewSet):
+    """GET /order-api/pincode-rate-api/?pincode=380001 -> delivery price for a pincode.
+
+    Public. The free-shipping threshold is applied against the visitor's
+    current cart subtotal, so the same endpoint powers the checkout summary."""
+
+    @handle_exceptions
+    def list(self, request):
+        pincode = (request.query_params.get("pincode") or "").strip()
+        if normalize_pincode(pincode) is None:
+            return _pincode_response(
+                False, error="Enter a valid 6-digit pincode.", http_status=status.HTTP_400_BAD_REQUEST
+            )
+
+        cart = CartViewSet._get_cart(request)
+        subtotal = cart.total_amount if cart.items.exists() else None
+        quote = quote_shipping(pincode, subtotal)
+
+        return _pincode_response(True, {"shipping": quote.as_dict()})
