@@ -631,6 +631,33 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 
+  /* ── FEATURED COLLECTIONS TABS ── */
+  const fcTabs = [...document.querySelectorAll('.fc-tab')];
+  if (fcTabs.length) {
+    const activateFcTab = (tab, focus = false) => {
+      fcTabs.forEach(t => {
+        const on = t === tab;
+        t.classList.toggle('is-active', on);
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+        t.tabIndex = on ? 0 : -1;
+        const panel = document.getElementById(t.getAttribute('aria-controls'));
+        if (panel) {
+          panel.hidden = !on;
+          panel.classList.toggle('is-active', on);
+        }
+      });
+      if (focus) tab.focus();
+    };
+    fcTabs.forEach((tab, i) => {
+      tab.addEventListener('click', () => activateFcTab(tab));
+      tab.addEventListener('keydown', e => {
+        if (e.key === 'ArrowRight') activateFcTab(fcTabs[(i + 1) % fcTabs.length], true);
+        if (e.key === 'ArrowLeft') activateFcTab(fcTabs[(i - 1 + fcTabs.length) % fcTabs.length], true);
+      });
+    });
+  }
+
+
   /* Trigger scroll event on load */
   window.dispatchEvent(new Event('scroll'));
 

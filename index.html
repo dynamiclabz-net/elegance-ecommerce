@@ -192,7 +192,7 @@
   </div>
 
   <!-- Side mini thumbnails -->
-  <div class="hb-thumbs" id="hbThumbs">
+  <div class="hb-thumbs" id="hbThumbs" style="display: none;">
     <button class="hb-thumb hb-thumb-active" data-idx="0">
       <div class="hb-thumb-img" style="background-image:url('images/19.png')"></div>
       <span>Wedding</span>
@@ -446,6 +446,163 @@
 </section>
 
 <!-- ══════════════════════════════════════════════════
+     FEATURED COLLECTIONS — tabs + banner + 4 products
+══════════════════════════════════════════════════ -->
+<section class="fc-section sec-white" id="featured-collections" aria-labelledby="fcTitle">
+  <div class="fc-header">
+    <h2 class="fc-title" id="fcTitle">Featured Collections</h2>
+    <a href="shop.html" class="fc-view-all">View All <span aria-hidden="true">&rarr;</span></a>
+  </div>
+
+  <div class="fc-tabs" role="tablist" aria-label="Featured collections">
+    <button type="button" class="fc-tab" role="tab" id="fcTab-isles" aria-controls="fcPanel-isles" aria-selected="false" tabindex="-1">An Ode to the Isles</button>
+    <button type="button" class="fc-tab" role="tab" id="fcTab-resort" aria-controls="fcPanel-resort" aria-selected="false" tabindex="-1">Resort &rsquo;26</button>
+    <button type="button" class="fc-tab is-active" role="tab" id="fcTab-archives" aria-controls="fcPanel-archives" aria-selected="true">The Archives</button>
+  </div>
+
+  <!-- An Ode to the Isles -->
+  <div class="fc-panel" role="tabpanel" id="fcPanel-isles" aria-labelledby="fcTab-isles" hidden>
+    <div class="fc-banner">
+      <img class="fc-banner-img" src="images/collection-isles.png" alt="An Ode to the Isles collection" loading="lazy" />
+      <div class="fc-banner-copy">
+        <h3 class="fc-banner-title">An Ode to the Isles</h3>
+        <p class="fc-banner-text">Breezy florals and sun-washed palettes, inspired by island summers.</p>
+        <a href="shop.html" class="fc-banner-cta">Discover Collection <span aria-hidden="true">&rarr;</span></a>
+      </div>
+    </div>
+    <div class="fc-meta"><span>Selected from An Ode to the Isles</span><span>Island Edit</span></div>
+    <div class="fc-grid">
+      <a href="shop.html" class="fc-card">
+        <div class="fc-media">
+          <img class="fc-img fc-img-primary" src="images/2026_05_17_13_11_IMG_3466.JPG" alt="Pastel Floral Anarkali Suit" loading="lazy" />
+          <img class="fc-img fc-img-hover" src="images/2026_05_17_13_11_IMG_3465.JPG" alt="" loading="lazy" />
+        </div>
+        <h3 class="fc-name">Pastel Floral Anarkali Suit</h3>
+        <span class="fc-price">₹4,250</span>
+      </a>
+      <a href="shop.html" class="fc-card">
+        <div class="fc-media">
+          <img class="fc-img fc-img-primary" src="images/15.png" alt="Rosewater Printed Co-ord Set" loading="lazy" />
+          <img class="fc-img fc-img-hover" src="images/2026_05_17_10_14_IMG_3252.JPG" alt="" loading="lazy" />
+        </div>
+        <h3 class="fc-name">Rosewater Printed Co-ord Set</h3>
+        <span class="fc-price">₹3,200</span>
+      </a>
+      <a href="shop.html" class="fc-card">
+        <div class="fc-media">
+          <img class="fc-img fc-img-primary" src="images/2026_05_17_10_14_IMG_3252.JPG" alt="Soft Cotton Unstitched Suit" loading="lazy" />
+          <img class="fc-img fc-img-hover" src="images/15.png" alt="" loading="lazy" />
+        </div>
+        <h3 class="fc-name">Soft Cotton Unstitched Suit</h3>
+        <span class="fc-price">₹1,850</span>
+      </a>
+      <a href="shop.html" class="fc-card">
+        <div class="fc-media">
+          <img class="fc-img fc-img-primary" src="images/19.png" alt="Peach Organza Occasion Suit" loading="lazy" />
+          <img class="fc-img fc-img-hover" src="images/EC 17021_3.jpg" alt="" loading="lazy" />
+        </div>
+        <h3 class="fc-name">Peach Organza Occasion Suit</h3>
+        <span class="fc-price">₹6,800</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Resort '26 -->
+  <div class="fc-panel" role="tabpanel" id="fcPanel-resort" aria-labelledby="fcTab-resort" hidden>
+    <div class="fc-banner">
+      <img class="fc-banner-img" src="images/collection-resort.png" alt="Resort 26 collection" loading="lazy" />
+      <div class="fc-banner-copy">
+        <h3 class="fc-banner-title">Resort &rsquo;26</h3>
+        <p class="fc-banner-text">Easy co-ords and relaxed silhouettes made for long, golden days.</p>
+        <a href="shop.html" class="fc-banner-cta">Discover Collection <span aria-hidden="true">&rarr;</span></a>
+      </div>
+    </div>
+    <div class="fc-meta"><span>Selected from Resort &rsquo;26</span><span>New Season</span></div>
+    <div class="fc-grid">
+      <a href="shop.html" class="fc-card">
+        <div class="fc-media">
+          <img class="fc-img fc-img-primary" src="images/6.png" alt="Zari Embroidered Festive Suit" loading="lazy" />
+          <img class="fc-img fc-img-hover" src="images/17.png" alt="" loading="lazy" />
+        </div>
+        <h3 class="fc-name">Zari Embroidered Festive Suit</h3>
+        <span class="fc-price">₹7,200</span>
+      </a>
+      <a href="shop.html" class="fc-card">
+        <div class="fc-media">
+          <img class="fc-img fc-img-primary" src="images/EC 15955 (6).jpg" alt="Ivory Embroidered Salwar Set" loading="lazy" />
+          <img class="fc-img fc-img-hover" src="images/EC 17020_2.jpg" alt="" loading="lazy" />
+        </div>
+        <h3 class="fc-name">Ivory Embroidered Salwar Set</h3>
+        <span class="fc-price">₹5,900</span>
+      </a>
+      <a href="shop.html" class="fc-card">
+        <div class="fc-media">
+          <img class="fc-img fc-img-primary" src="images/17.png" alt="Zari Work Semi-Stitched Suit" loading="lazy" />
+          <img class="fc-img fc-img-hover" src="images/6.png" alt="" loading="lazy" />
+        </div>
+        <h3 class="fc-name">Zari Work Semi-Stitched Suit</h3>
+        <span class="fc-price">₹3,750</span>
+      </a>
+      <a href="shop.html" class="fc-card">
+        <div class="fc-media">
+          <img class="fc-img fc-img-primary" src="images/2026_05_17_13_11_IMG_3465.JPG" alt="Floral Anarkali Set" loading="lazy" />
+          <img class="fc-img fc-img-hover" src="images/2026_05_17_13_11_IMG_3466.JPG" alt="" loading="lazy" />
+        </div>
+        <h3 class="fc-name">Floral Anarkali Set</h3>
+        <span class="fc-price">₹4,250</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- The Archives (default) -->
+  <div class="fc-panel is-active" role="tabpanel" id="fcPanel-archives" aria-labelledby="fcTab-archives">
+    <div class="fc-banner">
+      <img class="fc-banner-img" src="images/collection-archives.png" alt="The Archives collection" loading="lazy" />
+      <div class="fc-banner-copy">
+        <h3 class="fc-banner-title">The Archives</h3>
+        <p class="fc-banner-text">A return to the prints and silhouettes that started it all.</p>
+        <a href="shop.html" class="fc-banner-cta">Discover Collection <span aria-hidden="true">&rarr;</span></a>
+      </div>
+    </div>
+    <div class="fc-meta"><span>Selected from The Archives</span><span>Founder Favourites</span></div>
+    <div class="fc-grid">
+      <a href="shop.html" class="fc-card">
+        <div class="fc-media">
+          <img class="fc-img fc-img-primary" src="images/EC 17020_2.jpg" alt="Ivory Silk Chanderi Kameez" loading="lazy" />
+          <img class="fc-img fc-img-hover" src="images/EC 15955 (6).jpg" alt="" loading="lazy" />
+        </div>
+        <h3 class="fc-name">Ivory Silk Chanderi Kameez</h3>
+        <span class="fc-price">₹5,900</span>
+      </a>
+      <a href="shop.html" class="fc-card">
+        <div class="fc-media">
+          <img class="fc-img fc-img-primary" src="images/EC 17021_3.jpg" alt="Peach Georgette Occasion Suit" loading="lazy" />
+          <img class="fc-img fc-img-hover" src="images/19.png" alt="" loading="lazy" />
+        </div>
+        <h3 class="fc-name">Peach Georgette Occasion Suit</h3>
+        <span class="fc-price">₹6,800</span>
+      </a>
+      <a href="shop.html" class="fc-card">
+        <div class="fc-media">
+          <img class="fc-img fc-img-primary" src="images/17.png" alt="Zari Work Semi-Stitched Suit" loading="lazy" />
+          <img class="fc-img fc-img-hover" src="images/6.png" alt="" loading="lazy" />
+        </div>
+        <h3 class="fc-name">Zari Work Semi-Stitched Suit</h3>
+        <span class="fc-price">₹3,750</span>
+      </a>
+      <a href="shop.html" class="fc-card">
+        <div class="fc-media">
+          <img class="fc-img fc-img-primary" src="images/15.png" alt="Rosewater Printed Co-ord Set" loading="lazy" />
+          <img class="fc-img fc-img-hover" src="images/2026_05_17_10_14_IMG_3252.JPG" alt="" loading="lazy" />
+        </div>
+        <h3 class="fc-name">Rosewater Printed Co-ord Set</h3>
+        <span class="fc-price">₹3,200</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
      SECTION 2 — SHOP BY OCCASION (BENTO GRID)
 ══════════════════════════════════════════════════ -->
 <section class="occasion-section" id="occasions" style="display: none;">
@@ -601,7 +758,7 @@
 <!-- ══════════════════════════════════════════════════
      SECTION 4 — EDITORIAL SPLIT FEATURE (2-col)
 ══════════════════════════════════════════════════ -->
-<section class="editorial-split sec-cream">
+<section class="editorial-split sec-cream" style="display: none;">
   <div class="es-left">
     <div class="es-img-wrap es-img-tall">
       <img src="images/19.png" alt="Feature Editorial" loading="lazy" />
@@ -1288,7 +1445,7 @@
   </div>
 </footer>
 
-<!-- ══════════════════════════════════════════════════
+<!-- ═══════════════════════════════════���══════════════
      SCHEDULE A CALL — MODAL
 ══════════════════════════════════════════════════ -->
 <div class="sc-modal" id="scheduleModal" role="dialog" aria-modal="true" aria-labelledby="scTitle" aria-hidden="true">

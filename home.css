@@ -467,7 +467,7 @@ ul { list-style: none; padding: 0; margin: 0; }
   border-radius: 4px;
 }
 
-/* ── SIDE MINI THUMBNAILS ── */
+/* ���─ SIDE MINI THUMBNAILS ── */
 .hb-thumbs {
   position: absolute; right: 24px; top: 50%; transform: translateY(-50%);
   display: flex; flex-direction: column; gap: 10px; z-index: 20;
@@ -940,7 +940,7 @@ ul { list-style: none; padding: 0; margin: 0; }
 .es-cta-btn:hover { background: var(--text-dark); color: #fff; }
 
 /* ══════════════════════════════════════════════════════════════
-   SHOP BY CATEGORY — 4-CARD GRID
+   SHOP BY CATEGORY ��� 4-CARD GRID
 ══════════════════════════════════════════════════════════════ */
 .shop-cat-section { padding: 64px clamp(20px, 5vw, 90px) 72px; }
 .shop-cat-header { text-align: center; margin-bottom: 32px; }
@@ -1609,7 +1609,7 @@ ul { list-style: none; padding: 0; margin: 0; }
 
 /* ══════════════════════════════════════════════════════════════
    ELEGANCE BESTSELLERS — endless marquee
-═════════════════════════���════════════════════════════════════ */
+═════════════���═══════════���════════════════════════════════════ */
 .bs-section { padding: 64px 0 80px; overflow: hidden; }
 
 .bs-header { text-align: center; margin-bottom: 32px; }
@@ -1952,4 +1952,126 @@ ul { list-style: none; padding: 0; margin: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
   .sc-dialog, .sc-backdrop, .sc-check circle, .sc-check path { transition: none; animation: none; stroke-dashoffset: 0; }
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   FEATURED COLLECTIONS — tabs, banner, 4-up products
+═══════════════════════════════════════════════════════════════ */
+.fc-section { padding: 56px clamp(20px, 5vw, 90px) 72px; }
+
+.fc-header {
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 20px;
+}
+.fc-title {
+  font-family: var(--serif);
+  font-size: clamp(28px, 3vw, 40px);
+  font-weight: 500; color: var(--text-dark);
+}
+.fc-view-all {
+  position: absolute; right: 0; bottom: 6px;
+  font-size: 12px; font-weight: 500; letter-spacing: 1.2px; text-transform: uppercase;
+  color: var(--text-dark);
+  border-bottom: 1px solid var(--text-dark);
+  padding-bottom: 3px;
+  transition: color 0.25s, border-color 0.25s;
+}
+.fc-view-all:hover { color: var(--gold); border-color: var(--gold); }
+
+.fc-tabs {
+  display: flex; gap: 28px;
+  border-bottom: 1px solid var(--border-md);
+  margin-bottom: 14px;
+  overflow-x: auto; scrollbar-width: none;
+}
+.fc-tabs::-webkit-scrollbar { display: none; }
+.fc-tab {
+  position: relative;
+  padding: 0 0 12px;
+  background: none; border: 0; cursor: pointer; white-space: nowrap;
+  font-family: var(--sans); font-size: 13px; letter-spacing: 0.3px;
+  color: var(--text-mid);
+  transition: color 0.25s;
+}
+.fc-tab::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px;
+  background: var(--text-dark);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.35s ease;
+}
+.fc-tab:hover { color: var(--text-dark); }
+.fc-tab.is-active { color: var(--text-dark); }
+.fc-tab.is-active::after { transform: scaleX(1); }
+.fc-tab:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
+
+.fc-panel { animation: fcFade 0.5s ease; }
+.fc-panel[hidden] { display: none; }
+@keyframes fcFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+.fc-banner {
+  display: grid; grid-template-columns: 1fr clamp(280px, 26vw, 380px);
+  min-height: clamp(280px, 32vw, 440px);
+  background: var(--bg-ivory);
+}
+.fc-banner-img { width: 100%; height: 100%; object-fit: cover; object-position: center 25%; display: block; }
+.fc-banner-copy {
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 0 clamp(20px, 2vw, 28px) clamp(24px, 2.4vw, 34px);
+  background: #F4EAE0;
+}
+.fc-banner-title {
+  font-family: var(--serif);
+  font-size: clamp(26px, 2.4vw, 34px); font-weight: 500; color: var(--text-dark);
+}
+.fc-banner-text { margin-top: 8px; font-size: 13px; line-height: 1.6; color: var(--text-mid); }
+.fc-banner-cta {
+  align-self: stretch; margin-top: 18px; padding-bottom: 8px;
+  font-size: 11px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase;
+  color: var(--text-dark); border-bottom: 1px solid var(--text-dark);
+  transition: color 0.25s, border-color 0.25s;
+}
+.fc-banner-cta:hover { color: var(--gold); border-color: var(--gold); }
+
+.fc-meta {
+  display: flex; justify-content: space-between; gap: 16px;
+  margin: 18px 0 14px;
+  font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-dark);
+}
+
+.fc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.fc-card { display: block; color: inherit; }
+.fc-media { position: relative; aspect-ratio: 3 / 4; overflow: hidden; background: var(--bg-ivory); }
+.fc-img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: center top;
+  transition: opacity 0.5s ease, transform 0.8s cubic-bezier(.2,.7,.2,1);
+}
+.fc-img-hover { opacity: 0; }
+.fc-card:hover .fc-img-hover, .fc-card:focus-visible .fc-img-hover { opacity: 1; }
+.fc-card:hover .fc-img, .fc-card:focus-visible .fc-img { transform: scale(1.04); }
+.fc-name {
+  margin-top: 10px;
+  font-family: var(--sans); font-size: 13px; font-weight: 400; color: var(--text-dark);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.fc-price { display: block; margin-top: 3px; font-size: 13px; color: var(--text-mid); }
+
+@media (max-width: 900px) {
+  .fc-banner { grid-template-columns: 1fr; }
+  .fc-banner-img { aspect-ratio: 16 / 10; height: auto; }
+  .fc-banner-copy { padding: 22px 20px 24px; }
+  .fc-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .fc-section { padding: 44px 20px 52px; }
+  .fc-header { justify-content: space-between; }
+  .fc-view-all { position: static; }
+  .fc-tabs { gap: 22px; }
+  .fc-meta { font-size: 10px; letter-spacing: 0.8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fc-panel { animation: none; }
+  .fc-img, .fc-tab::after { transition: none; }
 }
