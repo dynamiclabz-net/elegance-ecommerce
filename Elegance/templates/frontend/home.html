@@ -1,0 +1,462 @@
+{% load static home_tags %}<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ELEGANCE — An Ethnic Regalia | Shop</title>
+  <meta name="description" content="Elegance — An ethnic regalia. Discover premium Indian ethnic wear for every occasion.">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="icon" type="image/png" href="{% static 'images/elegance-logo.png' %}">
+  <link rel="stylesheet" href="{% static 'css/home.css' %}" />
+</head>
+<body>
+
+{% include "frontend/includes/home_header.html" %}
+
+{% if banners %}
+<!-- ══════════════ HERO — FULL-WIDTH BANNER SLIDER ══════════════ -->
+<section class="hero-banner" id="home">
+  <div class="hb-track" id="hbTrack">
+    {% for b in banners %}
+    <div class="hb-slide{% if forloop.first %} hb-slide-active{% endif %}">
+      <div class="hb-img" style="background-image:url('{{ b.image }}')"></div>
+      <div class="hb-overlay{% if b.overlay == 'light' %} hb-overlay-light{% elif b.overlay == 'bottom' %} hb-overlay-bottom{% endif %}"></div>
+      <div class="hb-content hb-content-{{ b.text_align }}">
+        {% if b.eyebrow %}<span class="hb-eyebrow">{{ b.eyebrow }}</span>{% endif %}
+        {% if b.heading %}<h1 class="hb-heading">{{ b.heading|heading_markup }}</h1>{% endif %}
+        {% if b.sub_text %}<p class="hb-sub">{{ b.sub_text }}</p>{% endif %}
+        {% if b.btn1_text or b.btn2_text %}
+        <div class="hb-actions">
+          {% if b.btn1_text %}<a href="{{ b.btn1_url|default:'#' }}" class="hb-btn hb-btn-primary">{{ b.btn1_text }}</a>{% endif %}
+          {% if b.btn2_text %}<a href="{{ b.btn2_url|default:'#' }}" class="hb-btn hb-btn-ghost">{{ b.btn2_text }}</a>{% endif %}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <button class="hb-arrow hb-arrow-prev" id="hbPrev" aria-label="Previous slide"><i class="fas fa-chevron-left"></i></button>
+  <button class="hb-arrow hb-arrow-next" id="hbNext" aria-label="Next slide"><i class="fas fa-chevron-right"></i></button>
+
+  <div class="hb-dots" id="hbDots">
+    {% for b in banners %}
+    <button class="hb-dot{% if forloop.first %} hb-dot-active{% endif %}" data-idx="{{ forloop.counter0 }}" aria-label="Slide {{ forloop.counter }}"></button>
+    {% endfor %}
+  </div>
+
+  <div class="hb-thumbs" id="hbThumbs">
+    {% for b in banners %}
+    <button class="hb-thumb{% if forloop.first %} hb-thumb-active{% endif %}" data-idx="{{ forloop.counter0 }}">
+      <div class="hb-thumb-img" style="background-image:url('{{ b.image }}')"></div>
+      <span>{{ b.thumb_label }}</span>
+    </button>
+    {% endfor %}
+  </div>
+
+  <div class="hb-counter">
+    <span id="hbCurrent">01</span>
+    <span class="hb-counter-sep"></span>
+    <span class="hb-counter-total">{{ banners|length|stringformat:"02d" }}</span>
+  </div>
+</section>
+{% endif %}
+
+{% if home.show_new_arrivals and new_arrivals %}
+<!-- ══════════════ NEW ARRIVALS ══════════════ -->
+<section class="na-section sec-cream" id="new-arrivals">
+  <div class="na-header">
+    <h2 class="na-title">{{ home.na_title }}</h2>
+    {% if home.na_link_text %}<a href="{{ home.na_link_url }}" class="na-shop-all">{{ home.na_link_text }} <span aria-hidden="true">&rarr;</span></a>{% endif %}
+  </div>
+
+  <div class="na-row" id="newArrivalsRow">
+    {% for p in new_arrivals %}
+    <article class="na-card{% if forloop.first %} is-active{% endif %}" tabindex="0" data-href="{{ p.url }}">
+      <div class="na-media">
+        <img class="na-img na-img-primary" src="{{ p.image }}" alt="{{ p.name }}" loading="lazy" />
+        <img class="na-img na-img-hover" src="{{ p.hover_image }}" alt="" loading="lazy" />
+        <div class="na-actions">
+          <button type="button" class="na-btn na-btn-ghost" data-quick-add data-href="{{ p.url }}">Quick Add</button>
+          <button type="button" class="na-btn na-btn-solid" data-add-cart data-href="{{ p.url }}">Add to Cart</button>
+        </div>
+      </div>
+      <div class="na-info">
+        <h3 class="na-name">{{ p.name }}</h3>
+        <span class="na-price">₹{{ p.price }}</span>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% if home.show_shop_category and tiles %}
+<!-- ══════════════ SHOP BY CATEGORY ══════════════ -->
+<section class="shop-cat-section sec-cream">
+  <div class="shop-cat-header">
+    {% if home.cat_eyebrow %}<span class="shop-cat-eyebrow">{{ home.cat_eyebrow }}</span>{% endif %}
+    <h2 class="shop-cat-title">{{ home.cat_title }}</h2>
+  </div>
+
+  <div class="shop-cat-grid">
+    {% for t in tiles %}
+    <a href="{{ t.url }}" class="shop-cat-card">
+      <div class="shop-cat-img">
+        <img src="{{ t.image }}" alt="{{ t.title }}" loading="lazy" />
+      </div>
+      <div class="shop-cat-body">
+        <h3>{{ t.title }}</h3>
+        <i class="fas fa-arrow-right shop-cat-arrow" aria-hidden="true"></i>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+
+  {% if home.cat_all_text %}<a href="{{ home.cat_all_url }}" class="shop-cat-all">{{ home.cat_all_text }} <span aria-hidden="true">&rarr;</span></a>{% endif %}
+</section>
+{% endif %}
+
+{% if home.show_bestsellers and bestsellers %}
+<!-- ══════════════ BESTSELLERS — auto-scrolling marquee ══════════════ -->
+<section class="bs-section sec-white" id="elegance-bestsellers" aria-labelledby="bsTitle">
+  <div class="bs-header">
+    {% if home.bs_eyebrow %}<span class="bs-eyebrow">{{ home.bs_eyebrow }}</span>{% endif %}
+    <h2 class="bs-title" id="bsTitle">{{ home.bs_title }}</h2>
+  </div>
+
+  <div class="bs-marquee" id="bsMarquee">
+    <div class="bs-track" id="bsTrack">
+      {% for p in bestsellers %}
+      <a href="{{ p.url }}" class="bs-card">
+        <div class="bs-media">
+          <img class="bs-img bs-img-primary" src="{{ p.image }}" alt="{{ p.name }}" loading="lazy" />
+          <img class="bs-img bs-img-hover" src="{{ p.hover_image }}" alt="" loading="lazy" />
+        </div>
+        <div class="bs-info">
+          <h3 class="bs-name">{{ p.name }}</h3>
+          <span class="bs-price">₹{{ p.price }}</span>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if home.show_collections and collections %}
+<!-- ══════════════ FEATURED COLLECTIONS ══════════════ -->
+<section class="fc-section sec-white" id="featured-collections" aria-labelledby="fcTitle">
+  <div class="fc-header">
+    <h2 class="fc-title" id="fcTitle">{{ home.fc_title }}</h2>
+    {% if home.fc_link_text %}<a href="{{ home.fc_link_url }}" class="fc-view-all">{{ home.fc_link_text }} <span aria-hidden="true">&rarr;</span></a>{% endif %}
+  </div>
+
+  <div class="fc-tabs" role="tablist" aria-label="Featured collections">
+    {% for c in collections %}
+    <button type="button" class="fc-tab{% if forloop.first %} is-active{% endif %}" role="tab" id="fcTab-{{ c.id }}" aria-controls="fcPanel-{{ c.id }}" aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"{% if not forloop.first %} tabindex="-1"{% endif %}>{{ c.tab_label }}</button>
+    {% endfor %}
+  </div>
+
+  {% for c in collections %}
+  <div class="fc-panel{% if forloop.first %} is-active{% endif %}" role="tabpanel" id="fcPanel-{{ c.id }}" aria-labelledby="fcTab-{{ c.id }}"{% if not forloop.first %} hidden{% endif %}>
+    <div class="fc-banner">
+      {% if c.banner_image %}<img class="fc-banner-img" src="{{ c.banner_image }}" alt="{{ c.banner_title }} collection" loading="lazy" />{% endif %}
+      <div class="fc-banner-copy">
+        <h3 class="fc-banner-title">{{ c.banner_title }}</h3>
+        {% if c.banner_text %}<p class="fc-banner-text">{{ c.banner_text }}</p>{% endif %}
+        {% if c.cta_text %}<a href="{{ c.cta_url }}" class="fc-banner-cta">{{ c.cta_text }} <span aria-hidden="true">&rarr;</span></a>{% endif %}
+      </div>
+    </div>
+    <div class="fc-meta"><span>{{ c.meta_left }}</span><span>{{ c.meta_right }}</span></div>
+    <div class="fc-grid">
+      {% for p in c.products %}
+      <a href="{{ p.url }}" class="fc-card">
+        <div class="fc-media">
+          <img class="fc-img fc-img-primary" src="{{ p.image }}" alt="{{ p.name }}" loading="lazy" />
+          <img class="fc-img fc-img-hover" src="{{ p.hover_image }}" alt="" loading="lazy" />
+        </div>
+        <h3 class="fc-name">{{ p.name }}</h3>
+        <span class="fc-price">₹{{ p.price }}</span>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+</section>
+{% endif %}
+
+{% if home.show_category_sections %}
+{% for sec in category_sections %}
+<!-- ══════════════ CATEGORY CAROUSEL — {{ sec.title }} ══════════════ -->
+<section class="cat-carousel-section sec-white" id="category-section-{{ sec.id }}">
+  <div class="cat-sec-header">
+    <div class="cat-title-divider">
+      <div class="divider-line"></div>
+      <div class="divider-title-wrap">
+        <h2 class="cat-sec-title">{{ sec.title }}</h2>
+        <a href="{{ sec.url }}" class="cat-view-all">Shop All</a>
+      </div>
+      <div class="divider-line"></div>
+    </div>
+  </div>
+
+  <div class="cat-carousel-wrap">
+    <button class="cat-arrow cat-prev" id="catSec{{ sec.id }}Prev" aria-label="Previous"><i class="fas fa-chevron-left"></i></button>
+    <div class="cat-carousel-track-outer">
+      <div class="cat-carousel-track" id="catSec{{ sec.id }}Track">
+        {% for p in sec.products %}
+        <div class="cat-prod-card" data-href="{{ p.url }}">
+          <div class="cat-prod-img">
+            <img src="{{ p.image }}" alt="{{ p.name }}" loading="lazy" />
+            {% if p.sizes %}
+            <div class="size-chips">{% for s in p.sizes %}<span>{{ s }}</span>{% endfor %}</div>
+            {% endif %}
+            <button class="cat-wish-btn" aria-label="Wishlist"><i class="far fa-heart"></i></button>
+          </div>
+          <div class="cat-prod-info">
+            <p class="cat-prod-name">{{ p.name }}</p>
+            <p class="cat-prod-price">₹{{ p.price }}{% if p.mrp %} <span class="cat-mrp">₹{{ p.mrp }}</span>{% endif %}</p>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    <button class="cat-arrow cat-next" id="catSec{{ sec.id }}Next" aria-label="Next"><i class="fas fa-chevron-right"></i></button>
+  </div>
+</section>
+{% endfor %}
+{% endif %}
+
+{% if home.show_trending and trending %}
+<!-- ══════════════ MOST TRENDY ══════════════ -->
+<section class="product-section sec-ivory" id="bestsellers">
+  <div class="ps-header">
+    <div class="ps-title-row">
+      <h2 class="ps-title">{{ home.trend_title }}</h2>
+    </div>
+    {% if home.trend_link_text %}<a href="{{ home.trend_link_url }}" class="ps-view-all">{{ home.trend_link_text }} <i class="fas fa-arrow-right"></i></a>{% endif %}
+  </div>
+
+  <div class="product-scroll-row prod-row-wide" id="bestsellersRow">
+    {% for p in trending %}
+    <div class="prod-card prod-card-wide" data-href="{{ p.url }}">
+      <div class="prod-img-wrap">
+        <img src="{{ p.image }}" alt="{{ p.name }}" loading="lazy" />
+        <button class="wish-btn" aria-label="Wishlist"><i class="far fa-heart"></i></button>
+        <div class="prod-quick-add" data-href="{{ p.url }}">Quick Add</div>
+      </div>
+      <div class="prod-info">
+        {% if p.category_name %}<span class="prod-brand">{{ p.category_name }}</span>{% endif %}
+        <p class="prod-name">{{ p.name }}</p>
+        <div class="prod-price-row">
+          <span class="prod-price">₹{{ p.price }}</span>
+          {% if p.mrp %}
+          <span class="prod-mrp">₹{{ p.mrp }}</span>
+          <span class="prod-discount">{{ p.discount_pct }}% OFF</span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% if home.show_testimonials %}
+<!-- ══════════════ TESTIMONIALS ══════════════ -->
+<section class="testimonials-section sec-cream">
+  <div class="testi-header">
+    <h2 class="testi-title">Loved by <em>10,000+</em> Women</h2>
+    <p class="testi-subtitle">Read what our customers have to say</p>
+  </div>
+
+  <div class="testi-grid">
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-text">"The quality is absolutely divine! Every stitch is perfect, and the fabrics feel so luxurious. I've received so many compliments."</p>
+      <div class="testi-author">
+        <div class="testi-avatar"></div>
+        <div>
+          <p class="testi-name">Anjali Verma</p>
+          <p class="testi-city">Delhi, India</p>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-text">"Elegance's custom stitching service is a game-changer. My wedding attire was tailored to perfection. Highly recommended!"</p>
+      <div class="testi-author">
+        <div class="testi-avatar"></div>
+        <div>
+          <p class="testi-name">Priya Sharma</p>
+          <p class="testi-city">Mumbai, India</p>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-text">"From browsing to unboxing — everything was seamless. The packaging is elegant, and the pieces are stunning. Worth every rupee!"</p>
+      <div class="testi-author">
+        <div class="testi-avatar"></div>
+        <div>
+          <p class="testi-name">Neha Gupta</p>
+          <p class="testi-city">Bangalore, India</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="testi-stats">
+    <div class="stat-item"><p class="stat-number">4.9★</p><p class="stat-label">Average Rating</p></div>
+    <div class="stat-item"><p class="stat-number">10K+</p><p class="stat-label">Happy Customers</p></div>
+    <div class="stat-item"><p class="stat-number">48h</p><p class="stat-label">Avg Delivery</p></div>
+    <div class="stat-item"><p class="stat-number">99%</p><p class="stat-label">Satisfaction</p></div>
+  </div>
+</section>
+{% endif %}
+
+{% if home.show_benefits %}
+<!-- ══════════════ TRUST & BENEFITS ══════════════ -->
+<section class="benefits-section sec-ivory">
+  <div class="benefits-grid">
+    <div class="benefit-card"><div class="benefit-icon"><i class="fas fa-truck"></i></div><h3 class="benefit-title">Fast Shipping</h3><p class="benefit-text">Get your order delivered quickly across India.</p></div>
+    <div class="benefit-card"><div class="benefit-icon"><i class="fas fa-undo"></i></div><h3 class="benefit-title">Easy Returns</h3><p class="benefit-text">15-day hassle-free return policy</p></div>
+    <div class="benefit-card"><div class="benefit-icon"><i class="fas fa-lock"></i></div><h3 class="benefit-title">100% Secure</h3><p class="benefit-text">SSL encrypted checkout &amp; safe payments</p></div>
+    <div class="benefit-card"><div class="benefit-icon"><i class="fas fa-check-circle"></i></div><h3 class="benefit-title">Authentic</h3><p class="benefit-text">100% genuine fabrics &amp; handcrafted quality</p></div>
+    <div class="benefit-card"><div class="benefit-icon"><i class="fas fa-phone"></i></div><h3 class="benefit-title">Easy Exchange</h3><p class="benefit-text">Live chat, email &amp; phone support</p></div>
+    <div class="benefit-card"><div class="benefit-icon"><i class="fas fa-gift"></i></div><h3 class="benefit-title">Gift Wrapping</h3><p class="benefit-text">Complimentary elegant gift packaging</p></div>
+  </div>
+</section>
+{% endif %}
+
+{% if home.show_stitch_cta %}
+<!-- ══════════════ STITCHING BANNER ══════════════ -->
+<section class="stitch-cta-section">
+  <div class="stitch-cta-bg">
+    {% if home.stitch_image %}<img src="{{ home.stitch_image.url }}" alt="{{ home.stitch_heading|plain_markup }}" loading="lazy" />{% endif %}
+    <div class="stitch-cta-tint"></div>
+  </div>
+  <div class="stitch-cta-content">
+    {% if home.stitch_eyebrow %}<span class="stitch-eyebrow">{{ home.stitch_eyebrow }}</span>{% endif %}
+    <h2 class="stitch-heading">{{ home.stitch_heading|heading_markup }}</h2>
+    {% if home.stitch_body %}<p class="stitch-body">{{ home.stitch_body }}</p>{% endif %}
+    {% if home.stitch_cta_text %}<a href="{{ home.stitch_cta_url }}" class="stitch-cta-btn">{{ home.stitch_cta_text }} <i class="fas fa-arrow-right"></i></a>{% endif %}
+  </div>
+</section>
+{% endif %}
+
+{% include "frontend/includes/home_footer.html" %}
+
+<!-- ══════════════ SCHEDULE A CALL — MODAL ══════════════ -->
+<div class="sc-modal" id="scheduleModal" role="dialog" aria-modal="true" aria-labelledby="scTitle" aria-hidden="true">
+  <div class="sc-backdrop" data-sc-close></div>
+
+  <div class="sc-dialog">
+    <button type="button" class="sc-close" aria-label="Close" data-sc-close><i class="fas fa-times"></i></button>
+
+    <aside class="sc-aside">
+      <span class="sc-aside-logo">Elegance</span>
+      <div class="sc-aside-body">
+        <span class="sc-kicker">Personal Styling Concierge</span>
+        <h2 class="sc-aside-title">Let&apos;s talk <em>couture.</em></h2>
+        <p class="sc-aside-text">Pick a time that suits you and one of our stylists will call you &mdash; no pressure, just a conversation about what you&apos;re looking for.</p>
+      </div>
+      <ul class="sc-perks">
+        <li><i class="fas fa-cut"></i> Custom stitching &amp; fittings</li>
+        <li><i class="far fa-gem"></i> Bridal &amp; trousseau guidance</li>
+        <li><i class="fas fa-palette"></i> Fabric &amp; colour advice</li>
+      </ul>
+    </aside>
+
+    <div class="sc-panel">
+      <form class="sc-form" id="scheduleForm" novalidate>
+        <header class="sc-form-head">
+          <h3 id="scTitle">Schedule a call</h3>
+          <p>Takes less than a minute. We&apos;ll call you within your chosen window.</p>
+        </header>
+
+        <div class="sc-field">
+          <input type="text" id="scName" name="name" class="sc-input" placeholder=" " autocomplete="name" required />
+          <label for="scName" class="sc-label">Your name</label>
+          <span class="sc-error" data-error-for="scName"></span>
+        </div>
+
+        <div class="sc-field sc-field-phone">
+          <span class="sc-prefix">+91</span>
+          <input type="tel" id="scPhone" name="phone" class="sc-input" placeholder=" " inputmode="numeric" autocomplete="tel-national" maxlength="10" required />
+          <label for="scPhone" class="sc-label">Mobile number</label>
+          <span class="sc-error" data-error-for="scPhone"></span>
+        </div>
+
+        <fieldset class="sc-group">
+          <legend>Preferred day</legend>
+          <div class="sc-chips sc-days" id="scDays" role="radiogroup" aria-label="Preferred day"></div>
+          <div class="sc-cal" id="scCal" hidden>
+            <div class="sc-cal-head">
+              <button type="button" class="sc-cal-nav" id="scCalPrev" aria-label="Previous month"><i class="fas fa-chevron-left"></i></button>
+              <span class="sc-cal-title" id="scCalTitle" aria-live="polite"></span>
+              <button type="button" class="sc-cal-nav" id="scCalNext" aria-label="Next month"><i class="fas fa-chevron-right"></i></button>
+            </div>
+            <div class="sc-cal-week" aria-hidden="true"><span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span></div>
+            <div class="sc-cal-grid" id="scCalGrid"></div>
+            <p class="sc-cal-note">Bookings open up to 3 months ahead.</p>
+          </div>
+        </fieldset>
+
+        <fieldset class="sc-group">
+          <legend>Preferred time</legend>
+          <div class="sc-chips sc-slots" id="scSlots" role="radiogroup" aria-label="Preferred time">
+            <button type="button" class="sc-chip sc-slot" role="radio" aria-checked="false" data-slot="Morning" data-end="13"><i class="far fa-sun"></i><strong>Morning</strong><small>10 AM &ndash; 1 PM</small></button>
+            <button type="button" class="sc-chip sc-slot" role="radio" aria-checked="false" data-slot="Afternoon" data-end="17"><i class="fas fa-cloud-sun"></i><strong>Afternoon</strong><small>1 PM &ndash; 5 PM</small></button>
+            <button type="button" class="sc-chip sc-slot" role="radio" aria-checked="false" data-slot="Evening" data-end="20"><i class="far fa-moon"></i><strong>Evening</strong><small>5 PM &ndash; 8 PM</small></button>
+          </div>
+          <span class="sc-error" id="scSlotError"></span>
+        </fieldset>
+
+        <fieldset class="sc-group">
+          <legend>I&apos;d like help with <span class="sc-optional">(optional)</span></legend>
+          <div class="sc-tags" id="scTopics">
+            <button type="button" class="sc-tag" aria-pressed="false">Custom stitching</button>
+            <button type="button" class="sc-tag" aria-pressed="false">Bridal / Trousseau</button>
+            <button type="button" class="sc-tag" aria-pressed="false">Styling advice</button>
+            <button type="button" class="sc-tag" aria-pressed="false">Order query</button>
+          </div>
+        </fieldset>
+
+        <button type="submit" class="sc-submit" id="scSubmit">
+          <span class="sc-submit-label">Request a call back</span>
+          <i class="fas fa-arrow-right"></i>
+        </button>
+        <p class="sc-fineprint"><i class="fas fa-lock"></i> Your number is only used to call you about this request.</p>
+      </form>
+
+      <div class="sc-success" id="scSuccess" hidden>
+        <div class="sc-check" aria-hidden="true">
+          <svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="24" /><path d="M15 27l8 8 14-16" /></svg>
+        </div>
+        <h3>You&apos;re all set, <span id="scSuccessName"></span>.</h3>
+        <p>A stylist will call <strong id="scSuccessPhone"></strong> on</p>
+        <div class="sc-summary" id="scSuccessWhen"></div>
+        <button type="button" class="sc-done" data-sc-close>Back to shopping</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<button class="back-to-top" id="backToTop" aria-label="Back to top">
+  <i class="fas fa-chevron-up"></i>
+</button>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'js/api_caller.js' %}"></script>
+<script src="{% static 'js/frontend_utils.js' %}"></script>
+<script>window.ELEGANCE_CART_API_URL = "{% url 'cart-api-list' %}";</script>
+<script src="{% static 'js/home.js' %}"></script>
+<script>eRefreshCartBadge(window.ELEGANCE_CART_API_URL);</script>
+</body>
+</html>

@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "UserDetail",
     "Product",
     "Order",
+    "Home",
     "FrontEnd",
 ]
 
@@ -65,6 +66,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "Home.context_processors.site_chrome",
             ],
         },
     },

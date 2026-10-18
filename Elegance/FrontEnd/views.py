@@ -66,6 +66,24 @@ class AdminCategoriesPageViewSet(viewsets.ViewSet):
         return render(request, "frontend/admin/admin-categories.html")
 
 
+class AdminHomepagePageViewSet(viewsets.ViewSet):
+
+    @handle_exceptions
+    @check_authentication(required_role="admin")
+    def list(self, request):
+        return render(request, "frontend/admin/admin-homepage.html")
+
+
+class HomePageViewSet(viewsets.ViewSet):
+    """GET / and /home/  -> dynamic storefront home page. Public."""
+
+    @handle_exceptions
+    def list(self, request):
+        from Home.services import build_home_context
+
+        return render(request, "frontend/home.html", build_home_context())
+
+
 class AdminPincodesPageViewSet(viewsets.ViewSet):
 
     @handle_exceptions

@@ -1,0 +1,82 @@
+{% load static %}
+<!-- ══════════════════════════════════════════════════
+     TOP ANNOUNCEMENT BAR
+══════════════════════════════════════════════════ -->
+{% if site_settings.announcements %}
+<div class="announcement-bar">
+  <div class="announce-inner">
+    {% for a in site_settings.announcements %}
+    <span>{{ a.text }}{% if a.link_text %} <a href="{{ a.link_url|default:'#' }}">{{ a.link_text }}</a>{% endif %}</span>
+    {% if not forloop.last %}<span class="announce-sep">✦</span>{% endif %}
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<!-- ══════════════════════════════════════════════════
+     NAVBAR
+══════════════════════════════════════════════════ -->
+<nav class="site-nav" id="siteNav">
+  <div class="nav-inner">
+
+    <a href="{% url 'home-list' %}" class="nav-brand">
+      <img src="{% if site_settings.logo %}{{ site_settings.logo.url }}{% else %}{% static 'images/elegance-logo.png' %}{% endif %}" alt="Elegance Logo" class="nav-logo" />
+    </a>
+
+    <ul class="nav-links" id="navLinks">
+      {% for item in site_settings.nav_items %}
+        {% if item.columns %}
+        <li class="nav-item-dropdown">
+          <a href="{{ item.url|default:'#' }}" class="nav-link">{{ item.label }} <i class="fas fa-chevron-down nav-chevron"></i></a>
+          <div class="mega-drop">
+            {% for col in item.columns %}
+            <div class="mega-col">
+              <span class="mega-heading">{{ col.heading }}</span>
+              {% for link in col.links %}
+              <a href="{{ link.url|default:'#' }}">{{ link.label }}</a>
+              {% endfor %}
+            </div>
+            {% endfor %}
+            <div class="mega-col mega-col-img">
+              <img src="{% if site_settings.mega_image %}{{ site_settings.mega_image.url }}{% else %}{% static 'images/nav-new-season.png' %}{% endif %}" alt="{{ site_settings.mega_image_label|default:'New Arrivals' }}" />
+              {% if site_settings.mega_image_label %}<span>{{ site_settings.mega_image_label }}</span>{% endif %}
+            </div>
+          </div>
+        </li>
+        {% else %}
+        <li><a href="{{ item.url|default:'#' }}" class="nav-link{% if item.style == 'sale' %} nav-sale{% endif %}">{{ item.label }}</a></li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+
+    <div class="nav-actions">
+      <button class="nav-icon-btn" aria-label="Search" id="searchToggle">
+        <i class="fas fa-search"></i>
+      </button>
+      <a href="{% url 'account-list' %}" class="nav-icon-btn" aria-label="Wishlist">
+        <i class="far fa-heart"></i>
+      </a>
+      <a href="{% url 'cart-list' %}" class="nav-icon-btn cart-btn" aria-label="Cart">
+        <i class="fas fa-shopping-bag"></i>
+        <span class="cart-badge" data-count="0"></span>
+      </a>
+      <a href="{% url 'account-list' %}" class="btn-account" aria-label="Account">
+        <i class="far fa-user"></i>
+      </a>
+      <button type="button" class="btn-schedule" id="openScheduleCall" aria-haspopup="dialog" aria-controls="scheduleModal">
+        <i class="fas fa-phone-volume"></i><span>Schedule Call</span>
+      </button>
+      <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="search-bar" id="searchBar">
+    <div class="search-inner">
+      <i class="fas fa-search search-icon-input"></i>
+      <input type="text" placeholder="Search for sarees, suits, co-ords…" class="search-input" id="searchInput" />
+      <button class="search-close" id="searchClose"><i class="fas fa-times"></i></button>
+    </div>
+  </div>
+</nav>

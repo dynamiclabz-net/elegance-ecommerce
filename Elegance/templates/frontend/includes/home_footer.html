@@ -1,0 +1,45 @@
+{% load static %}
+<!-- ══════════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════════ -->
+<footer class="site-footer">
+  <div class="footer-top">
+    <div class="footer-brand-col">
+      <img src="{% if site_settings.logo %}{{ site_settings.logo.url }}{% else %}{% static 'images/elegance-logo.png' %}{% endif %}" alt="Elegance" class="footer-logo" />
+      <p class="footer-tagline">{{ site_settings.footer_tagline }}</p>
+      <div class="footer-social">
+        {% for s in site_settings.footer_socials %}
+        <a href="{{ s.url|default:'#' }}"{% if s.url and s.url != '#' %} target="_blank" rel="noopener"{% endif %} aria-label="{{ s.label }}"><i class="{{ s.icon }}"></i></a>
+        {% endfor %}
+      </div>
+    </div>
+
+    {% for col in site_settings.footer_columns %}
+    <div class="footer-links-col">
+      <h4>{{ col.heading }}</h4>
+      {% for link in col.links %}
+      <a href="{{ link.url|default:'#' }}">{{ link.label }}</a>
+      {% endfor %}
+    </div>
+    {% endfor %}
+
+    <div class="footer-newsletter-col">
+      <h4>{{ site_settings.newsletter_heading }}</h4>
+      <p>{{ site_settings.newsletter_text }}</p>
+      <form class="newsletter-form" onsubmit="return false;">
+        <input type="email" placeholder="Your email address" class="newsletter-input" />
+        <button type="submit" class="newsletter-btn"><i class="fas fa-arrow-right"></i></button>
+      </form>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <span>&copy; {% now "Y" %} {{ site_settings.copyright_text }}</span>
+    <div class="footer-payment">
+      <i class="fab fa-cc-visa"></i>
+      <i class="fab fa-cc-mastercard"></i>
+      <i class="fab fa-cc-paypal"></i>
+      <i class="fas fa-shield-alt"></i>
+    </div>
+  </div>
+</footer>

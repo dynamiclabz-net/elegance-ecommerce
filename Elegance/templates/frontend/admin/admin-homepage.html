@@ -1,0 +1,378 @@
+{% extends "frontend/admin/_base.html" %}
+{% load static %}
+
+{% block title %}Homepage{% endblock %}
+{% block breadcrumb %}Storefront{% endblock %}
+{% block page_title %}Homepage{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin-homepage.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="hp-topbar">
+  <p class="hp-topbar-note">Every preview below is the live storefront stylesheet. Drag items inside a preview, or use the arrows, to change their order.</p>
+  <a href="{% url 'home-list' %}" target="_blank" rel="noopener" class="btn-e-outline"><i class="bi bi-box-arrow-up-right"></i> View live homepage</a>
+</div>
+
+<div class="e-tabs hp-tabs" id="hp-tabs">
+  <button class="active" data-tab="banners">Home Banner</button>
+  <button data-tab="new_arrivals">New Arrivals</button>
+  <button data-tab="tiles">Shop by Category</button>
+  <button data-tab="bestsellers">Bestsellers</button>
+  <button data-tab="sections">Category Sections</button>
+  <button data-tab="collections">Featured Collections</button>
+  <button data-tab="trending">Most Trendy</button>
+  <button data-tab="copy">Sections &amp; Banner</button>
+  <button data-tab="navbar">Navbar</button>
+  <button data-tab="footer">Footer</button>
+</div>
+
+<!-- ───────── Banners ───────── -->
+<div class="e-tab-panel" id="tab-banners">
+  <div class="e-card">
+    <div class="e-card-header">
+      <h2>Hero banners</h2>
+      <button class="btn-e-primary" id="banner-add-btn"><i class="bi bi-plus-lg"></i> Add banner</button>
+    </div>
+    <div class="e-card-body">
+      <div class="hp-ratio"><i class="bi bi-aspect-ratio"></i> Recommended image: <strong>1920 &times; 1080 px (16:9)</strong>, JPG/WebP under 400 KB. The banner fills the full screen height, so keep the subject centred and leave quiet space where the text sits.</div>
+      <div id="banner-list" class="hp-banner-list"></div>
+    </div>
+  </div>
+  <div class="e-card mt-3">
+    <div class="e-card-header"><h2>Live preview</h2><span class="hp-hint">Click a banner above to preview it. Drag the thumbnails to reorder.</span></div>
+    <div class="e-card-body p-0"><iframe class="hp-frame" id="frame-banners" title="Banner preview"></iframe></div>
+  </div>
+</div>
+
+<!-- ───────── New arrivals ───────── -->
+<div class="e-tab-panel d-none" id="tab-new_arrivals">
+  <div class="e-card">
+    <div class="e-card-header">
+      <h2>New Arrivals</h2>
+      <button class="btn-e-primary" data-pick="new_arrivals"><i class="bi bi-grid-3x2-gap"></i> Select products</button>
+    </div>
+    <div class="e-card-body">
+      <div class="hp-ratio"><i class="bi bi-aspect-ratio"></i> Shows up to <strong>4</strong> active products using their own photos. Best product photo ratio: <strong>3:4 portrait (900 &times; 1200 px)</strong>; the second photo appears on hover.</div>
+      <div class="hp-fields">
+        <div class="e-field"><label class="e-label">Section title</label><input class="e-input" data-setting="na_title"></div>
+        <div class="e-field"><label class="e-label">Link text</label><input class="e-input" data-setting="na_link_text"></div>
+        <div class="e-field"><label class="e-label">Link URL</label><input class="e-input" data-setting="na_link_url"></div>
+        <div class="e-field hp-switch"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" data-setting="show_new_arrivals"><label class="form-check-label">Show section</label></div></div>
+      </div>
+      <button class="btn-e-accent btn-sm" data-save-settings="new_arrivals">Save section text</button>
+    </div>
+  </div>
+  <div class="e-card mt-3">
+    <div class="e-card-header"><h2>Live preview</h2></div>
+    <div class="e-card-body p-0"><iframe class="hp-frame" id="frame-new_arrivals" title="New arrivals preview"></iframe></div>
+  </div>
+</div>
+
+<!-- ───────── Shop by category ───────── -->
+<div class="e-tab-panel d-none" id="tab-tiles">
+  <div class="e-card">
+    <div class="e-card-header"><h2>Shop by Category</h2></div>
+    <div class="e-card-body">
+      <div class="hp-ratio"><i class="bi bi-aspect-ratio"></i> Recommended tile image: <strong>800 &times; 1000 px (4:5 portrait)</strong>. If no photo is uploaded, the category&apos;s own image is used.</div>
+      <form id="tile-form" class="hp-inline-form">
+        <div class="e-field"><label class="e-label">Category <span class="req">*</span></label><select class="e-select" id="tile-category" required></select></div>
+        <div class="e-field"><label class="e-label">Display title <span class="hp-optional">(optional)</span></label><input class="e-input" id="tile-title" placeholder="Defaults to the category name"></div>
+        <div class="e-field"><label class="e-label">Photo</label><input type="file" class="e-input" id="tile-image" accept="image/*"></div>
+        <div class="e-field hp-inline-submit"><button type="submit" class="btn-e-primary"><i class="bi bi-plus-lg"></i> Add tile</button></div>
+      </form>
+      <div id="tile-list" class="hp-tile-list"></div>
+      <hr class="hp-sep">
+      <div class="hp-fields">
+        <div class="e-field"><label class="e-label">Eyebrow</label><input class="e-input" data-setting="cat_eyebrow"></div>
+        <div class="e-field"><label class="e-label">Section title</label><input class="e-input" data-setting="cat_title"></div>
+        <div class="e-field"><label class="e-label">&quot;Shop all&quot; text</label><input class="e-input" data-setting="cat_all_text"></div>
+        <div class="e-field"><label class="e-label">&quot;Shop all&quot; URL</label><input class="e-input" data-setting="cat_all_url"></div>
+        <div class="e-field hp-switch"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" data-setting="show_shop_category"><label class="form-check-label">Show section</label></div></div>
+      </div>
+      <button class="btn-e-accent btn-sm" data-save-settings="tiles">Save section text</button>
+    </div>
+  </div>
+  <div class="e-card mt-3">
+    <div class="e-card-header"><h2>Live preview</h2></div>
+    <div class="e-card-body p-0"><iframe class="hp-frame" id="frame-tiles" title="Shop by category preview"></iframe></div>
+  </div>
+</div>
+
+<!-- ───────── Bestsellers ───────── -->
+<div class="e-tab-panel d-none" id="tab-bestsellers">
+  <div class="e-card">
+    <div class="e-card-header">
+      <h2>Bestsellers</h2>
+      <button class="btn-e-primary" data-pick="bestsellers"><i class="bi bi-grid-3x2-gap"></i> Select products</button>
+    </div>
+    <div class="e-card-body">
+      <div class="hp-ratio"><i class="bi bi-aspect-ratio"></i> Products scroll automatically. Best product photo ratio: <strong>5:7 (900 &times; 1260 px)</strong>; 3:4 also works. Add at least 5 products so the marquee looks full.</div>
+      <div class="hp-fields">
+        <div class="e-field"><label class="e-label">Eyebrow</label><input class="e-input" data-setting="bs_eyebrow"></div>
+        <div class="e-field"><label class="e-label">Section title</label><input class="e-input" data-setting="bs_title"></div>
+        <div class="e-field hp-switch"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" data-setting="show_bestsellers"><label class="form-check-label">Show section</label></div></div>
+      </div>
+      <button class="btn-e-accent btn-sm" data-save-settings="bestsellers">Save section text</button>
+    </div>
+  </div>
+  <div class="e-card mt-3">
+    <div class="e-card-header"><h2>Live preview</h2></div>
+    <div class="e-card-body p-0"><iframe class="hp-frame" id="frame-bestsellers" title="Bestsellers preview"></iframe></div>
+  </div>
+</div>
+
+<!-- ───────── Category sections ───────── -->
+<div class="e-tab-panel d-none" id="tab-sections">
+  <div class="e-card">
+    <div class="e-card-header"><h2>Category sections</h2></div>
+    <div class="e-card-body">
+      <div class="hp-ratio"><i class="bi bi-aspect-ratio"></i> Each section is a carousel of one category. Pick the category, then choose which of its products appear. Product photo ratio: <strong>3:4 portrait (900 &times; 1200 px)</strong>.</div>
+      <form id="section-form" class="hp-inline-form">
+        <div class="e-field"><label class="e-label">Category <span class="req">*</span></label><select class="e-select" id="section-category" required></select></div>
+        <div class="e-field"><label class="e-label">Heading <span class="hp-optional">(optional)</span></label><input class="e-input" id="section-title" placeholder="Defaults to the category name"></div>
+        <div class="e-field hp-inline-submit"><button type="submit" class="btn-e-primary"><i class="bi bi-plus-lg"></i> Add section</button></div>
+      </form>
+      <div class="hp-fields hp-fields-single">
+        <div class="e-field hp-switch"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" data-setting="show_category_sections"><label class="form-check-label">Show category sections on the homepage</label></div></div>
+      </div>
+      <button class="btn-e-accent btn-sm" data-save-settings="sections">Save</button>
+    </div>
+  </div>
+  <div id="section-list"></div>
+</div>
+
+<!-- ───────── Featured collections ───────── -->
+<div class="e-tab-panel d-none" id="tab-collections">
+  <div class="e-card">
+    <div class="e-card-header">
+      <h2>Featured collections</h2>
+      <button class="btn-e-primary" id="collection-add-btn"><i class="bi bi-plus-lg"></i> New collection</button>
+    </div>
+    <div class="e-card-body">
+      <div class="hp-ratio"><i class="bi bi-aspect-ratio"></i> Collection banner: <strong>1600 &times; 800 px (2:1)</strong>, subject in the upper-centre. Each collection shows <strong>4 products</strong> (photo ratio 3:4, 900 &times; 1200 px).</div>
+      <div class="hp-fields">
+        <div class="e-field"><label class="e-label">Section title</label><input class="e-input" data-setting="fc_title"></div>
+        <div class="e-field"><label class="e-label">&quot;View all&quot; text</label><input class="e-input" data-setting="fc_link_text"></div>
+        <div class="e-field"><label class="e-label">&quot;View all&quot; URL</label><input class="e-input" data-setting="fc_link_url"></div>
+        <div class="e-field hp-switch"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" data-setting="show_collections"><label class="form-check-label">Show section</label></div></div>
+      </div>
+      <button class="btn-e-accent btn-sm" data-save-settings="collections">Save section text</button>
+    </div>
+  </div>
+
+  <div class="hp-col-tabs" id="collection-tabs"></div>
+  <div id="collection-editor"></div>
+</div>
+
+<!-- ───────── Most trendy ───────── -->
+<div class="e-tab-panel d-none" id="tab-trending">
+  <div class="e-card">
+    <div class="e-card-header">
+      <h2>Most Trendy</h2>
+      <button class="btn-e-primary" data-pick="trending"><i class="bi bi-grid-3x2-gap"></i> Select products</button>
+    </div>
+    <div class="e-card-body">
+      <div class="hp-ratio"><i class="bi bi-aspect-ratio"></i> Best product photo ratio: <strong>2:3 portrait (800 &times; 1200 px)</strong>.</div>
+      <div class="hp-fields">
+        <div class="e-field"><label class="e-label">Section title</label><input class="e-input" data-setting="trend_title"></div>
+        <div class="e-field"><label class="e-label">Link text</label><input class="e-input" data-setting="trend_link_text"></div>
+        <div class="e-field"><label class="e-label">Link URL</label><input class="e-input" data-setting="trend_link_url"></div>
+        <div class="e-field hp-switch"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" data-setting="show_trending"><label class="form-check-label">Show section</label></div></div>
+      </div>
+      <button class="btn-e-accent btn-sm" data-save-settings="trending">Save section text</button>
+    </div>
+  </div>
+  <div class="e-card mt-3">
+    <div class="e-card-header"><h2>Live preview</h2></div>
+    <div class="e-card-body p-0"><iframe class="hp-frame" id="frame-trending" title="Most trendy preview"></iframe></div>
+  </div>
+</div>
+
+<!-- ───────── Sections & banner copy ───────── -->
+<div class="e-tab-panel d-none" id="tab-copy">
+  <div class="e-card">
+    <div class="e-card-header"><h2>Page sections</h2></div>
+    <div class="e-card-body">
+      <div class="hp-fields">
+        <div class="e-field hp-switch"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" data-setting="show_testimonials"><label class="form-check-label">Testimonials</label></div></div>
+        <div class="e-field hp-switch"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" data-setting="show_benefits"><label class="form-check-label">Trust &amp; benefits strip</label></div></div>
+        <div class="e-field hp-switch"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" data-setting="show_stitch_cta"><label class="form-check-label">Custom stitching banner</label></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="e-card mt-3">
+    <div class="e-card-header"><h2>Custom stitching banner</h2></div>
+    <div class="e-card-body">
+      <div class="hp-ratio"><i class="bi bi-aspect-ratio"></i> Background image: <strong>1920 &times; 800 px (12:5)</strong>. It is darkened under the text, so avoid very bright photos.</div>
+      <div class="hp-fields">
+        <div class="e-field"><label class="e-label">Eyebrow</label><input class="e-input" data-setting="stitch_eyebrow"></div>
+        <div class="e-field"><label class="e-label">Heading <span class="hp-optional">(wrap words in *asterisks* to italicise)</span></label><input class="e-input" data-setting="stitch_heading"></div>
+        <div class="e-field hp-wide"><label class="e-label">Body text</label><textarea class="e-input" rows="3" data-setting="stitch_body"></textarea></div>
+        <div class="e-field"><label class="e-label">Button text</label><input class="e-input" data-setting="stitch_cta_text"></div>
+        <div class="e-field"><label class="e-label">Button URL</label><input class="e-input" data-setting="stitch_cta_url"></div>
+        <div class="e-field"><label class="e-label">Background image</label><input type="file" class="e-input" id="stitch-image" accept="image/*"><div id="stitch-image-current" class="hp-current"></div></div>
+      </div>
+      <button class="btn-e-accent btn-sm" data-save-settings="copy">Save</button>
+    </div>
+  </div>
+  <div class="e-card mt-3">
+    <div class="e-card-header"><h2>Live preview</h2></div>
+    <div class="e-card-body p-0"><iframe class="hp-frame" id="frame-copy" title="Stitching banner preview"></iframe></div>
+  </div>
+</div>
+
+<!-- ───────── Navbar ───────── -->
+<div class="e-tab-panel d-none" id="tab-navbar">
+  <div class="e-card">
+    <div class="e-card-header"><h2>Logo</h2></div>
+    <div class="e-card-body">
+      <div class="hp-ratio"><i class="bi bi-aspect-ratio"></i> Transparent PNG/SVG, about <strong>480 &times; 120 px (4:1)</strong>. Leave empty to use the default Elegance logo.</div>
+      <div class="e-field"><input type="file" class="e-input" id="logo-image" accept="image/*"><div id="logo-current" class="hp-current"></div></div>
+    </div>
+  </div>
+  <div class="e-card mt-3">
+    <div class="e-card-header"><h2>Announcement bar</h2><button class="btn-e-outline btn-sm" id="announce-add"><i class="bi bi-plus-lg"></i> Add message</button></div>
+    <div class="e-card-body"><div id="announce-list"></div></div>
+  </div>
+  <div class="e-card mt-3">
+    <div class="e-card-header"><h2>Menu</h2><button class="btn-e-outline btn-sm" id="nav-add"><i class="bi bi-plus-lg"></i> Add menu item</button></div>
+    <div class="e-card-body">
+      <p class="hp-hint mb-3">Add columns to a menu item to give it a dropdown. Items without columns are plain links.</p>
+      <div id="nav-list"></div>
+      <hr class="hp-sep">
+      <div class="hp-fields">
+        <div class="e-field"><label class="e-label">Dropdown promo image <span class="hp-optional">(120 &times; 150 px, 4:5)</span></label><input type="file" class="e-input" id="mega-image" accept="image/*"><div id="mega-current" class="hp-current"></div></div>
+        <div class="e-field"><label class="e-label">Promo image label</label><input class="e-input" data-setting="mega_image_label"></div>
+      </div>
+    </div>
+  </div>
+  <div class="hp-savebar"><button class="btn-e-primary" data-save-settings="navbar"><i class="bi bi-check2"></i> Save navbar</button></div>
+</div>
+
+<!-- ───────── Footer ───────── -->
+<div class="e-tab-panel d-none" id="tab-footer">
+  <div class="e-card">
+    <div class="e-card-header"><h2>Brand &amp; newsletter</h2></div>
+    <div class="e-card-body">
+      <div class="hp-fields">
+        <div class="e-field hp-wide"><label class="e-label">Tagline</label><textarea class="e-input" rows="2" data-setting="footer_tagline"></textarea></div>
+        <div class="e-field"><label class="e-label">Newsletter heading</label><input class="e-input" data-setting="newsletter_heading"></div>
+        <div class="e-field"><label class="e-label">Newsletter text</label><input class="e-input" data-setting="newsletter_text"></div>
+        <div class="e-field"><label class="e-label">Copyright line</label><input class="e-input" data-setting="copyright_text"></div>
+      </div>
+    </div>
+  </div>
+  <div class="e-card mt-3">
+    <div class="e-card-header"><h2>Social links</h2><button class="btn-e-outline btn-sm" id="social-add"><i class="bi bi-plus-lg"></i> Add link</button></div>
+    <div class="e-card-body"><div id="social-list"></div></div>
+  </div>
+  <div class="e-card mt-3">
+    <div class="e-card-header"><h2>Link columns</h2><button class="btn-e-outline btn-sm" id="fcol-add"><i class="bi bi-plus-lg"></i> Add column</button></div>
+    <div class="e-card-body"><div id="fcol-list"></div></div>
+  </div>
+  <div class="hp-savebar"><button class="btn-e-primary" data-save-settings="footer"><i class="bi bi-check2"></i> Save footer</button></div>
+</div>
+
+<!-- ───────── Banner modal ───────── -->
+<div class="modal fade e-modal" id="banner-modal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <form id="banner-form">
+        <div class="modal-header"><h5 class="modal-title" id="banner-modal-title">Add banner</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body">
+          <input type="hidden" id="banner-id">
+          <div class="e-field">
+            <label class="e-label">Image <span class="req" id="banner-image-req">*</span></label>
+            <input type="file" class="e-input" id="banner-image" accept="image/*">
+            <div class="e-field-help">Recommended 1920 &times; 1080 px (16:9).</div>
+            <div id="banner-image-current" class="hp-current"></div>
+          </div>
+          <div class="hp-fields">
+            <div class="e-field"><label class="e-label">Eyebrow</label><input class="e-input" id="banner-eyebrow"></div>
+            <div class="e-field"><label class="e-label">Thumbnail label</label><input class="e-input" id="banner-thumb"></div>
+            <div class="e-field hp-wide"><label class="e-label">Heading <span class="hp-optional">(wrap words in *asterisks* to italicise)</span></label><input class="e-input" id="banner-heading"></div>
+            <div class="e-field hp-wide"><label class="e-label">Sub text</label><textarea class="e-input" rows="2" id="banner-sub"></textarea></div>
+            <div class="e-field"><label class="e-label">Button 1 text</label><input class="e-input" id="banner-b1t"></div>
+            <div class="e-field"><label class="e-label">Button 1 URL</label><input class="e-input" id="banner-b1u"></div>
+            <div class="e-field"><label class="e-label">Button 2 text</label><input class="e-input" id="banner-b2t"></div>
+            <div class="e-field"><label class="e-label">Button 2 URL</label><input class="e-input" id="banner-b2u"></div>
+            <div class="e-field"><label class="e-label">Text position</label>
+              <select class="e-select" id="banner-align"><option value="left">Left</option><option value="center">Centre</option><option value="right">Right</option></select></div>
+            <div class="e-field"><label class="e-label">Image overlay</label>
+              <select class="e-select" id="banner-overlay"><option value="dark">Dark (for light photos)</option><option value="light">Light</option><option value="bottom">Bottom fade</option></select></div>
+          </div>
+          <div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="banner-active" checked><label class="form-check-label" for="banner-active" style="font-size:13px;">Active</label></div>
+        </div>
+        <div class="modal-footer"><button type="button" class="btn-e-outline" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn-e-primary" id="banner-save">Save banner</button></div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ───────── Collection modal ───────── -->
+<div class="modal fade e-modal" id="collection-modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="collection-form">
+        <div class="modal-header"><h5 class="modal-title">New collection</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body">
+          <div class="e-field"><label class="e-label">Tab name <span class="req">*</span></label><input class="e-input" id="collection-new-label" required placeholder="e.g. Summer Resort"></div>
+          <div class="e-field"><label class="e-label">Banner image</label><input type="file" class="e-input" id="collection-new-image" accept="image/*"><div class="e-field-help">Recommended 1600 &times; 800 px (2:1).</div></div>
+        </div>
+        <div class="modal-footer"><button type="button" class="btn-e-outline" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn-e-primary">Create collection</button></div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ───────── Product picker modal ───────── -->
+<div class="modal fade e-modal" id="picker-modal" tabindex="-1">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <h5 class="modal-title" id="picker-title">Select products</h5>
+          <div class="hp-hint" id="picker-sub"></div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="hp-picker-bar">
+          <select class="e-select" id="picker-category"><option value="">All categories</option></select>
+          <input class="e-input" id="picker-search" placeholder="Search by name or SKU">
+        </div>
+        <div class="hp-picker-grid" id="picker-grid"></div>
+        <div class="text-center mt-3"><button class="btn-e-outline d-none" id="picker-more">Load more</button></div>
+      </div>
+      <div class="modal-footer">
+        <span class="hp-picker-count" id="picker-count"></span>
+        <button type="button" class="btn-e-outline" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn-e-primary" id="picker-save">Save selection</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/admin/admin_homepage.js' %}"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    AdminHomepageInit({
+      csrfToken: "{{ csrf_token }}",
+      homeCssUrl: "{% static 'css/home.css' %}",
+      placeholderImage: "{% static 'images/placeholder-product.png' %}",
+      categoryApiUrl: "{% url 'category-api-list' %}",
+      bannerApiUrl: "{% url 'home-banner-api' %}",
+      pickApiUrl: "{% url 'home-product-pick-api' %}",
+      tileApiUrl: "{% url 'home-category-tile-api' %}",
+      sectionApiUrl: "{% url 'home-category-section-api' %}",
+      collectionApiUrl: "{% url 'home-collection-api' %}",
+      searchApiUrl: "{% url 'home-product-search-api' %}",
+      settingsApiUrl: "{% url 'home-settings-api' %}",
+    });
+  });
+</script>
+{% endblock %}
