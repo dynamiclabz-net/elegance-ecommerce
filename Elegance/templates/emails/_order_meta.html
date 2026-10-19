@@ -1,0 +1,22 @@
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr>
+    <td class="col" width="50%" valign="top" style="padding:0 10px 0 0;font-family:Helvetica,Arial,sans-serif;">
+      <div style="font-size:11px;letter-spacing:1.2px;text-transform:uppercase;font-weight:bold;color:#C9A03A;padding-bottom:6px;">Delivering to</div>
+      <div style="font-size:13px;line-height:20px;color:#2A2A2A;">
+        {% for line in address_lines %}{% if forloop.first %}<strong>{{ line }}</strong>{% else %}{{ line }}{% endif %}<br>{% endfor %}
+      </div>
+    </td>
+    <td class="col" width="50%" valign="top" style="padding:0 0 0 10px;font-family:Helvetica,Arial,sans-serif;">
+      <div style="font-size:11px;letter-spacing:1.2px;text-transform:uppercase;font-weight:bold;color:#C9A03A;padding-bottom:6px;">Payment</div>
+      <div style="font-size:13px;line-height:20px;color:#2A2A2A;">
+        {{ payment_label }}<br>
+        {% if is_cod %}
+        Advance paid: &#8377;{{ cod_advance|floatformat:"2g" }}<br>
+        Balance on delivery: <strong>&#8377;{{ cod_balance|floatformat:"2g" }}</strong>
+        {% else %}
+        Paid online
+        {% endif %}
+      </div>
+    </td>
+  </tr>
+</table>

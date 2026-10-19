@@ -11,6 +11,8 @@ from django.db import IntegrityError, transaction
 from django.db.models import F
 from django.utils import timezone
 
+from Mailer import emails as mailer_emails
+
 from .couriers import CourierError, get_courier
 from .models import Order, OrderStatusHistory, Payment, Shipment, ShipmentEvent
 
@@ -129,6 +131,7 @@ def approve_order(order, user, note=""):
         order.confirmed_at = now
     order.save(update_fields=["approved_at", "approved_by", "order_status", "confirmed_at"])
     log_history(order, note or "Order approved by admin.", user)
+    mailer_emails.send_order_approved_email(order)
     return order
 
 
@@ -452,6 +455,7 @@ def sync_order_from_shipment(shipment, user=None):
     if target == "delivered":
         _record_cod_collection(order)
     log_history(order, f"{shipment.get_status_display()} ({shipment.get_provider_display()}).", user)
+    mailer_emails.notify_order_status(order, target)
 
 
 def _record_cod_collection(order):

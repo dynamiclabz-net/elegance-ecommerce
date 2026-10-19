@@ -8,6 +8,8 @@ from rest_framework.response import Response
 
 from utils.decorators import handle_exceptions, check_authentication
 
+from Mailer import emails as mailer_emails
+
 from .models import User, OTPVerification, Address
 from .serializers import UserSerializer, AddressSerializer
 
@@ -213,6 +215,10 @@ class ProfileViewSet(viewsets.ViewSet):
             if field in request.data:
                 setattr(user, field, request.data.get(field))
         user.save()
+
+        # Customers sign up by mobile OTP, so the welcome email goes out the first time an email is saved.
+        if user.email:
+            mailer_emails.send_welcome_email(user)
 
         return Response({
             "success": True, "user_not_logged_in": False, "user_unauthorized": False,

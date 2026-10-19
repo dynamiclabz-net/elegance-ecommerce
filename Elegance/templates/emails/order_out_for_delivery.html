@@ -1,0 +1,54 @@
+{% extends "emails/base.html" %}
+{% block preheader %}Order {{ order.order_number }} is on its way and should reach you today.{% endblock %}
+{% block body %}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr>
+    <td class="px" align="center" style="padding:36px 40px 8px 40px;">
+      <div style="display:inline-block;background-color:#FBF6E6;color:#b8860b;font-size:11px;letter-spacing:1.6px;font-weight:bold;text-transform:uppercase;padding:6px 14px;border-radius:20px;">Out for delivery</div>
+      <h1 class="h1" style="margin:18px 0 10px 0;font-family:Georgia,'Times New Roman',serif;font-size:32px;line-height:38px;font-weight:normal;color:#2A2A2A;">Your order is on its way</h1>
+      <p style="margin:0;font-size:15px;line-height:24px;color:#6E6A66;">{{ first_name }}, order <strong style="color:#2A2A2A;">{{ order.order_number }}</strong> is out for delivery and should reach you soon. Please keep your phone handy so the delivery partner can reach you.</p>
+    </td>
+  </tr>
+  <tr><td class="px" style="padding:26px 40px 6px 40px;">{% include "emails/_tracker.html" %}</td></tr>
+
+  {% if courier or tracking_id %}
+  <tr>
+    <td class="px" style="padding:22px 40px 6px 40px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#FBF6E6;border:1px solid #E7DECF;border-radius:8px;">
+        <tr>
+          <td style="padding:18px 22px;font-family:Helvetica,Arial,sans-serif;">
+            <div style="font-size:11px;letter-spacing:1.2px;text-transform:uppercase;font-weight:bold;color:#C9A03A;padding-bottom:6px;">Shipment details</div>
+            <div style="font-size:14px;line-height:22px;color:#2A2A2A;padding-bottom:10px;">
+              {% if courier %}Delivery partner: <strong>{{ courier }}</strong><br>{% endif %}
+              {% if tracking_id %}Tracking ID: <strong>{{ tracking_id }}</strong>{% endif %}
+            </div>
+            {% if tracking_url %}{% include "emails/_button.html" with url=tracking_url label="Track your parcel" %}{% endif %}
+            {% include "emails/_button.html" with url=order_url label="View order" outline=True %}
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  {% else %}
+  <tr><td class="px" align="center" style="padding:18px 40px 6px 40px;">{% include "emails/_button.html" with url=order_url label="View your order" %}</td></tr>
+  {% endif %}
+
+  {% if is_cod and amount_to_collect %}
+  <tr>
+    <td class="px" style="padding:18px 40px 0 40px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#FBF6E6;border-radius:8px;">
+        <tr><td style="padding:14px 18px;font-size:14px;line-height:21px;color:#2A2A2A;">Please keep <strong style="color:#b8860b;">&#8377;{{ amount_to_collect|floatformat:"2g" }}</strong> ready. This is the balance to pay on delivery.</td></tr>
+      </table>
+    </td>
+  </tr>
+  {% endif %}
+
+  <tr>
+    <td class="px" style="padding:22px 40px 8px 40px;">
+      <div style="font-size:11px;letter-spacing:1.2px;text-transform:uppercase;font-weight:bold;color:#C9A03A;padding-bottom:4px;">In this package</div>
+      {% include "emails/_order_items.html" %}
+    </td>
+  </tr>
+  <tr><td class="px" style="padding:20px 40px 36px 40px;">{% include "emails/_order_meta.html" %}</td></tr>
+</table>
+{% endblock %}

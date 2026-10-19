@@ -1,0 +1,30 @@
+{% extends "emails/base.html" %}
+{% block preheader %}Your account is ready. Explore sarees, suits and more.{% endblock %}
+{% block body %}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr>
+    <td class="px" align="center" style="padding:36px 40px 8px 40px;">
+      <div style="display:inline-block;background-color:#FBF6E6;color:#b8860b;font-size:11px;letter-spacing:1.6px;font-weight:bold;text-transform:uppercase;padding:6px 14px;border-radius:20px;">Welcome</div>
+      <h1 class="h1" style="margin:18px 0 10px 0;font-family:Georgia,'Times New Roman',serif;font-size:32px;line-height:38px;font-weight:normal;color:#2A2A2A;">Hello {{ first_name }}, welcome to {{ store_name }}</h1>
+      <p style="margin:0;font-size:15px;line-height:24px;color:#6E6A66;">Your account is ready. We craft and curate ethnic wear that feels as special as the occasions you wear it for, and we are delighted to have you with us.</p>
+    </td>
+  </tr>
+  <tr>
+    <td class="px" align="center" style="padding:24px 40px 8px 40px;">
+      {% include "emails/_button.html" with url=shop_url label="Start shopping" %}
+    </td>
+  </tr>
+  <tr>
+    <td class="px" style="padding:20px 40px 36px 40px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#FBF6E6;border:1px solid #E7DECF;border-radius:8px;">
+        <tr><td style="padding:20px 24px;font-size:14px;line-height:22px;color:#2A2A2A;">
+          <div style="font-size:11px;letter-spacing:1.2px;text-transform:uppercase;font-weight:bold;color:#C9A03A;padding-bottom:10px;">What you can do with your account</div>
+          <p style="margin:0 0 8px 0;"><strong style="color:#b8860b;">Track every order</strong><br><span style="color:#6E6A66;">See approval, shipping and delivery updates in one place.</span></p>
+          <p style="margin:0 0 8px 0;"><strong style="color:#b8860b;">Download GST invoices</strong><br><span style="color:#6E6A66;">Your tax invoice is one tap away on every order.</span></p>
+          <p style="margin:0;"><strong style="color:#b8860b;">Check out faster</strong><br><span style="color:#6E6A66;">Save your addresses and reorder your favourites.</span></p>
+        </td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+{% endblock %}

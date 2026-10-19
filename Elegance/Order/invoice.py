@@ -18,8 +18,8 @@ from reportlab.platypus import (
 
 from . import tax
 
-PINK = colors.HexColor("#E8178A")
-PINK_TINT = colors.HexColor("#FDEEF6")
+PRIMARY = colors.HexColor("#b8860b")
+PRIMARY_TINT = colors.HexColor("#FBF6E6")
 GOLD = colors.HexColor("#C9A03A")
 GOLD_TINT = colors.HexColor("#FBF6E6")
 INK = colors.HexColor("#2A2A2A")
@@ -110,10 +110,10 @@ def _style(name, **kw):
 
 S_BODY = _style("body")
 S_SMALL = _style("small", fontSize=7, leading=9.2, textColor=MUTED)
-S_LABEL = _style("label", fontName="Helvetica-Bold", fontSize=7, leading=9, textColor=PINK)
+S_LABEL = _style("label", fontName="Helvetica-Bold", fontSize=7, leading=9, textColor=PRIMARY)
 S_BOLD = _style("bold", fontName="Helvetica-Bold")
 S_RIGHT = _style("right", alignment=TA_RIGHT)
-S_TITLE = _style("title", fontName="Helvetica-Bold", fontSize=18, leading=22, textColor=PINK, alignment=TA_RIGHT)
+S_TITLE = _style("title", fontName="Helvetica-Bold", fontSize=18, leading=22, textColor=PRIMARY, alignment=TA_RIGHT)
 S_TITLE_SUB = _style("titlesub", fontSize=7.5, textColor=MUTED, alignment=TA_RIGHT)
 S_CELL = _style("cell", fontSize=7.5, leading=9.4)
 S_CELL_R = _style("cellr", fontSize=7.5, leading=9.4, alignment=TA_RIGHT)
@@ -205,7 +205,7 @@ def _party_table(order, seller, intra):
         colWidths=[w + 6 * mm, w, w - 6 * mm],
     )
     table.setStyle(TableStyle([
-        ("BACKGROUND", (0, 0), (-1, 0), PINK_TINT),
+        ("BACKGROUND", (0, 0), (-1, 0), PRIMARY_TINT),
         ("BOX", (0, 0), (-1, -1), 0.6, RULE),
         ("LINEAFTER", (0, 0), (-2, -1), 0.6, RULE),
         ("VALIGN", (0, 0), (-1, -1), "TOP"),
@@ -263,7 +263,7 @@ def _items_table(order, intra):
     table = Table(rows, colWidths=[w * mm * scale for w in widths], repeatRows=2)
     last = len(rows) - 1
     table.setStyle(TableStyle([
-        ("BACKGROUND", (0, 0), (-1, 1), PINK),
+        ("BACKGROUND", (0, 0), (-1, 1), PRIMARY),
         ("SPAN", (7, 0), (8, 0)), ("SPAN", (9, 0), (10, 0)), ("SPAN", (11, 0), (12, 0)),
         *[("SPAN", (c, 0), (c, 1)) for c in range(0, 7)],
         ("VALIGN", (0, 0), (-1, 1), "MIDDLE"),
@@ -317,7 +317,7 @@ def _totals_section(order, summary, intra):
         colWidths=[left_w - 4 * mm],
     )
     left.setStyle(TableStyle([
-        ("BACKGROUND", (0, 0), (-1, 0), PINK_TINT), ("BACKGROUND", (0, 2), (-1, 2), PINK_TINT),
+        ("BACKGROUND", (0, 0), (-1, 0), PRIMARY_TINT), ("BACKGROUND", (0, 2), (-1, 2), PRIMARY_TINT),
         ("BOX", (0, 0), (-1, -1), 0.6, RULE),
         ("LEFTPADDING", (0, 0), (-1, -1), 7), ("RIGHTPADDING", (0, 0), (-1, -1), 7),
         ("TOPPADDING", (0, 0), (-1, -1), 4), ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
@@ -332,7 +332,7 @@ def _totals_section(order, summary, intra):
     right.setStyle(TableStyle([
         ("BOX", (0, 0), (-1, -1), 0.6, RULE),
         ("LINEBELOW", (0, 0), (-1, last - 1), 0.4, RULE),
-        ("BACKGROUND", (0, last), (-1, last), PINK),
+        ("BACKGROUND", (0, last), (-1, last), PRIMARY),
         ("LEFTPADDING", (0, 0), (-1, -1), 7), ("RIGHTPADDING", (0, 0), (-1, -1), 7),
         ("TOPPADDING", (0, 0), (-1, -1), 4), ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
         ("TOPPADDING", (0, last), (-1, last), 7), ("BOTTOMPADDING", (0, last), (-1, last), 7),

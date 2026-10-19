@@ -8,6 +8,7 @@ from rest_framework.response import Response
 
 from utils.decorators import handle_exceptions, check_authentication
 
+from Mailer import emails as mailer_emails
 from Product.models import Product, ProductVariant
 from UserDetail.models import Address
 
@@ -161,6 +162,7 @@ class AdminOrderViewSet(viewsets.ViewSet):
 
         new_status = request.data.get("order_status")
         note = request.data.get("note", "")
+        status_to_notify = None
 
         if new_status:
             if new_status not in VALID_STATUSES:
@@ -177,6 +179,7 @@ class AdminOrderViewSet(viewsets.ViewSet):
                 order.refresh_from_db()
             elif new_status != order.order_status:
                 order.order_status = new_status
+                status_to_notify = new_status
                 timestamp_field = STATUS_TIMESTAMP_FIELD.get(new_status)
                 if timestamp_field and not getattr(order, timestamp_field):
                     setattr(order, timestamp_field, timezone.now())
@@ -194,6 +197,9 @@ class AdminOrderViewSet(viewsets.ViewSet):
             order.payment_status = request.data.get("payment_status")
 
         order.save()
+
+        if status_to_notify:
+            mailer_emails.notify_order_status(order, status_to_notify)
 
         return self._order_response(request, order)
 
@@ -761,6 +767,8 @@ class PaymentVerifyViewSet(viewsets.ViewSet):
                 note="Payment received — order confirmed.", changed_by=request.user,
             )
         order.save()
+
+        mailer_emails.send_order_placed_email(order)
 
         return Response({
             "success": True, "user_not_logged_in": False, "user_unauthorized": False,

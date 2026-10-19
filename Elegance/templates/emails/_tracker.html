@@ -1,0 +1,12 @@
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr>
+    {% for step in steps %}
+    <td width="20%" valign="top" style="padding:0 3px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr><td height="4" bgcolor="{% if step.done %}{{ accent }}{% else %}#E7DECF{% endif %}" style="background-color:{% if step.done %}{{ accent }}{% else %}#E7DECF{% endif %};height:4px;font-size:0;line-height:0;border-radius:2px;">&nbsp;</td></tr>
+        <tr><td align="center" style="padding-top:8px;font-family:Helvetica,Arial,sans-serif;font-size:11px;line-height:14px;font-weight:{% if step.current %}bold{% else %}normal{% endif %};color:{% if step.current %}{{ accent }}{% elif step.done %}#2A2A2A{% else %}#A59F96{% endif %};">{{ step.label }}</td></tr>
+      </table>
+    </td>
+    {% endfor %}
+  </tr>
+</table>

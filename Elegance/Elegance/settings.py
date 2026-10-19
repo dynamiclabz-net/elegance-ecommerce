@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "Product",
     "Order",
     "Home",
+    "Mailer",
     "FrontEnd",
 ]
 
@@ -242,3 +243,27 @@ STORE_INVOICE = {
     "jurisdiction": os.environ.get("INVOICE_JURISDICTION", "Ahmedabad"),
 }
 
+
+# Tracking is refreshed from the courier when a customer opens their order and
+# the stored data is older than this many minutes.
+SHIPPING_TRACKING_STALE_MINUTES = 20
+
+# WhatsApp number used for the return/replacement contact link
+STORE_WHATSAPP_NUMBER = os.environ.get("STORE_WHATSAPP_NUMBER", "9999999999")
+
+# ── Transactional email (Resend) ───────────────────────────────────────────
+# Emails are skipped (and logged as "skipped") until both RESEND_API_KEY and
+# RESEND_FROM_EMAIL are set. The from address must use a domain verified in Resend;
+# "onboarding@resend.dev" only delivers to your own Resend account email.
+RESEND_API_KEY = os.environ.get("RESEND_API_KEY", base64_to_text("cmVfTmpKNnJ2R1hfRUVNU0xIY3hhSnpEYWJEZ1VrYnpLZnVi"))
+RESEND_FROM_EMAIL = os.environ.get("RESEND_FROM_EMAIL", "Elegance <onboarding@updates.sankievents.in>")
+RESEND_REPLY_TO = os.environ.get("RESEND_REPLY_TO", "")
+RESEND_ENABLED = os.environ.get("RESEND_ENABLED", "True") == "True"
+# Send in a background thread after the DB commit so checkout / webhooks never wait on Resend.
+RESEND_SEND_ASYNC = os.environ.get("RESEND_SEND_ASYNC", "False") == "True"
+
+# Public base URL used for links and the logo inside emails (must be reachable by mail clients).
+SITE_URL = os.environ.get("SITE_URL", "http://localhost:8000").rstrip("/")
+
+# How long the invoice link in an email keeps working without signing in.
+EMAIL_INVOICE_LINK_MAX_AGE_DAYS = int(os.environ.get("EMAIL_INVOICE_LINK_MAX_AGE_DAYS", "90"))

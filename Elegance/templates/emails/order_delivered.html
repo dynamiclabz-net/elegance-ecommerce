@@ -1,0 +1,42 @@
+{% extends "emails/base.html" %}
+{% block preheader %}Order {{ order.order_number }} has been delivered. We hope you love it.{% endblock %}
+{% block body %}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr>
+    <td class="px" align="center" style="padding:36px 40px 8px 40px;">
+      <div style="display:inline-block;background-color:#E9F2EA;color:#3F6B4A;font-size:11px;letter-spacing:1.6px;font-weight:bold;text-transform:uppercase;padding:6px 14px;border-radius:20px;">Delivered</div>
+      <h1 class="h1" style="margin:18px 0 10px 0;font-family:Georgia,'Times New Roman',serif;font-size:32px;line-height:38px;font-weight:normal;color:#2A2A2A;">Your order has arrived</h1>
+      <p style="margin:0;font-size:15px;line-height:24px;color:#6E6A66;">{{ first_name }}, order <strong style="color:#2A2A2A;">{{ order.order_number }}</strong> has been delivered. We hope you love it and look beautiful in it. Thank you for shopping with {{ store_name }}.</p>
+    </td>
+  </tr>
+  <tr><td class="px" style="padding:26px 40px 6px 40px;">{% include "emails/_tracker.html" %}</td></tr>
+  <tr>
+    <td class="px" align="center" style="padding:18px 40px 6px 40px;">
+      {% include "emails/_button.html" with url=invoice_url label="Download invoice (PDF)" color="#3F6B4A" %}
+      {% include "emails/_button.html" with url=order_url label="View order" outline=True color="#3F6B4A" %}
+    </td>
+  </tr>
+
+  <tr>
+    <td class="px" style="padding:22px 40px 8px 40px;">
+      <div style="font-size:11px;letter-spacing:1.2px;text-transform:uppercase;font-weight:bold;color:#C9A03A;padding-bottom:4px;">What you ordered</div>
+      {% include "emails/_order_items.html" %}
+    </td>
+  </tr>
+
+  <tr>
+    <td class="px" style="padding:20px 40px 36px 40px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#FBF6E6;border:1px solid #E7DECF;border-radius:8px;">
+        <tr><td style="padding:18px 22px;font-size:14px;line-height:22px;color:#2A2A2A;">
+          <strong>Something not right?</strong><br>
+          <span style="color:#6E6A66;">If there is an issue with your order, reach out and we will make it right.</span>
+          {% if whatsapp_url %}<br><a href="{{ whatsapp_url }}" style="color:#b8860b;font-weight:bold;text-decoration:none;">Message us on WhatsApp</a>{% endif %}
+        </td></tr>
+      </table>
+      <p style="margin:22px 0 0 0;text-align:center;">
+        <a href="{{ shop_url }}" style="color:#b8860b;font-size:14px;font-weight:bold;text-decoration:none;">Continue shopping &rarr;</a>
+      </p>
+    </td>
+  </tr>
+</table>
+{% endblock %}
