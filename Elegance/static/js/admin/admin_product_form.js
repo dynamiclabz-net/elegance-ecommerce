@@ -209,6 +209,8 @@ async function loadExistingProduct() {
   document.getElementById("pf-stock").value = p.stock_quantity;
   document.getElementById("pf-price").value = p.price;
   document.getElementById("pf-discount-price").value = p.discount_price || "";
+  setGstRate(p.gst_rate);
+  document.getElementById("pf-hsn-code").value = p.hsn_code || "";
   document.getElementById("pf-short-description").value = p.short_description || "";
   document.getElementById("pf-description").value = p.description || "";
   document.getElementById("pf-is-active").checked = p.is_active;
@@ -226,6 +228,17 @@ async function loadExistingProduct() {
   renderCareInstructions(p.care_instructions || []);
 }
 
+/* A stored rate that is not one of the standard slabs still has to show, so add it as an option. */
+function setGstRate(rate) {
+  const select = document.getElementById("pf-gst-rate");
+  if (rate === undefined || rate === null || rate === "") return;
+  const value = String(Number(rate));
+  if (![...select.options].some((o) => o.value === value)) {
+    select.add(new Option(`${value}%`, value));
+  }
+  select.value = value;
+}
+
 /* ───────────── Save basic product info ───────────── */
 
 async function handleProductSave(e) {
@@ -241,6 +254,8 @@ async function handleProductSave(e) {
     stock_quantity: Number(document.getElementById("pf-stock").value || 0),
     price: document.getElementById("pf-price").value,
     discount_price: document.getElementById("pf-discount-price").value || null,
+    gst_rate: document.getElementById("pf-gst-rate").value,
+    hsn_code: document.getElementById("pf-hsn-code").value.trim(),
     short_description: document.getElementById("pf-short-description").value.trim(),
     description: document.getElementById("pf-description").value.trim(),
     is_active: document.getElementById("pf-is-active").checked,

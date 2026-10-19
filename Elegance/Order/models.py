@@ -135,6 +135,18 @@ class Order(models.Model):
     shipping_charge = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
+    # GST snapshot taken when the order is placed. Product prices are GST-inclusive:
+    # taxable_amount + gst_amount == subtotal - discount_amount. Shipping is not taxed here.
+    taxable_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    cgst_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    sgst_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    igst_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    gst_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    tax_computed = models.BooleanField(default=False)
+
+    invoice_number = models.CharField(max_length=30, unique=True, null=True, blank=True)
+    invoice_date = models.DateTimeField(null=True, blank=True)
+
     # COD partial advance payment (e.g. 20% of total order value paid online upfront)
     cod_advance_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=20)
     cod_advance_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
@@ -236,6 +248,14 @@ class OrderItem(models.Model):
     unit_price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.PositiveIntegerField(default=1)
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    # GST snapshot (see Order.taxable_amount). taxable_value is after any order discount.
+    hsn_code = models.CharField(max_length=10, blank=True, default="")
+    gst_rate = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    taxable_value = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    cgst_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    sgst_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    igst_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     class Meta:
         db_table = "order_order_item"

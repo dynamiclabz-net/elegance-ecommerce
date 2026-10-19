@@ -156,11 +156,16 @@ class ProductDetailSerializer(serializers.ModelSerializer):
             "id", "name", "slug", "category", "category_name", "subcategory",
             "subcategory_name", "product_type", "product_type_name", "sku",
             "short_description", "description", "fabric", "price", "discount_price",
+            "gst_rate", "hsn_code",
             "effective_price", "discount_percentage", "stock_quantity", "in_stock",
             "is_active", "is_featured", "images", "variants", "video_url",
             "specifications", "care_instructions", "created_at", "updated_at",
         )
         read_only_fields = ("id", "slug", "created_at", "updated_at")
+        extra_kwargs = {
+            "gst_rate": {"min_value": 0, "max_value": 100},
+            "hsn_code": {"required": False, "allow_blank": True},
+        }
 
     def get_video_url(self, obj):
         if not obj.video:

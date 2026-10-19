@@ -156,3 +156,22 @@
 .od-track-events li:first-child::before { opacity: 1; }
 .od-track-activity { font-size: 0.92rem; }
 .od-track-meta { font-size: 0.8rem; opacity: 0.65; }
+
+.od-invoice-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 12px;
+  border-radius: 4px;
+  border: 1px solid var(--text-dark);
+  background: var(--text-dark);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+.od-invoice-link:hover { opacity: 0.88; color: #fff; }
+.od-invoice-link i { font-size: 15px; }

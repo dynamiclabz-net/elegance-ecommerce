@@ -222,3 +222,23 @@ SHIPPING_TRACKING_STALE_MINUTES = 20
 
 # WhatsApp number used for the return/replacement contact link
 STORE_WHATSAPP_NUMBER = os.environ.get("STORE_WHATSAPP_NUMBER", "9999999999")
+
+
+# Seller details printed on the GST tax invoice (override any value via environment).
+STORE_INVOICE = {
+    "legal_name": os.environ.get("INVOICE_LEGAL_NAME", "ELEGANCE"),
+    "address": os.environ.get(
+        "INVOICE_ADDRESS",
+        "16, Prakash Park Society, Opp. Metro Pillar No. 188, Commerce Six Road, Navrangpura, Ahmedabad - 380009",
+    ),
+    "phone": os.environ.get("INVOICE_PHONE", "+91 79 2646 2588"),
+    "mobile": os.environ.get("INVOICE_MOBILE", "+91 7600 82 8888"),
+    "email": os.environ.get("INVOICE_EMAIL", "elegance.ec@gmail.com / elegancecollection@outlook.com"),
+    "gstin": os.environ.get("INVOICE_GSTIN", "24AAEFE6941N1Z5"),
+    "pan": os.environ.get("INVOICE_PAN", "AAEFE6941N"),
+    "state": os.environ.get("INVOICE_STATE", "Gujarat"),
+    "state_code": os.environ.get("INVOICE_STATE_CODE", "24"),
+    "state_abbr": os.environ.get("INVOICE_STATE_ABBR", "GUJ"),
+    "jurisdiction": os.environ.get("INVOICE_JURISDICTION", "Ahmedabad"),
+}
+

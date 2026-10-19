@@ -68,8 +68,7 @@
           <div class="cart-summary-card">
             <div class="cs-header"><h2 class="cs-title">Payment Summary</h2></div>
             <div class="cs-breakdown">
-              <div class="cs-row"><span>Subtotal</span><span id="odSubtotal"></span></div>
-              <div class="cs-row"><span>Shipping</span><span id="odShipping"></span></div>
+              <div id="odBreakup" style="display:contents"></div>
               <div class="cs-row" id="odAdvanceRow" style="display:none"><span>Paid (Advance)</span><span id="odAdvance"></span></div>
               <div class="cs-row" id="odBalanceRow" style="display:none"><span>Due on Delivery</span><span id="odBalance"></span></div>
               <div class="cs-row cs-row-total"><span>Total</span><span id="odTotal"></span></div>
@@ -78,6 +77,9 @@
               <span id="odPaymentMethod"></span>
               <span class="od-payment-status" id="odPaymentStatus"></span>
             </div>
+            <a href="#" class="od-invoice-link" id="odInvoiceLink" style="display:none" target="_blank" rel="noopener">
+              <i class="fas fa-file-invoice"></i> Download Invoice
+            </a>
             <a href="#" class="od-whatsapp-link" id="odWhatsappLink" target="_blank" rel="noopener">
               <i class="fab fa-whatsapp"></i> Need help with this order?
             </a>

@@ -115,10 +115,48 @@ function OrderDetailPageInit(config) {
     return typeof url === "string" && /^https?:\/\//i.test(url);
   }
 
+  function row(label, value) {
+    return `<div class="cs-row"><span>${label}</span><span>${value}</span></div>`;
+  }
+
+  function shippingText(order) {
+    return Number(order.shipping_charge) > 0 ? money(order.shipping_charge) : "Free";
+  }
+
+  /* Orders placed before GST was captured have no tax split, so they keep the plain breakup. */
+  function breakupHtml(order) {
+    const s = order.price_summary;
+    if (!s || !s.tax_computed) {
+      return (
+        row("Subtotal", money(order.subtotal)) +
+        (Number(order.discount_amount) > 0 ? row("Discount", "-" + money(order.discount_amount)) : "") +
+        row("Shipping", shippingText(order))
+      );
+    }
+
+    const gstRows = s.is_igst
+      ? row("IGST", money(s.igst_amount))
+      : row("CGST", money(s.cgst_amount)) + row("SGST", money(s.sgst_amount));
+
+    return (
+      row("Price (excl. GST)", money(s.basic_value)) +
+      (Number(s.discount) > 0 ? row("Discount", "-" + money(s.discount_excl_gst)) : "") +
+      row("Taxable value", money(s.taxable_amount)) +
+      gstRows +
+      row("Shipping", shippingText(order)) +
+      (Math.abs(Number(s.round_off)) >= 0.005 ? row("Round off", money(s.round_off)) : "")
+    );
+  }
+
   function renderSummary(order) {
-    document.getElementById("odSubtotal").textContent = money(order.subtotal);
-    document.getElementById("odShipping").textContent = Number(order.shipping_charge) > 0 ? money(order.shipping_charge) : "Free";
+    document.getElementById("odBreakup").innerHTML = breakupHtml(order);
     document.getElementById("odTotal").textContent = money(order.total_amount);
+
+    const invoiceLink = document.getElementById("odInvoiceLink");
+    if (invoiceLink && order.invoice_url) {
+      invoiceLink.href = order.invoice_url;
+      invoiceLink.style.display = "flex";
+    }
 
     const advanceRow = document.getElementById("odAdvanceRow");
     const balanceRow = document.getElementById("odBalanceRow");

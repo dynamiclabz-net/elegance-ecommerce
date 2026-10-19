@@ -1,5 +1,7 @@
+from django.urls import reverse
 from rest_framework import serializers
 
+from .tax import build_price_summary
 from .models import (
     Cart, CartItem, Order, OrderItem, Payment, OrderStatusHistory, PincodeRange, Shipment, ShipmentEvent,
 )
@@ -49,14 +51,19 @@ class CartSerializer(serializers.ModelSerializer):
 class OrderItemSerializer(serializers.ModelSerializer):
     product_slug = serializers.CharField(source="product.slug", read_only=True, default=None)
     image_url = serializers.SerializerMethodField()
+    gst_amount = serializers.SerializerMethodField()
 
     class Meta:
         model = OrderItem
         fields = (
             "id", "order", "product", "product_slug", "variant", "product_name", "variant_label",
             "sku", "unit_price", "quantity", "total_price", "image_url",
+            "hsn_code", "gst_rate", "taxable_value", "gst_amount",
         )
         read_only_fields = ("id", "total_price")
+
+    def get_gst_amount(self, obj):
+        return obj.cgst_amount + obj.sgst_amount + obj.igst_amount
 
     def get_image_url(self, obj):
         if not obj.product_id:
@@ -209,6 +216,14 @@ class OrderDetailSerializer(serializers.ModelSerializer):
     amount_to_collect = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
     shipment = serializers.SerializerMethodField()
     shipments = serializers.SerializerMethodField()
+    price_summary = serializers.SerializerMethodField()
+    invoice_url = serializers.SerializerMethodField()
+
+    def get_price_summary(self, obj):
+        return build_price_summary(obj)
+
+    def get_invoice_url(self, obj):
+        return reverse("order-invoice", kwargs={"order_number": obj.order_number})
 
     def get_shipment(self, obj):
         """The active shipment, or the most recent one if none is active."""
@@ -235,6 +250,7 @@ class OrderDetailSerializer(serializers.ModelSerializer):
             "payment_method", "payment_method_display", "payment_status", "payment_status_display",
             "order_status", "order_status_display",
             "subtotal", "discount_amount", "shipping_charge", "total_amount",
+            "price_summary", "invoice_number", "invoice_url",
             "cod_advance_percentage", "cod_advance_amount", "cod_balance_amount", "is_cod",
             "courier_partner", "tracking_id", "tracking_url",
             "placed_at", "confirmed_at", "shipped_at", "out_for_delivery_at",

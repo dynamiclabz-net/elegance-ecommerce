@@ -17,7 +17,7 @@ from django.conf import settings
 from rest_framework.decorators import action
 from rest_framework.views import APIView
 
-from . import fulfilment
+from . import fulfilment, tax
 from .couriers import CourierError, get_courier, provider_catalog
 from .models import (
     Cart, CartItem, Order, OrderItem, Payment, OrderStatusHistory, PincodeRange, ORDER_STATUS_CHOICES,
@@ -130,6 +130,7 @@ class AdminOrderViewSet(viewsets.ViewSet):
                 "data": None, "error": "Order not found."
             }, status=status.HTTP_404_NOT_FOUND)
 
+        tax.ensure_invoice_details(order)
         return self._order_response(request, order)
 
     @staticmethod
@@ -388,6 +389,7 @@ class MyOrderViewSet(viewsets.ViewSet):
 
         fulfilment.refresh_if_stale(order.active_shipment)
         order.refresh_from_db()
+        tax.ensure_invoice_details(order)
 
         return Response({
             "success": True, "user_not_logged_in": False, "user_unauthorized": False,
@@ -519,7 +521,7 @@ class CartViewSet(viewsets.ViewSet):
 
 # ─────────────────────────────────────────────
 # Checkout — places the order from the current cart
-# ────────────────────────────────────────────���
+# ─────────────────────────────────────────────
 class CheckoutViewSet(viewsets.ViewSet):
     """POST /order-api/checkout-api/  -> create Order (+ initial Payment record) from the cart.
 
@@ -660,6 +662,8 @@ class CheckoutViewSet(viewsets.ViewSet):
                 Product.objects.filter(pk=item.product_id).update(
                     stock_quantity=item.product.stock_quantity - item.quantity
                 )
+
+        tax.ensure_invoice_details(order)
 
         if payment_method == "cod":
             advance_pct = order.cod_advance_percentage

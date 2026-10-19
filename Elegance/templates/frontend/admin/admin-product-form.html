@@ -75,6 +75,27 @@
               </div>
             </div>
 
+            <div class="col-md-6">
+              <div class="e-field">
+                <label class="e-label">GST Rate (%) <span class="req">*</span></label>
+                <select class="e-input" id="pf-gst-rate" required>
+                  <option value="0">0% (Exempt)</option>
+                  <option value="3">3%</option>
+                  <option value="5" selected>5%</option>
+                  <option value="12">12%</option>
+                  <option value="18">18%</option>
+                  <option value="28">28%</option>
+                </select>
+                <div id="pf-gst-hint" style="font-size:12px;color:var(--e-text-muted);margin-top:4px;">Prices entered above are GST-inclusive; the invoice splits the tax out.</div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="e-field">
+                <label class="e-label">HSN Code</label>
+                <input type="text" class="e-input" id="pf-hsn-code" maxlength="8" inputmode="numeric" placeholder="e.g. 5007 (silk sarees), 6204 (suits)">
+              </div>
+            </div>
+
             <div class="col-12">
               <div class="e-field">
                 <label class="e-label">Short Description</label>

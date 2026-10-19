@@ -163,6 +163,16 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     discount_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
+    # Prices above are GST-inclusive; the invoice splits them into taxable value + GST.
+    gst_rate = models.DecimalField(
+        max_digits=5, decimal_places=2, default=5,
+        help_text="GST percentage included in the selling price (e.g. 5, 12, 18).",
+    )
+    hsn_code = models.CharField(
+        max_length=10, blank=True, default="",
+        help_text="HSN code printed on the invoice. Falls back to the store default when empty.",
+    )
+
     stock_quantity = models.PositiveIntegerField(default=0)
 
     is_active = models.BooleanField(default=True)

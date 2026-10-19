@@ -1,6 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import *
+from .invoice_views import order_invoice
 
 router = DefaultRouter()
 router.register(r"admin-order-api", AdminOrderViewSet, basename="admin-order-api")
@@ -13,5 +14,6 @@ router.register(r"payment-verify-api", PaymentVerifyViewSet, basename="payment-v
 
 urlpatterns = [
     path("webhooks/shiprocket/", ShiprocketWebhookView.as_view(), name="shiprocket-webhook"),
+    path("invoice/<str:order_number>/", order_invoice, name="order-invoice"),
     path("", include(router.urls)),
 ]

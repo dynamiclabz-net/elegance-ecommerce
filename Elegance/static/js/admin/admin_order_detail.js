@@ -488,7 +488,48 @@ async function submitShipment() {
   renderOrder(result.data.order);
 }
 
-// ── order rendering ─────────────────────────────────────────────────────
+// ── order rendering ────────────────────────────────────────��────────────
+function breakupRow(label, value, { muted = true, negative = false } = {}) {
+  return `
+    <div class="d-flex justify-content-between mb-2" style="font-size:13.5px;">
+      <span class="${muted ? "text-muted" : ""}">${label}</span>
+      <span>${negative ? "-" : ""}${eFormatCurrency(value)}</span>
+    </div>`;
+}
+
+/* Orders placed before GST was captured have no tax split, so they fall back to the plain breakup. */
+function renderPriceBreakup(order) {
+  const s = order.price_summary;
+  if (!s || !s.tax_computed) {
+    return (
+      breakupRow("Subtotal", order.subtotal) +
+      (Number(order.discount_amount) > 0 ? breakupRow("Discount", order.discount_amount, { negative: true }) : "") +
+      breakupRow("Shipping", order.shipping_charge)
+    );
+  }
+
+  const gstRows = s.is_igst
+    ? breakupRow("IGST", s.igst_amount)
+    : breakupRow("CGST", s.cgst_amount) + breakupRow("SGST", s.sgst_amount);
+
+  return (
+    breakupRow("Basic price of goods", s.basic_value) +
+    (Number(s.discount) > 0 ? breakupRow("Less: Discount", s.discount_excl_gst, { negative: true }) : "") +
+    breakupRow("GST assessable value", s.taxable_amount, { muted: false }) +
+    gstRows +
+    breakupRow("Shipping", s.shipping_charge) +
+    (Math.abs(Number(s.round_off)) >= 0.005 ? breakupRow("Round off", s.round_off) : "")
+  );
+}
+
+function renderInvoiceButton(order) {
+  if (!order.invoice_url) return "";
+  return `
+    <a class="btn-e-outline w-100 mt-3 d-inline-flex justify-content-center align-items-center gap-2 text-decoration-none" href="${eEscapeHtml(order.invoice_url)}" target="_blank" rel="noopener">
+      <i class="fas fa-file-invoice"></i> Download Invoice${order.invoice_number ? ` (${eEscapeHtml(order.invoice_number)})` : ""}
+    </a>`;
+}
+
 function renderOrder(order) {
   _currentOrder = order;
   document.getElementById("order-number-title").textContent = order.order_number;
@@ -542,15 +583,7 @@ function renderOrder(order) {
   `;
 
   document.getElementById("order-summary").innerHTML = `
-    <div class="d-flex justify-content-between mb-2" style="font-size:13.5px;">
-      <span class="text-muted">Subtotal</span><span>${eFormatCurrency(order.subtotal)}</span>
-    </div>
-    <div class="d-flex justify-content-between mb-2" style="font-size:13.5px;">
-      <span class="text-muted">Discount</span><span>-${eFormatCurrency(order.discount_amount)}</span>
-    </div>
-    <div class="d-flex justify-content-between mb-2" style="font-size:13.5px;">
-      <span class="text-muted">Shipping</span><span>${eFormatCurrency(order.shipping_charge)}</span>
-    </div>
+    ${renderPriceBreakup(order)}
     <hr>
     <div class="d-flex justify-content-between mb-2" style="font-size:15px;font-weight:600;">
       <span>Total</span><span>${eFormatCurrency(order.total_amount)}</span>
@@ -563,6 +596,7 @@ function renderOrder(order) {
         <span>Balance on Delivery</span><span>${eFormatCurrency(order.cod_balance_amount)}</span>
       </div>
     ` : ""}
+    ${renderInvoiceButton(order)}
   `;
 
   const hasActiveShipment = !!(order.shipment && order.shipment.is_active);
