@@ -31,3 +31,13 @@
   font-weight: 600;
 }
 .pc-btn:hover { background: var(--gold); }
+button.pc-btn { border: 1px solid var(--text-dark); cursor: pointer; font-family: inherit; }
+button.pc-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.pc-btn-outline {
+  background: transparent;
+  color: var(--text-dark);
+  border: 1px solid var(--border);
+}
+.pc-btn-outline:hover { background: transparent; color: var(--gold); border-color: var(--gold); }
+.pc-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+.pc-attempt { font-size: 13px; color: var(--text-muted); min-height: 18px; margin: -12px 0 0; }

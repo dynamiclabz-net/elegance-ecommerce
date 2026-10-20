@@ -18,7 +18,7 @@ from django.conf import settings
 from rest_framework.decorators import action
 from rest_framework.views import APIView
 
-from . import fulfilment, tax
+from . import fulfilment, razorpay_service as rzp, tax
 from .couriers import CourierError, get_courier, provider_catalog
 from .models import (
     Cart, CartItem, Order, OrderItem, Payment, OrderStatusHistory, PincodeRange, ORDER_STATUS_CHOICES,
@@ -342,7 +342,7 @@ class AdminOrderViewSet(viewsets.ViewSet):
 
 # ─────────────────────────────────────────────
 # Delivery partner webhooks
-# ─────────────────────────────────────────────
+# ────────��────────────────────────────────────
 class ShiprocketWebhookView(APIView):
     """POST /order-api/webhooks/shiprocket/
 
@@ -677,22 +677,12 @@ class CheckoutViewSet(viewsets.ViewSet):
                 Decimal("1"), ROUND_HALF_UP
             )
             order.cod_balance_amount = total_amount - order.cod_advance_amount
-            payment_type = "cod_advance"
             payment_amount = order.cod_advance_amount
         else:
             order.cod_advance_amount = Decimal("0")
             order.cod_balance_amount = Decimal("0")
-            payment_type = "full_online"
             payment_amount = total_amount
         order.save(update_fields=["cod_advance_amount", "cod_balance_amount"])
-
-        # Placeholder Razorpay order — swap for a real client.order.create() call
-        # once the Razorpay integration is added; everything downstream is ready.
-        razorpay_order_id = f"order_dummy_{order.id}"
-        payment = Payment.objects.create(
-            order=order, payment_type=payment_type, amount=payment_amount,
-            razorpay_order_id=razorpay_order_id, status="created",
-        )
 
         OrderStatusHistory.objects.create(
             order=order, status="placed", note="Order placed by customer.", changed_by=request.user,
@@ -700,12 +690,19 @@ class CheckoutViewSet(viewsets.ViewSet):
 
         cart.items.all().delete()
 
-        callback_path = reverse("payment-callback-detail", kwargs={"pk": order.id})
-        dummy_payment_id = f"pay_dummy_{payment.id}"
-        redirect_url = (
-            f"{callback_path}?razorpay_payment_id={dummy_payment_id}"
-            f"&razorpay_order_id={razorpay_order_id}&razorpay_signature=dummy_signature"
-        )
+        order_detail_url = reverse("order-detail-detail", kwargs={"pk": order.id})
+        status_url = reverse("payment-callback-detail", kwargs={"pk": order.id})
+
+        # The order is already saved; if the gateway can't be reached the customer
+        # lands on the order page where "Pay now" lets them try again.
+        razorpay_options = None
+        payment_error = None
+        if payment_amount > 0:
+            try:
+                payment = rzp.create_payment(order)
+                razorpay_options = rzp.build_checkout_options(payment, request)
+            except rzp.RazorpayError as exc:
+                payment_error = exc.message
 
         return Response({
             "success": True, "user_not_logged_in": False, "user_unauthorized": False,
@@ -713,84 +710,13 @@ class CheckoutViewSet(viewsets.ViewSet):
                 "order_id": order.id,
                 "order_number": order.order_number,
                 "payment_amount": payment_amount,
-                "redirect_url": redirect_url,
+                "razorpay": razorpay_options,
+                "payment_error": payment_error,
+                "status_url": status_url,
+                "order_detail_url": order_detail_url,
             },
             "error": None,
         }, status=status.HTTP_201_CREATED)
-
-
-# ─────────────────────────────────────────────
-# Payment verification — called by the payment-callback page after the
-# (simulated) redirect back from Razorpay.
-# ────────────────────────────────────��────────
-class PaymentVerifyViewSet(viewsets.ViewSet):
-    """POST /order-api/payment-verify-api/
-    body: {order_id, razorpay_payment_id, razorpay_order_id, razorpay_signature}"""
-
-    @handle_exceptions
-    @check_authentication()
-    def create(self, request):
-        order_id = request.data.get("order_id")
-        razorpay_payment_id = request.data.get("razorpay_payment_id")
-        razorpay_order_id = request.data.get("razorpay_order_id")
-        razorpay_signature = request.data.get("razorpay_signature")
-
-        order = Order.objects.filter(pk=order_id, user=request.user).first()
-        if not order:
-            return Response({
-                "success": False, "user_not_logged_in": False, "user_unauthorized": False,
-                "data": None, "error": "Order not found."
-            }, status=status.HTTP_404_NOT_FOUND)
-
-        payment = order.payments.filter(status="created").order_by("-created_at").first()
-        if not payment:
-            return Response({
-                "success": False, "user_not_logged_in": False, "user_unauthorized": False,
-                "data": None, "error": "No pending payment found for this order."
-            }, status=status.HTTP_400_BAD_REQUEST)
-
-        # NOTE: real signature verification (via razorpay.utility.verify_payment_signature)
-        # goes here once RAZORPAY_KEY_SECRET is configured. For now we trust the redirect.
-        payment.razorpay_payment_id = razorpay_payment_id
-        payment.razorpay_order_id = razorpay_order_id or payment.razorpay_order_id
-        payment.razorpay_signature = razorpay_signature
-        payment.status = "success"
-        payment.paid_at = timezone.now()
-        payment.save()
-
-        order.payment_status = "partial" if payment.payment_type == "cod_advance" else "paid"
-        if order.order_status == "placed":
-            order.order_status = "confirmed"
-            order.confirmed_at = timezone.now()
-            OrderStatusHistory.objects.create(
-                order=order, status="confirmed",
-                note="Payment received — order confirmed.", changed_by=request.user,
-            )
-        order.save()
-
-        mailer_emails.send_order_placed_email(order)
-
-        return Response({
-            "success": True, "user_not_logged_in": False, "user_unauthorized": False,
-            "data": {"order": OrderDetailSerializer(order, context={"request": request}).data},
-            "error": None,
-        }, status=status.HTTP_200_OK)
-
-    @handle_exceptions
-    @check_authentication()
-    def retrieve(self, request, pk):
-        order = Order.objects.filter(pk=pk, user=request.user).first()
-        if not order:
-            return Response({
-                "success": False, "user_not_logged_in": False, "user_unauthorized": False,
-                "data": None, "error": "Order not found."
-            }, status=status.HTTP_404_NOT_FOUND)
-
-        return Response({
-            "success": True, "user_not_logged_in": False, "user_unauthorized": False,
-            "data": {"order": OrderDetailSerializer(order, context={"request": request}).data},
-            "error": None,
-        }, status=status.HTTP_200_OK)
 
 
 # ─────────────────────────────────────────────

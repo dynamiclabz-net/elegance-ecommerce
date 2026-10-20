@@ -298,6 +298,17 @@ class Payment(models.Model):
 
     status = models.CharField(max_length=15, choices=PAYMENT_TXN_STATUS_CHOICES, default="created")
 
+    # Gateway details, filled in from Razorpay when the payment is checked.
+    razorpay_status = models.CharField(max_length=30, blank=True, default="")
+    method = models.CharField(max_length=20, blank=True, default="")
+    method_detail = models.CharField(max_length=150, blank=True, default="")
+    bank_reference = models.CharField(max_length=100, blank=True, default="")
+    error_code = models.CharField(max_length=100, blank=True, default="")
+    error_description = models.CharField(max_length=255, blank=True, default="")
+    environment = models.CharField(max_length=10, blank=True, default="")
+    gateway_response = models.JSONField(null=True, blank=True)
+    last_checked_at = models.DateTimeField(null=True, blank=True)
+
     paid_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(default=timezone.now)
 

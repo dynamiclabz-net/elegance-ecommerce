@@ -1,2 +1,4 @@
-invoice
-email notificaitons
+XXinvoice
+XXemail notificaitons
+
+once create cart as logged out and than cehckout page should be verying the otp and all not working

@@ -1,5 +1,6 @@
 from functools import wraps
 
+from django.conf import settings
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from rest_framework import viewsets, status
@@ -201,7 +202,11 @@ class PaymentCallbackPageViewSet(viewsets.ViewSet):
     @handle_exceptions
     @check_authentication()
     def retrieve(self, request, pk):
-        return render(request, "frontend/payment-callback.html", {"order_id": pk})
+        return render(request, "frontend/payment-callback.html", {
+            "order_id": pk,
+            "max_retries": settings.PAYMENT_STATUS_MAX_RETRIES,
+            "retry_delays": settings.PAYMENT_STATUS_RETRY_DELAYS_MS,
+        })
 
 
 class OrderDetailPageViewSet(viewsets.ViewSet):

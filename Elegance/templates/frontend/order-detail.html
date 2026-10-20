@@ -77,6 +77,15 @@
               <span id="odPaymentMethod"></span>
               <span class="od-payment-status" id="odPaymentStatus"></span>
             </div>
+            <div class="od-pay-box" id="odPayBox" style="display:none">
+              <p class="od-pay-due" id="odPayDue"></p>
+              <button type="button" class="od-pay-btn" id="odPayBtn"><i class="fas fa-lock"></i> <span id="odPayBtnText">Pay now</span></button>
+              <p class="od-pay-note">Secure payment via Razorpay: UPI, cards, net banking and wallets.</p>
+            </div>
+            <div class="od-payments" id="odPayments" style="display:none">
+              <h3 class="od-payments-title">Payment details</h3>
+              <ul class="od-payments-list" id="odPaymentList"></ul>
+            </div>
             <a href="#" class="od-invoice-link" id="odInvoiceLink" style="display:none" target="_blank" rel="noopener">
               <i class="fas fa-file-invoice"></i> Download Invoice
             </a>
@@ -94,6 +103,7 @@
 {% endblock %}
 
 {% block extra_js %}
+  <script src="{% static 'js/razorpay-pay.js' %}"></script>
   <script src="{% static 'js/order-detail.js' %}"></script>
   <script>
     document.addEventListener("DOMContentLoaded", function () {
@@ -101,6 +111,7 @@
         csrfToken: "{{ csrf_token }}",
         orderId: "{{ order_id }}",
         myOrderApiUrl: "{% url 'my-order-api-detail' pk=order_id %}",
+        orderPaymentApiUrl: "{% url 'order-payment-api-list' %}",
       });
     });
   </script>

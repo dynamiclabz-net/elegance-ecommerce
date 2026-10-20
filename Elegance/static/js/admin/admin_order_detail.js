@@ -28,8 +28,76 @@ const MANUAL_STATUS_OPTIONS = [
   ["rto_delivered", "Returned to seller"],
 ];
 
+function paymentDetailLine(label, value, mono) {
+  if (!value) return "";
+  const text = eEscapeHtml(value);
+  return `<div><span class="text-muted">${label}:</span> ${mono ? `<code>${text}</code>` : text}</div>`;
+}
+
+function paymentRowHtml(p) {
+  const badgeClass = p.status === "success" ? "success" : p.status === "failed" ? "danger" : "muted";
+  const method = p.method_detail || p.method;
+  const canRecheck = Boolean(p.razorpay_order_id);
+  const dashboardLink = p.dashboard_url
+    ? `<a class="btn-e-outline btn-sm" href="${eEscapeHtml(p.dashboard_url)}" target="_blank" rel="noopener">Open in Razorpay</a>`
+    : "";
+  const checked = p.last_checked_at ? `Checked ${eFormatDate(p.last_checked_at)}` : "";
+
+  return `
+    <tr>
+      <td>
+        <div><strong>${eEscapeHtml(p.payment_type_display)}</strong></div>
+        <div>${eFormatCurrency(p.amount)}</div>
+        <div class="text-muted" style="font-size:11.5px;">${p.paid_at ? "Paid " + eFormatDate(p.paid_at) : "Created " + eFormatDate(p.created_at)}</div>
+      </td>
+      <td>
+        <span class="e-badge ${badgeClass}">${eEscapeHtml(p.status_display)}</span>
+        ${p.razorpay_status ? `<div class="text-muted" style="font-size:11.5px;margin-top:4px;">Razorpay: ${eEscapeHtml(p.razorpay_status)}</div>` : ""}
+        ${p.environment ? `<div class="text-muted" style="font-size:11.5px;">${eEscapeHtml(p.environment)} mode</div>` : ""}
+      </td>
+      <td style="font-size:12.5px;line-height:1.6;word-break:break-all;">
+        ${paymentDetailLine("Method", method, false)}
+        ${paymentDetailLine("Order ID", p.razorpay_order_id, true)}
+        ${paymentDetailLine("Payment ID", p.razorpay_payment_id, true)}
+        ${paymentDetailLine("Bank ref", p.bank_reference, true)}
+        ${p.status === "failed" ? paymentDetailLine("Failure", [p.error_code, p.error_description].filter(Boolean).join(": "), false) : ""}
+        ${checked ? `<div class="text-muted" style="font-size:11.5px;">${checked}</div>` : ""}
+      </td>
+      <td style="white-space:nowrap;">
+        <div class="d-flex flex-column gap-2">
+          ${canRecheck ? `<button type="button" class="btn-e-outline btn-sm" data-payment-recheck="${p.id}">Re-check status</button>` : ""}
+          ${dashboardLink}
+        </div>
+      </td>
+    </tr>`;
+}
+
+async function handlePaymentRecheck(event) {
+  const button = event.target.closest("[data-payment-recheck]");
+  if (!button) return;
+
+  const originalText = button.textContent;
+  button.disabled = true;
+  button.textContent = "Checking…";
+
+  const [success, result] = await callApi(
+    "POST", _odCfg.adminPaymentSyncApiUrl, { payment_id: button.dataset.paymentRecheck }, _odCfg.csrfToken
+  );
+
+  if (!success || !result.success) {
+    button.disabled = false;
+    button.textContent = originalText;
+    eToast(eExtractError(result, "Could not check the payment with Razorpay."), "error");
+    return;
+  }
+
+  eToast(result.data.message || "Payment status refreshed.", "success");
+  renderOrder(result.data.order);
+}
+
 function AdminOrderDetailInit(config) {
   _odCfg = config;
+  document.getElementById("order-payments-body").addEventListener("click", handlePaymentRecheck);
   document.getElementById("status-update-form").addEventListener("submit", handleStatusUpdate);
   document.getElementById("fulfilment-body").addEventListener("click", handleFulfilmentClick);
   document.getElementById("ship-submit-btn").addEventListener("click", submitShipment);
@@ -488,7 +556,7 @@ async function submitShipment() {
   renderOrder(result.data.order);
 }
 
-// ── order rendering ────────────────────────────────────────��────────────
+// ── order rendering ─────────────────────────────────────────────────────
 function breakupRow(label, value, { muted = true, negative = false } = {}) {
   return `
     <div class="d-flex justify-content-between mb-2" style="font-size:13.5px;">
@@ -563,14 +631,8 @@ function renderOrder(order) {
     </div>
   `).join("") || `<div class="e-empty py-2"><p>No history yet.</p></div>`;
 
-  document.getElementById("order-payments-body").innerHTML = (order.payments || []).map((p) => `
-    <tr>
-      <td>${eEscapeHtml(p.payment_type_display)}</td>
-      <td>${eFormatCurrency(p.amount)}</td>
-      <td><span class="e-badge ${p.status === "success" ? "success" : p.status === "failed" ? "danger" : "muted"}">${eEscapeHtml(p.status_display)}</span></td>
-      <td>${eFormatDate(p.paid_at)}</td>
-    </tr>
-  `).join("") || `<tr><td colspan="4"><div class="e-empty"><p>No payments recorded.</p></div></td></tr>`;
+  document.getElementById("order-payments-body").innerHTML = (order.payments || []).map(paymentRowHtml).join("")
+    || `<tr><td colspan="4"><div class="e-empty"><p>No payments recorded.</p></div></td></tr>`;
 
   document.getElementById("shipping-details").innerHTML = `
     <div style="font-size:13.5px;line-height:1.7;">

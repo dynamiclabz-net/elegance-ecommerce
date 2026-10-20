@@ -187,6 +187,79 @@ function OrderDetailPageInit(config) {
     }
   }
 
+  const PAYMENT_STATUS_LABELS = { success: "Paid", failed: "Failed", pending: "Pending" };
+
+  function formatDateTime(value) {
+    if (!value) return "";
+    return new Date(value).toLocaleString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit" });
+  }
+
+  function paymentItemHtml(payment) {
+    const label = PAYMENT_STATUS_LABELS[payment.status] || payment.status_display || payment.status;
+    const method = payment.method_detail || payment.method;
+    const lines = [];
+    if (method) lines.push(`<span>${eEscapeHtml(method)}</span>`);
+    if (payment.razorpay_payment_id) lines.push(`<span>Payment ID: ${eEscapeHtml(payment.razorpay_payment_id)}</span>`);
+    const when = payment.paid_at || payment.created_at;
+    if (when) lines.push(`<span>${eEscapeHtml(formatDateTime(when))}</span>`);
+    if (payment.status === "failed" && payment.error_description) {
+      lines.push(`<span class="od-pay-error">${eEscapeHtml(payment.error_description)}</span>`);
+    }
+
+    return `
+      <li class="od-pay-item">
+        <div class="od-pay-item-top">
+          <strong>${eEscapeHtml(payment.payment_type_display || "Payment")} &middot; ${money(payment.amount)}</strong>
+          <span class="od-pay-badge pay-${eEscapeHtml(payment.status)}">${eEscapeHtml(label)}</span>
+        </div>
+        <div class="od-pay-item-meta">${lines.join("")}</div>
+      </li>`;
+  }
+
+  async function startPayment() {
+    const button = document.getElementById("odPayBtn");
+    const text = document.getElementById("odPayBtnText");
+    const originalText = text.textContent;
+    button.disabled = true;
+    text.textContent = "Opening payment…";
+
+    const restore = () => {
+      button.disabled = false;
+      text.textContent = originalText;
+    };
+
+    const [ok, result] = await callApi("POST", config.orderPaymentApiUrl, { order_id: config.orderId }, csrfToken);
+    if (!ok || !result.success) {
+      restore();
+      eToast(eExtractError(result, "Could not start the payment. Please try again."), "error");
+      return;
+    }
+
+    const opened = await window.EleganceRazorpay.open(result.data.razorpay, { onDismiss: restore });
+    if (!opened) restore();
+  }
+
+  function renderPayments(order) {
+    const payments = order.payments || [];
+    const listEl = document.getElementById("odPayments");
+    listEl.style.display = payments.length ? "" : "none";
+    document.getElementById("odPaymentList").innerHTML = payments.map(paymentItemHtml).join("");
+
+    const due = order.payment_due || {};
+    const box = document.getElementById("odPayBox");
+    const cancelled = order.order_status === "cancelled";
+    if (!due.can_pay || cancelled) {
+      box.style.display = "none";
+      return;
+    }
+
+    box.style.display = "";
+    document.getElementById("odPayDue").textContent = order.is_cod
+      ? `Advance of ${money(due.amount)} is pending.`
+      : `Payment of ${money(due.amount)} is pending.`;
+    document.getElementById("odPayBtnText").textContent = `${due.label} ${money(due.amount)}`;
+  }
+
   function renderHeader(order) {
     document.getElementById("odOrderNumber").textContent = "#" + order.order_number;
     document.getElementById("odPlacedDate").textContent = "Placed on " + new Date(order.placed_at).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" });
@@ -221,8 +294,11 @@ function OrderDetailPageInit(config) {
     renderAddress(order);
     renderTracking(order);
     renderSummary(order);
+    renderPayments(order);
     contentEl.style.display = "block";
   }
 
+  document.getElementById("odPayBtn").addEventListener("click", startPayment);
+  window.EleganceRazorpay.preload().catch(() => {});
   loadOrder();
 }

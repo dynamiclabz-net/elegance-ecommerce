@@ -100,7 +100,7 @@ function setupPincodeHint() {
 
 function CheckoutPageInit(config) {
   coConfig = config;
-  bootstrap();
+  loadCheckoutData();
 
   document.getElementById("coAddAddressBtn").addEventListener("click", () => {
     document.getElementById("coAddressForm").style.display = "";
@@ -124,7 +124,7 @@ function CheckoutPageInit(config) {
   document.getElementById("coOtpVerifyBtn").addEventListener("click", handleOtpVerify);
 }
 
-async function bootstrap() {
+async function loadCheckoutData() {
   const [cartOk, cartResult] = await callApi("GET", coConfig.cartApiUrl, null, "");
   const [addrOk, addrResult] = await callApi("GET", coConfig.addressApiUrl, null, "");
 
@@ -384,5 +384,27 @@ async function submitOrder() {
     return;
   }
 
-  window.location.href = result.data.redirect_url;
+  const data = result.data;
+
+  if (!data.razorpay) {
+    if (data.payment_error) {
+      eToast(data.payment_error + " Your order is saved, you can pay from the order page.", "error");
+      setTimeout(() => { window.location.href = data.order_detail_url; }, 1500);
+    } else {
+      window.location.href = data.order_detail_url;
+    }
+    return;
+  }
+
+  activeBtn.textContent = "Opening payment…";
+  const opened = await window.EleganceRazorpay.open(data.razorpay, {
+    onDismiss: function () {
+      eToast("Payment not completed. You can pay from your order page.", "error");
+      setTimeout(() => { window.location.href = data.order_detail_url; }, 1200);
+    },
+  });
+
+  if (!opened) {
+    window.location.href = data.order_detail_url;
+  }
 }

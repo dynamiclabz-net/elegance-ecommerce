@@ -1,6 +1,7 @@
 from django.urls import reverse
 from rest_framework import serializers
 
+from .razorpay_service import amount_due
 from .tax import build_price_summary
 from .models import (
     Cart, CartItem, Order, OrderItem, Payment, OrderStatusHistory, PincodeRange, Shipment, ShipmentEvent,
@@ -80,14 +81,35 @@ class PaymentSerializer(serializers.ModelSerializer):
     payment_type_display = serializers.CharField(source="get_payment_type_display", read_only=True)
     status_display = serializers.CharField(source="get_status_display", read_only=True)
 
+    dashboard_url = serializers.SerializerMethodField()
+
+    ADMIN_ONLY_FIELDS = (
+        "razorpay_order_id", "razorpay_status", "bank_reference", "error_code",
+        "environment", "last_checked_at", "dashboard_url",
+    )
+
+    def get_dashboard_url(self, obj):
+        if not obj.razorpay_payment_id:
+            return None
+        return f"https://dashboard.razorpay.com/app/payments/{obj.razorpay_payment_id}"
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if not self.context.get("admin"):
+            for field in self.ADMIN_ONLY_FIELDS:
+                data.pop(field, None)
+        return data
+
     class Meta:
         model = Payment
         fields = (
             "id", "order", "payment_type", "payment_type_display", "amount",
-            "razorpay_order_id", "razorpay_payment_id", "razorpay_signature",
-            "status", "status_display", "paid_at", "created_at",
+            "razorpay_order_id", "razorpay_payment_id",
+            "status", "status_display", "method", "method_detail", "error_description",
+            "razorpay_status", "bank_reference", "error_code", "environment",
+            "last_checked_at", "dashboard_url", "paid_at", "created_at",
         )
-        read_only_fields = ("id", "created_at")
+        read_only_fields = fields
 
 
 class OrderStatusHistorySerializer(serializers.ModelSerializer):
@@ -218,6 +240,16 @@ class OrderDetailSerializer(serializers.ModelSerializer):
     shipments = serializers.SerializerMethodField()
     price_summary = serializers.SerializerMethodField()
     invoice_url = serializers.SerializerMethodField()
+    payment_due = serializers.SerializerMethodField()
+
+    def get_payment_due(self, obj):
+        """What the customer can still pay online ("Pay now" on the order page)."""
+        due = amount_due(obj)
+        return {
+            "can_pay": due > 0,
+            "amount": due,
+            "label": "Pay advance online" if obj.is_cod else "Pay online",
+        }
 
     def get_price_summary(self, obj):
         return build_price_summary(obj)
@@ -250,7 +282,7 @@ class OrderDetailSerializer(serializers.ModelSerializer):
             "payment_method", "payment_method_display", "payment_status", "payment_status_display",
             "order_status", "order_status_display",
             "subtotal", "discount_amount", "shipping_charge", "total_amount",
-            "price_summary", "invoice_number", "invoice_url",
+            "price_summary", "invoice_number", "invoice_url", "payment_due",
             "cod_advance_percentage", "cod_advance_amount", "cod_balance_amount", "is_cod",
             "courier_partner", "tracking_id", "tracking_url",
             "placed_at", "confirmed_at", "shipped_at", "out_for_delivery_at",

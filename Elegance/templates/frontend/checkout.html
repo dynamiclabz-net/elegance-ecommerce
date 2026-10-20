@@ -172,9 +172,11 @@
 {% endblock %}
 
 {% block extra_js %}
-  <script src="{% static 'js/checkout.js' %}"></script>
+  <script src="{% static 'js/razorpay-pay.js' %}"></script>
+  <script src="{% static 'js/checkout.js' %}"></script>  
   <script>
     document.addEventListener("DOMContentLoaded", function () {
+      window.EleganceRazorpay.preload().catch(function () {});
       CheckoutPageInit({
         csrfToken: "{{ csrf_token }}",
         cartApiUrl: "{% url 'cart-api-list' %}",

@@ -44,11 +44,11 @@
       </div>
 
       <div class="e-card">
-        <div class="e-card-header"><h2>Payments</h2></div>
+        <div class="e-card-header"><h2>Payments (Razorpay)</h2></div>
         <div class="e-card-body p-0">
           <div style="overflow-x:auto;">
             <table class="e-table">
-              <thead><tr><th>Type</th><th>Amount</th><th>Status</th><th>Paid At</th></tr></thead>
+              <thead><tr><th>Payment</th><th>Status</th><th>Razorpay details</th><th></th></tr></thead>
               <tbody id="order-payments-body"></tbody>
             </table>
           </div>
@@ -219,6 +219,7 @@
       csrfToken: "{{ csrf_token }}",
       orderId: {{ order_id }},
       adminOrderApiUrl: "{% url 'admin-order-api-list' %}",
+      adminPaymentSyncApiUrl: "{% url 'admin-payment-sync-api-list' %}",
       ordersListUrl: "{% url 'admin-orders-list' %}",
       packingSlipUrl: "{% url 'admin-packing-slip-detail' order_id %}",
     });

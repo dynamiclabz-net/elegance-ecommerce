@@ -158,9 +158,44 @@ OTP_MAX_ATTEMPTS = 5
 # COD partial advance payment percentage (of total order value)
 COD_ADVANCE_PERCENTAGE = 20
 
-# Razorpay (to be filled in when integrating online payments)
-RAZORPAY_KEY_ID = os.environ.get("RAZORPAY_KEY_ID", "")
-RAZORPAY_KEY_SECRET = os.environ.get("RAZORPAY_KEY_SECRET", "")
+# ─────────────────────────────────────────────
+# Razorpay
+# ─────────────────────────────────────────────
+# RAZORPAY_ENV picks which credential set is used: "test" or "live".
+# Webhook secret is the one you set when adding the webhook in the Razorpay
+# dashboard (Settings > Webhooks) pointing at /order-api/webhooks/razorpay/.
+RAZORPAY_ENV = os.environ.get("RAZORPAY_ENV", "test")
+RAZORPAY_CREDENTIALS = {
+    "test": {
+        "KEY_ID": os.environ.get("RAZORPAY_TEST_KEY_ID", base64_to_text("cnpwX3Rlc3RfUzV6OXlXcFh0d0VkVVg=")),
+        "KEY_SECRET": os.environ.get("RAZORPAY_TEST_KEY_SECRET", base64_to_text("NTAyaldFeDBWUFE1b2RuSkJQVzNJblNS")),
+        "WEBHOOK_SECRET": os.environ.get("RAZORPAY_TEST_WEBHOOK_SECRET", ""),
+    },
+    "live": {
+        "KEY_ID": os.environ.get("RAZORPAY_LIVE_KEY_ID", ""),
+        "KEY_SECRET": os.environ.get("RAZORPAY_LIVE_KEY_SECRET", ""),
+        "WEBHOOK_SECRET": os.environ.get("RAZORPAY_LIVE_WEBHOOK_SECRET", ""),
+    },
+}
+_razorpay_active = RAZORPAY_CREDENTIALS.get(RAZORPAY_ENV, RAZORPAY_CREDENTIALS["test"])
+RAZORPAY_KEY_ID = _razorpay_active["KEY_ID"]
+RAZORPAY_KEY_SECRET = _razorpay_active["KEY_SECRET"]
+RAZORPAY_WEBHOOK_SECRET = _razorpay_active["WEBHOOK_SECRET"]
+
+RAZORPAY_API_BASE = "https://api.razorpay.com/v1"
+RAZORPAY_CHECKOUT_JS_URL = "https://checkout.razorpay.com/v1/checkout.js"
+RAZORPAY_BUSINESS_NAME = os.environ.get("RAZORPAY_BUSINESS_NAME", "Elegance")
+RAZORPAY_THEME_COLOR = os.environ.get("RAZORPAY_THEME_COLOR", "#b8964f")
+# How long a customer has to finish paying inside the Razorpay window.
+RAZORPAY_PAYMENT_TIMEOUT_SECONDS = int(os.environ.get("RAZORPAY_PAYMENT_TIMEOUT_SECONDS", "900"))
+# Leave empty to use the host the customer is browsing on. Set it (e.g. an https
+# ngrok URL) when Razorpay must reach a different public address for the redirect.
+RAZORPAY_CALLBACK_BASE_URL = os.environ.get("RAZORPAY_CALLBACK_BASE_URL", "").rstrip("/")
+
+# The payment-status screen checks 1 time, then retries this many times.
+PAYMENT_STATUS_MAX_RETRIES = 3
+PAYMENT_STATUS_RETRY_DELAYS_MS = [3000, 5000, 8000]
+
 
 # ─────────────────────────────────────────────
 # Delivery partners
