@@ -342,12 +342,14 @@ class AdminOrderViewSet(viewsets.ViewSet):
 
 # ─────────────────────────────────────────────
 # Delivery partner webhooks
-# ────────��────────────────────────────────────
+# ���───────��────────────────────────────────────
 class ShiprocketWebhookView(APIView):
-    """POST /order-api/webhooks/shiprocket/
+    """POST /order-api/webhooks/courier-updates/
 
     Configure in Shiprocket (Settings > API > Webhooks) with this URL and a
-    secret token; Shiprocket echoes the token in the `x-api-key` header."""
+    secret token; Shiprocket echoes the token in the `x-api-key` header.
+    (Shiprocket forbids "shiprocket" in the URL, so use the courier-updates path;
+    /order-api/webhooks/shiprocket/ still works for older setups.)"""
 
     authentication_classes = []
     permission_classes = []

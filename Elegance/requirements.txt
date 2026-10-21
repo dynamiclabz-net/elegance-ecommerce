@@ -1,0 +1,40 @@
+Django
+djangorestframework
+channels
+asgiref
+
+django-redis
+redis
+channels
+channels-redis
+django-storages 
+boto3
+
+psycopg2-binary
+pandas
+
+requests
+websockets
+
+pyotp
+
+NorenRestApiPy
+websocket-client
+
+uvicorn
+pillow
+fastapi
+# --- Deployment Utilities ---
+gunicorn==23.0.0             # WSGI server Render uses to run Django
+whitenoise==6.7.0            # For static files on Render
+dj-database-url==2.2.0       # To parse Render DATABASE_URL
+python-dotenv==1.0.1         # Optional: if you use .env files locally
+pytz
+firebase-admin
+razorpay
+PyMuPDF==1.24.11
+openpyxl
+reportlab==4.2.5
+svglib==1.5.1
+pyOpenSSL==25.3.0
+resend

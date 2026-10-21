@@ -2,6 +2,7 @@ import os
 import base64
 from pathlib import Path
 from datetime import timedelta
+import dj_database_url
 
 
 IS_LOCAL = True
@@ -45,6 +46,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -78,13 +80,32 @@ WSGI_APPLICATION = "Elegance.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
+if IS_LOCAL:
+    if LOCAL_DB:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
+    else:
+        DATABASES = {
+            "default": dj_database_url.config(
+                default="postgresql://elegance_db_zusb_user:abKdkMdbc2KYEN80RJSnfWVYRJQGZ8Yx@dpg-dbca3tei0phs73ase2pg-a.singapore-postgres.render.com/elegance_db_zusb", # DB ecternal link
+                conn_max_age=600,
+                ssl_require=True,
+            )
+        }
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+else:    
+    DATABASES = {
+        "default": dj_database_url.config(
+            default=os.environ.get("DATABASE_URL"),
+            conn_max_age=600,
+            ssl_require=True,
+        )
     }
-}
+
 
 
 # Custom user model (defined in the UserDetail app)
@@ -118,6 +139,11 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "static"]
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+WHITENOISE_AUTOREFRESH = False
+WHITENOISE_USE_FINDERS = True
+
 
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
@@ -167,9 +193,9 @@ COD_ADVANCE_PERCENTAGE = 20
 RAZORPAY_ENV = os.environ.get("RAZORPAY_ENV", "test")
 RAZORPAY_CREDENTIALS = {
     "test": {
-        "KEY_ID": os.environ.get("RAZORPAY_TEST_KEY_ID", base64_to_text("cnpwX3Rlc3RfUzV6OXlXcFh0d0VkVVg=")),
-        "KEY_SECRET": os.environ.get("RAZORPAY_TEST_KEY_SECRET", base64_to_text("NTAyaldFeDBWUFE1b2RuSkJQVzNJblNS")),
-        "WEBHOOK_SECRET": os.environ.get("RAZORPAY_TEST_WEBHOOK_SECRET", ""),
+        "KEY_ID": os.environ.get("RAZORPAY_TEST_KEY_ID", base64_to_text("cnpwX3Rlc3RfVHFXdFcwdUE0V3dMMno=")),
+        "KEY_SECRET": os.environ.get("RAZORPAY_TEST_KEY_SECRET", base64_to_text("bzBOS1dXV3RoOW0zZ3RxM3lkTHc4bFcy")),
+        "WEBHOOK_SECRET": os.environ.get("RAZORPAY_TEST_WEBHOOK_SECRET", base64_to_text("WndtQVdyTnEyeDNOc0xJYlNRQmM2NVFJV1ctZ2NaeTZWZW5HNkJnQXI1TQ==")),
     },
     "live": {
         "KEY_ID": os.environ.get("RAZORPAY_LIVE_KEY_ID", ""),
@@ -177,6 +203,7 @@ RAZORPAY_CREDENTIALS = {
         "WEBHOOK_SECRET": os.environ.get("RAZORPAY_LIVE_WEBHOOK_SECRET", ""),
     },
 }
+
 _razorpay_active = RAZORPAY_CREDENTIALS.get(RAZORPAY_ENV, RAZORPAY_CREDENTIALS["test"])
 RAZORPAY_KEY_ID = _razorpay_active["KEY_ID"]
 RAZORPAY_KEY_SECRET = _razorpay_active["KEY_SECRET"]
@@ -211,13 +238,13 @@ SHIPROCKET_CREDENTIALS = {
         "EMAIL": os.environ.get("SHIPROCKET_TEST_EMAIL", base64_to_text("aW5mbythcGlAcmVjYXJ2aXQuY29t")),
         "PASSWORD": os.environ.get("SHIPROCKET_TEST_PASSWORD", base64_to_text("NTBmN2VmMmM5MDU2MmU2NzdkZjgzMmU0MjYwMDRlNmE=")),
         "CHANNEL_ID": os.environ.get("SHIPROCKET_TEST_CHANNEL_ID", "1843794"),
-        "WEBHOOK_TOKEN": os.environ.get("SHIPROCKET_TEST_WEBHOOK_TOKEN", ""),
+        "WEBHOOK_TOKEN": os.environ.get("SHIPROCKET_TEST_WEBHOOK_TOKEN", base64_to_text("Mkw1eFNXcU1EQS1TZ2dQTkVWV0dLRXNVWVVMMVM0bzM3MkU5LUpFNzBOWQ==")),
     },
     "production": {
-        "EMAIL": os.environ.get("SHIPROCKET_PROD_EMAIL", base64_to_text("ZGl2eWFtc2hhaDIwMjBAZ21haWwuY29t")),
-        "PASSWORD": os.environ.get("SHIPROCKET_PROD_PASSWORD", base64_to_text("T0ZYZ2lHS3B1JGM1OCRld2hLT0UmciRjWkljTGNkM1o=")),
-        "CHANNEL_ID": os.environ.get("SHIPROCKET_PROD_CHANNEL_ID", "1843794"),
-        "WEBHOOK_TOKEN": os.environ.get("SHIPROCKET_PROD_WEBHOOK_TOKEN", ""),
+        "EMAIL": os.environ.get("SHIPROCKET_PROD_EMAIL", base64_to_text("ZWxlZ2FuY2UuZWM2QGdtYWlsLmNvbQ==")),
+        "PASSWORD": os.environ.get("SHIPROCKET_PROD_PASSWORD", base64_to_text("Q1dtayVpdVpIZzRsVDBhJERnYlkxbHBeeTIkTkVUZjg=")),
+        "CHANNEL_ID": os.environ.get("SHIPROCKET_PROD_CHANNEL_ID", "12112329"),
+        "WEBHOOK_TOKEN": os.environ.get("SHIPROCKET_PROD_WEBHOOK_TOKEN", base64_to_text("Mkw1eFNXcU1EQS1TZ2dQTkVWV0dLRXNVWVVMMVM0bzM3MkU5LUpFNzBOWQ==")),
     },
 }
 # Nickname of the pickup location preselected in the admin (as named in Shiprocket).
@@ -284,14 +311,14 @@ STORE_INVOICE = {
 SHIPPING_TRACKING_STALE_MINUTES = 20
 
 # WhatsApp number used for the return/replacement contact link
-STORE_WHATSAPP_NUMBER = os.environ.get("STORE_WHATSAPP_NUMBER", "9999999999")
+STORE_WHATSAPP_NUMBER = os.environ.get("STORE_WHATSAPP_NUMBER", "7600828888")
 
 # ── Transactional email (Resend) ───────────────────────────────────────────
 # Emails are skipped (and logged as "skipped") until both RESEND_API_KEY and
 # RESEND_FROM_EMAIL are set. The from address must use a domain verified in Resend;
 # "onboarding@resend.dev" only delivers to your own Resend account email.
-RESEND_API_KEY = os.environ.get("RESEND_API_KEY", base64_to_text("cmVfTmpKNnJ2R1hfRUVNU0xIY3hhSnpEYWJEZ1VrYnpLZnVi"))
-RESEND_FROM_EMAIL = os.environ.get("RESEND_FROM_EMAIL", "Elegance <onboarding@updates.sankievents.in>")
+RESEND_API_KEY = os.environ.get("RESEND_API_KEY", base64_to_text("cmVfTGFWbXpkaFRfS3dEZE12QWI3WXFSQkZRcHlCNGQ1TWN1"))
+RESEND_FROM_EMAIL = os.environ.get("RESEND_FROM_EMAIL", "Elegance <info@shopelegancecollection.com>")
 RESEND_REPLY_TO = os.environ.get("RESEND_REPLY_TO", "")
 RESEND_ENABLED = os.environ.get("RESEND_ENABLED", "True") == "True"
 # Send in a background thread after the DB commit so checkout / webhooks never wait on Resend.

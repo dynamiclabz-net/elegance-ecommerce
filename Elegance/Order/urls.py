@@ -19,6 +19,9 @@ router.register(r"order-payment-api", OrderPaymentViewSet, basename="order-payme
 router.register(r"admin-payment-sync-api", AdminPaymentSyncViewSet, basename="admin-payment-sync-api")
 
 urlpatterns = [
+    # Shiprocket rejects webhook URLs containing "shiprocket", "sr", "kr" etc., so
+    # the dashboard must use the neutral `courier-updates` path.
+    path("webhooks/courier-updates/", ShiprocketWebhookView.as_view(), name="courier-updates-webhook"),
     path("webhooks/shiprocket/", ShiprocketWebhookView.as_view(), name="shiprocket-webhook"),
     path("webhooks/razorpay/", razorpay_webhook, name="razorpay-webhook"),
     path("payment-return/<int:order_id>/", razorpay_return, name="razorpay-return"),

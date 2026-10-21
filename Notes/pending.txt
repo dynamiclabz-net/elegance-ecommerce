@@ -2,3 +2,4 @@ XXinvoice
 XXemail notificaitons
 
 once create cart as logged out and than cehckout page should be verying the otp and all not working
+in product detail page the functionality of selecting attributes and th balel that says select one option is not visible as it has no bg and also need ot make it better in terms of UX the red border on the attribute is very bad so see the first attribute should be pre selected and also see if one variaiton is not avaialbe like see if colour optinos are like blue and green and in blue only L & XL so open but if yellow has only L than disable XL button like that and it shoudl work
